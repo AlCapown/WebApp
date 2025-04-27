@@ -1,0 +1,32 @@
+﻿@using WebApp.Common.Constants
+@using WebApp.Client.Components.Admin
+@using WebApp.Client.Components.Admin.Week
+@using WebApp.Client.Components.Common.Page
+@using WebApp.Client.Components.Common.WebAppComponentBase
+
+@page "/Admin/Season/{SeasonId:int}/Week"
+@attribute [Authorize(Roles = AppRole.ADMIN)]
+
+@inject NavigationManager Navigation
+
+<PageContainer PageHeading="Manage Week">
+    <MudGrid Justify="Justify.FlexStart">
+        <MudItem xs="12">
+            <MudButton OnClick="@GoBack" Color="Color.Primary" Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.NavigateBefore">Back</MudButton>
+        </MudItem>
+        <MudItem xs="12">
+            <AdminSeasonWeekTable SeasonId="@SeasonId"/>
+        </MudItem>
+    </MudGrid>
+</PageContainer>
+
+@code 
+{
+    [Parameter]
+    public int SeasonId { get; set; }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/admin/season");
+    }
+}

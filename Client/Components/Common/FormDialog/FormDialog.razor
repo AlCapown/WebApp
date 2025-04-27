@@ -1,0 +1,117 @@
+﻿@using Fluxor.Blazor.Web.Components
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+@using MudBlazor
+@using System
+@using System.Threading.Tasks
+@using WebApp.Common.Models
+
+@inherits FluxorComponent
+
+<EditForm Model="@Model" OnValidSubmit="@OnValidSubmitAsync">
+    <MudDialog Class="wa_formDialog">
+        <TitleContent>
+            <MudText Typo="Typo.h6" Align="Align.Center">
+                @Title  
+            </MudText>
+            <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 0px 0px;" />
+        </TitleContent>
+        <DialogContent>
+            <DataAnnotationsValidator  />
+            <ServerSideValidationHandler @ref="@Validator" />
+            <MudText Color="Color.Error" Class="wa_formDialog__error">@Validator?.UnboundError</MudText>
+            @ChildContent
+            @if (IsFormDialogSubmitting)
+            {
+                <MudProgressLinear Color="Color.Primary" Indeterminate="true" Class="my-7" />
+            }
+        </DialogContent>
+        <DialogActions>
+            @if (!IsFormDialogSubmitting) 
+            {
+                <MudButton ButtonType="ButtonType.Button" Color="Color.Secondary" OnClick="@OnCancel">Cancel</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary">Ok</MudButton>
+            }
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+
+    [CascadingParameter]
+    protected IMudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public object Model { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    [Parameter]
+    public Action OnSubmit { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    public bool IsFormDialogSubmitting { get; private set; }
+
+    protected ServerSideValidationHandler Validator { get; set; }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            if (ChildContent?.Target is IFormDialogContent formDialogContent)
+            {
+                formDialogContent.OnValidSubmitCallbackSuccess += ValidSubmitCallbackSuccessHandler;
+                formDialogContent.OnValidSubmitCallbackErrorAsync += ValidSubmitCallbackErrorHandlerAsync;
+            }
+            else
+            {
+                throw new ArgumentException($"Child content of the {nameof(FormDialog)} component must implement {nameof(IFormDialogContent)}");
+            }
+        }
+
+        base.OnAfterRender(firstRender);
+    }
+
+    protected async Task OnValidSubmitAsync(EditContext editContext)
+    {
+        await MudDialog.SetOptionsAsync(MudDialog.Options with { BackdropClick = false });
+        IsFormDialogSubmitting = true;
+        Validator.ClearErrors();
+        StateHasChanged();
+        OnSubmit?.Invoke();
+    }
+
+    protected void ValidSubmitCallbackSuccessHandler()
+    {
+        IsFormDialogSubmitting = false;
+        MudDialog.Close();
+        StateHasChanged();
+    }
+
+    protected async Task ValidSubmitCallbackErrorHandlerAsync(ApiError error)
+    {
+        await MudDialog.SetOptionsAsync(MudDialog.Options with { BackdropClick = false });
+        IsFormDialogSubmitting = false;
+        Validator.DisplayApiErrors(error);
+        StateHasChanged();
+    }
+
+    protected void OnCancel()
+    {
+        MudDialog.Cancel();
+    }
+
+    protected override async ValueTask DisposeAsyncCore(bool disposing)
+    {
+        if (disposing && ChildContent?.Target is IFormDialogContent formDialogContent)
+        {
+            formDialogContent.OnValidSubmitCallbackSuccess -= ValidSubmitCallbackSuccessHandler;
+            formDialogContent.OnValidSubmitCallbackErrorAsync -= ValidSubmitCallbackErrorHandlerAsync;
+        }
+
+        await base.DisposeAsyncCore(disposing);
+    }
+}

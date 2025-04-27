@@ -1,0 +1,135 @@
+﻿@using System.Threading
+@using System.Threading.Tasks
+@using WebApp.Common.Models
+@using WebApp.Common.Infrastructure
+@using WebApp.Client.Store.PageStore
+
+@inherits FluxorComponent
+
+@inject IDispatcher Dispatcher
+@inject IActionSubscriber ActionSubscriber
+@inject IDialogService DialogService
+@inject NavigationManager NavigationManager
+
+<ErrorBoundary>
+    <ChildContent>
+        @ChildContent
+    </ChildContent>
+    <ErrorContent Context="exception">
+        @{ OnException(exception); }
+    </ErrorContent>
+</ErrorBoundary>
+
+
+@code {
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+
+    private readonly UnorderedTaskQueue _taskQueue = new();
+    private readonly CancellationTokenSource _cancellationTokenSource = new();
+
+    protected override void OnInitialized() 
+    {
+        ActionSubscriber.SubscribeToAction<PageActions.EnqueuePageError>(this, async action => 
+        {
+            await HandleErrorAction(action);
+        });
+
+        base.OnInitialized();
+    }
+
+    protected override async ValueTask DisposeAsyncCore(bool disposing)
+    {
+        if (disposing)
+        {
+            _cancellationTokenSource.Cancel();
+            ActionSubscriber.UnsubscribeFromAllActions(this);
+        }
+
+        await base.DisposeAsyncCore(disposing);
+    }
+
+    private async Task HandleErrorAction(PageActions.EnqueuePageError errorAction)
+    {
+        // To ensure only a single error shows at a time, process these errors in a queue.
+        // There is no guarantee that these errors will be processed in order of being queued.
+        await _taskQueue.Enqueue(async () =>
+        {
+            if (errorAction.Error is ApiError apiError)
+            {
+                await ShowApiErrorDialog(apiError);
+            }
+            else if (errorAction.Error is LocalError localError)
+            {
+                await ShowLocalErrorDialog(localError);
+            }
+            else
+            {
+                await ShowUnsupportedErrorTypeDialog();
+            }
+        }, _cancellationTokenSource.Token);
+    }
+
+    private void OnException(Exception ex)
+    {
+        Dispatcher.Dispatch(new PageActions.EnqueuePageError
+        {
+            Error = new LocalError
+            {
+                Message = ex.Message,
+                StackTrace = ex.StackTrace
+            }
+        });
+    }
+
+    private async Task ShowApiErrorDialog(ApiError apiError)
+    {
+        var dialogPrams = new DialogParameters<ErrorDialog>();
+        dialogPrams.Add(x => x.Message, apiError.Message);
+        dialogPrams.Add(x => x.IsRetriable, apiError.RetryAction is not null);
+        
+        var dialog = await DialogService.ShowAsync<ErrorDialog>("Api Error", dialogPrams);
+        var dialogResult = await dialog.Result;
+
+        switch (dialogResult?.Data?.ToString())
+        {
+            case ErrorDialog.ErrorDialogResult.RETRY:
+                Dispatcher.Dispatch(apiError.RetryAction);
+                break;
+            case ErrorDialog.ErrorDialogResult.CANCELLED:
+                break;
+            case ErrorDialog.ErrorDialogResult.REFRESH:
+            default:
+                ReloadPage();
+                break;
+        }
+    }
+
+    private async Task ShowLocalErrorDialog(LocalError localError)
+    {
+        var dialogPrams = new DialogParameters<ErrorDialog>();
+        dialogPrams.Add(x => x.Message, localError.Message);
+        dialogPrams.Add(x => x.IsRetriable, false);
+
+        var dialog = await DialogService.ShowAsync<ErrorDialog>("Local Error", dialogPrams);
+        await dialog.Result;
+        ReloadPage();
+    }
+
+    private async Task ShowUnsupportedErrorTypeDialog()
+    {
+        var dialogPrams = new DialogParameters<ErrorDialog>();
+        dialogPrams.Add(x => x.Message, "Unsupported error type used.");
+        dialogPrams.Add(x => x.IsRetriable, false);
+        
+        var dialog = await DialogService.ShowAsync<ErrorDialog>("Unsupported Error", dialogPrams);
+        await dialog.Result;
+        ReloadPage();
+    }
+
+    private void ReloadPage()
+    {
+        NavigationManager.NavigateTo(NavigationManager.Uri, true);
+    }
+}

@@ -1,0 +1,99 @@
+﻿@using WebApp.Common.Models
+@using WebApp.Client.Components.Common.FormDialog
+@using WebApp.Client.Store.GamePredictionStore
+@using WebApp.Client.Common.Extensions
+
+@inherits FluxorComponent
+@implements IFormDialogContent
+
+@inject IDispatcher Dispatcher
+@inject IActionSubscriber ActionSubscriber
+
+<FormDialog @ref="FormDialog" Title="@Title" Model="@Model" OnSubmit="DispatchSubmitAction">
+    <MudNumericField @bind-Value="Model.AwayTeamScore" For="@(() => Model.AwayTeamScore)" Label="@AwayTeamLabel" Min="0" Max="999" HideSpinButtons="true" Disabled="FormDialog.IsFormDialogSubmitting" />
+    <MudNumericField @bind-Value="Model.HomeTeamScore" For="@(() => Model.HomeTeamScore)" Label="@HomeTeamLabel" Min="0" Max="999" HideSpinButtons="true" Class="mt-6" Disabled="FormDialog.IsFormDialogSubmitting" />
+</FormDialog>
+
+@code {
+
+    [Parameter]
+    [EditorRequired]
+    public int GameId { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public int HomeTeamScore { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public int AwayTeamScore { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public string HomeTeamName { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public string AwayTeamName { get; set; }
+
+    public Action OnValidSubmitCallbackSuccess { get; set; }
+
+    public Func<ApiError, Task> OnValidSubmitCallbackErrorAsync { get; set; }
+
+    private FormDialog FormDialog { get; set; }
+
+    private CreateGamePredictionRequest Model { get; set; }
+
+    private string Title => $"Enter your prediction for {AwayTeamName} @ {HomeTeamName}";
+
+    private string HomeTeamLabel => $"{HomeTeamName} Score";
+
+    private string AwayTeamLabel => $"{AwayTeamName} Score";
+
+    protected override void OnInitialized()
+    {
+        Model = GetDefaultModelState();
+
+        ActionSubscriber.SubscribeToAction<GamePredictionActions.CreateGamePredictionSuccess>(this, action =>
+        {
+            OnValidSubmitCallbackSuccess?.Invoke();
+        });
+
+        ActionSubscriber.SubscribeToAction<GamePredictionActions.CreateGamePredictionFailure>(this, async action =>
+        {
+            await OnValidSubmitCallbackErrorAsync?.Invoke(action.ApiError);
+        });
+
+        base.OnInitialized();
+    }
+
+    private void DispatchSubmitAction()
+    {
+        Dispatcher.DispatchFetch(new GamePredictionActions.CreateGamePrediction
+        {
+            Request = Model,
+            DispatchErrorToWindow = false,
+            ForceDispatch = true
+        });
+    }
+
+    protected override async ValueTask DisposeAsyncCore(bool disposing)
+    {
+        if (disposing)
+        {
+            ActionSubscriber.UnsubscribeFromAllActions(this);
+        }
+
+        await base.DisposeAsyncCore(disposing);
+    }
+
+    private CreateGamePredictionRequest GetDefaultModelState()
+    {
+        return new CreateGamePredictionRequest
+        {
+            GameId = GameId,
+            HomeTeamScore = HomeTeamScore,
+            AwayTeamScore = AwayTeamScore
+        };
+    }
+}

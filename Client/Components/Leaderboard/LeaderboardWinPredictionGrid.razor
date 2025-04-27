@@ -1,0 +1,70 @@
+﻿@using WebApp.Client.Components.Common.WebAppComponentBase
+@using WebApp.Client.Components.Common.LoadingWrapper
+
+@inherits WebAppComponentBase
+@inject NavigationManager Navigation
+
+<div class="wa_table__container_large">
+    <div class="wa_table__header">
+        <MudText Typo="@Typo.h6">Win Prediction Leaders Per Week</MudText>
+        <MudText Typo="@Typo.subtitle1">(Higher is Better)</MudText>
+        <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 15px 0px;" />
+    </div>
+    <SkeletonLoadingWrapper IsLoading=@DisplayLoading Width="100%" Height="30rem">
+        <div class="wa_table__overflowContainer">
+            <MudDataGrid Items="Items" Breakpoint="Breakpoint.None" SortMode="SortMode.None" Dense="true" Elevation="2" Class="wa_table__mudOverrides">
+                <Columns>
+                    <PropertyColumn Property="x => x.Week" Title="Week">
+                        <FooterTemplate>
+                            <MudText Typo="Typo.subtitle2">Totals:</MudText>
+                        </FooterTemplate>
+                    </PropertyColumn>
+                    @foreach (var user in OrderedUsers)
+                    {
+                        <PropertyColumn Property=@(x => x.UserPredictions[user.UserId].PredictedWinningTeam ? 1 : 0) AggregateDefinition=@(SumTrueAggregate(user.UserId))>
+                            <HeaderTemplate>
+                                <MudButton OnClick="e => OnUserClicked(user.UserId)" Variant="Variant.Text" EndIcon="@Icons.Material.Filled.NavigateNext">
+                                    <MudText Typo="Typo.subtitle2">@($"{user.FirstName} {user.LastName}")</MudText>
+                                </MudButton>
+                            </HeaderTemplate>
+                        </PropertyColumn>
+                    }
+                </Columns>
+            </MudDataGrid>
+        </div>
+    </SkeletonLoadingWrapper>
+</div>
+
+@code {
+    [Parameter]
+    [EditorRequired]
+    public List<LeaderboardItem> Items { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public List<User> OrderedUsers { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public bool DisplayLoading { get; set; }
+
+    private AggregateDefinition<LeaderboardItem> SumTrueAggregate(string userId)
+    {
+        return new AggregateDefinition<LeaderboardItem>
+        {
+            Type = AggregateType.Custom,
+            CustomAggregate = list =>
+            {
+                return list
+                    .Where(x => x.UserPredictions[userId].PredictedWinningTeam == true)
+                    .Count()
+                    .ToString();
+            }
+        };
+    }
+
+    private void OnUserClicked(string userId)
+    {
+        Navigation.NavigateTo($"/UserPredictions/{userId}");
+    }
+}

@@ -1,0 +1,73 @@
+﻿@inherits WebAppComponentBase
+
+@using WebApp.Client.Common.Extensions
+@using WebApp.Client.Components.Common.LoadingWrapper
+@using WebApp.Common.Models
+@using WebApp.Client.Store.SeasonStore
+@using WebApp.Client.Components.Common.WebAppComponentBase
+
+@inject IState<SeasonState> SeasonState
+@inject IDialogService DialogService
+@inject NavigationManager Navigation
+
+<div class="wa_table__container">
+    <div class="wa_table__header">
+        <MudText Typo="@Typo.h6">Seasons</MudText>
+        <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 15px 0px;" />
+    </div>
+    <SkeletonLoadingWrapper IsLoading=@IsLoading() Width="100%" Height="30rem">
+        <div class="wa_table__overflowContainer">
+            <MudTable Items="@SeasonState.Value.Seasons.Values" Hover="true" SortLabel="Sort By" AllowUnsorted="false" Dense="true" Breakpoint="Breakpoint.None" Class="wa_table__mudOverrides">
+                <HeaderContent>
+                    <MudTh>
+                        <MudTableSortLabel SortBy="new Func<Season, object>(x => x.SeasonId)" InitialDirection="SortDirection.Descending">
+                            <MudText Typo="Typo.subtitle2">@("Year")</MudText>
+                        </MudTableSortLabel>
+                    </MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Description")</MudText></MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Edit")</MudText></MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("View")</MudText></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Year"><MudText Typo="Typo.body2">@context.SeasonId</MudText></MudTd>
+                    <MudTd DataLabel="Description"><MudText Typo="Typo.body2">@context.Description</MudText></MudTd>
+                    <MudTd DataLabel="Edit">
+                        <MudButton OnClick="@(async e => await OpenEditSeasonDialog(@context.SeasonId))" Variant="Variant.Text" EndIcon="@Icons.Material.Filled.Edit">
+                            <MudText Typo="Typo.body2">Edit Season</MudText>
+                        </MudButton></MudTd>
+                    <MudTd DataLabel="View">
+                        <MudButton OnClick="@(e => NavigateToViewWeek(@context.SeasonId))" Variant="Variant.Text" EndIcon="@Icons.Material.Filled.NavigateNext">
+                            <MudText Typo="Typo.body2">View Weeks</MudText>
+                        </MudButton>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </div>
+    </SkeletonLoadingWrapper>
+</div>
+
+@code 
+{
+    
+    protected override void OnInitialized()
+    {
+        MaybeDispatchAndTrack(new SeasonActions.LoadSeasonList
+        {
+            DispatchErrorToWindow = true
+        });
+
+        base.OnInitialized();
+    }
+
+    private async Task OpenEditSeasonDialog(int seasonId)
+    {
+        var parameters = new DialogParameters();
+        parameters.Add("SeasonId", seasonId);
+        await DialogService.ShowAsync<AdminEditSeasonDialog>("Edit Season", parameters);
+    }
+
+    private void NavigateToViewWeek(int seasonId)
+    {
+        Navigation.NavigateTo($"/admin/season/{seasonId}/week");
+    }
+}

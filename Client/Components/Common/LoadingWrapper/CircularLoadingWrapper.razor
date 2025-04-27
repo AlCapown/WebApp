@@ -1,0 +1,20 @@
+﻿@inherits ComponentBase
+
+@if (IsLoading)
+{
+    <MudProgressCircular Color="Color.Default" Size="Size.Large" Indeterminate="true" />
+}
+else
+{
+    @ChildContent
+}
+
+@code 
+{
+    [Parameter]
+    [EditorRequired]
+    public bool IsLoading { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

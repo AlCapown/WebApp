@@ -1,0 +1,5 @@
+{
+  "Source": "wwwroot/Styles",
+  "Target": "wwwroot/Styles",
+  "Arguments": "--style=compressed --no-source-map"
+}

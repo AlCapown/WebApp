@@ -1,0 +1,18 @@
+select sw.SeasonId, sw.[Week], sw.WeekStart, sw.WeekEnd, 
+FORMAT( g.StartsOn AT TIME ZONE 'Central Standard Time', 'dd/MM/yyyy hh:mm tt') AS 'StartsOn', 
+Datepart(WEEKDAY, g.StartsOn AT TIME ZONE 'Central Standard Time') as [DayOfWeek],
+ht.TeamFullName as 'HomeTeam',
+g.HomeTeamScore, wt.TeamFullName as 'AwayTeam', g.AwayTeamScore
+from dbo.Game g
+inner join dbo.SeasonWeek sw on g.SeasonWeekId = sw.SeasonWeekId
+inner join dbo.Team ht on ht.TeamId = g.HomeTeamId
+inner join dbo.Team wt on wt.TeamId = g.AwayTeamId
+order by g.StartsOn
+
+
+select * from AspNetRoles
+select * from AspNetUsers
+
+
+insert into dbo.AspNetUserRoles(UserId, RoleId) 
+values ('e5a128fe-2a4d-431c-8259-efbf2a68ce34', 'ADMIN');

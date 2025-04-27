@@ -1,0 +1,15 @@
+﻿@import '../../../Common/Styles/Breakpoints.scss';
+
+.wa_formDialog {
+    @media (min-width: $breakpoint-sm) {
+        min-width: 30rem;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+        min-width: 95%;
+    }
+
+    .wa_formDialog__error {
+        padding-bottom: 1rem;
+    }
+}

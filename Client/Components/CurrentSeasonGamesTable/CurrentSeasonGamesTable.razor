@@ -1,0 +1,174 @@
+﻿@inherits WebAppComponentBase
+
+@using WebApp.Client.Common.Extensions
+@using WebApp.Client.Components.Common.LoadingWrapper
+@using WebApp.Client.Components.Common.WebAppComponentBase
+@using WebApp.Client.Store.GameStore
+@using WebApp.Client.Store.TeamStore
+@using WebApp.Common.Constants
+@using WebApp.Common.Enums
+@using WebApp.Common.Models
+@using System.Threading
+
+@inject IState<GameState> GameState
+@inject IState<TeamState> TeamState
+
+<div class="wa_table__container">
+    <SkeletonLoadingWrapper IsLoading=@IsLoading() Width="100%" Height="5rem">
+        <MudGrid Justify="Justify.FlexEnd">
+            <MudItem xs="12">
+                <MudAutocomplete 
+                    T="string"
+                    @bind-Value="@TeamSearchValue"
+                    SearchFunc="TeamAutoCompleteSearch"
+                    CoerceText="false"
+                    CoerceValue="true"
+                    ResetValueOnEmptyText="true"
+                    Label="Team Name" 
+                    Clearable="true" 
+                    Adornment="Adornment.Start" 
+                    AdornmentIcon="@Icons.Material.Filled.Search" 
+                    IconSize="Size.Medium" />
+            </MudItem>
+        </MudGrid>
+    </SkeletonLoadingWrapper>
+</div>
+
+<div class="wa_table__container" style="margin-top: 2rem;">
+    <div class="wa_table__header">
+        <MudText Typo="@Typo.h6">@($"Game Scores for {SeasonConstants.CURRENT_SEASON_ID} Season")</MudText>
+        <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 15px 0px;" />
+    </div>
+    <SkeletonLoadingWrapper IsLoading=@IsLoading() Width="100%" Height="30rem">
+        <div class="wa_table__overflowContainer">
+            <MudTable Items=@Games Hover="true" SortLabel="Sort By" AllowUnsorted="false" Filter=@Filter Breakpoint="Breakpoint.None" Dense="true" Class="wa_table__mudOverrides">
+                <HeaderContent>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Week")</MudText></MudTh>
+                    <MudTh>
+                        <MudTableSortLabel SortBy="new Func<Game, object>(x => x.GameStartsOn)" InitialDirection="SortDirection.Descending">
+                            <MudText Typo="Typo.subtitle2">@("Starts")</MudText>
+                        </MudTableSortLabel>
+                    </MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Game")</MudText></MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Time")</MudText></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel=@("Week")>
+                        <MudText Typo="Typo.body2">@($"Week {context.Week}")</MudText>
+                        <MudText Typo="Typo.body2">@($"{context.SeasonWeekTypeName.ToFriendlyNameString()}")</MudText>
+                    </MudTd>
+                    <MudTd DataLabel=@("Starts")>
+                        <MudText Style="text-wrap: wrap;" Typo="Typo.body2">@GameStartsOnDateString(context.GameStartsOn)</MudText>
+                        <MudText Typo="Typo.body2">@GameStartsOnTimeString(context.GameStartsOn)</MudText>
+                    </MudTd>
+                    <MudTd DataLabel="@("Game")">
+                        <MudText Typo="Typo.body2">@($"{context.AwayTeamName} - {context.AwayTeamScore}")</MudText>
+                        <MudText Typo="Typo.body2">@("@")</MudText>
+                        <MudText Typo="Typo.body2">@($"{context.HomeTeamName} - {context.HomeTeamScore}")</MudText>
+                    </MudTd>
+                    <MudTd DataLabel=@("Time")>
+                        <MudText Typo="Typo.body2">@QuarterToTableValue(context.GameStartsOn, context.ClockTime, context.Quarter, context.IsComplete)</MudText>
+                        @if (!context.IsComplete && context.GameStartsOn.HasValue && context.GameStartsOn < DateTimeOffset.Now)
+                        {
+                            <MudProgressLinear Indeterminate="true"></MudProgressLinear>
+                        }
+                    </MudTd>
+                </RowTemplate>
+                <PagerContent>
+                    <MudTablePager HorizontalAlignment="HorizontalAlignment.End" PageSizeOptions="new int[] { 25, 50, 100, int.MaxValue }" />
+                </PagerContent>
+            </MudTable>
+        </div>
+    </SkeletonLoadingWrapper>
+</div>
+
+@code {
+
+    [SupplyParameterFromQuery]
+    [Parameter]
+    public string TeamSearchValue { get; set; }
+
+    private List<Game> Games => GameState.Value.Games.Values
+        .Where(x => x.SeasonId == SeasonConstants.CURRENT_SEASON_ID)
+        .ToList();
+
+    protected override void OnInitialized()
+    {
+        MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
+        {
+            SeasonId = SeasonConstants.CURRENT_SEASON_ID
+        });
+
+        MaybeDispatchAndTrack(new TeamActions.LoadTeams());
+
+        base.OnInitialized();
+    }
+
+    private Func<Game, bool> Filter => game =>
+    {
+        if (!string.IsNullOrWhiteSpace(TeamSearchValue))
+        {
+            return game.HomeTeamName.Contains(TeamSearchValue, StringComparison.OrdinalIgnoreCase) ||
+                   game.AwayTeamName.Contains(TeamSearchValue, StringComparison.OrdinalIgnoreCase);
+        }
+
+        return true;
+    };
+
+    private Task<IEnumerable<string>> TeamAutoCompleteSearch(string value, CancellationToken token)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return Task.FromResult(TeamState.Value.Teams.Select(x => x.Value.TeamName));
+        }
+
+        return Task.FromResult(TeamState.Value.Teams
+            .Where(x => x.Value.TeamName.Contains(value, StringComparison.OrdinalIgnoreCase))
+            .Select(x => x.Value.TeamName));
+    }
+
+    private string QuarterToTableValue(DateTimeOffset? GameStartsOn, string clockTime, int quarter, bool isComplete)
+    {
+        if (isComplete)
+        {
+            return "Final";
+        }
+
+        if (!GameStartsOn.HasValue || GameStartsOn.Value > DateTimeOffset.Now)
+        {
+            return "";
+        }
+
+        var quarterString = quarter switch
+        {
+            0 => "",
+            1 => "Q1",
+            2 => "Q2",
+            3 => "Q3",
+            4 => "Q4",
+            _ => "OT"
+        };
+
+        return string.IsNullOrEmpty(quarterString) ? "" : string.Format("{0} - {1}", clockTime, quarterString);
+    }
+
+    private string GameStartsOnDateString(DateTimeOffset? gameStartsOn)
+    {
+        if (!gameStartsOn.HasValue)
+        {
+            return "-";
+        }
+
+        return gameStartsOn.Value.ToLocalTime().ToString("dddd MM/dd/yyyy");
+    }
+
+    private string GameStartsOnTimeString(DateTimeOffset? gameStartsOn)
+    {
+        if (!gameStartsOn.HasValue)
+        {
+            return "-";
+        }
+
+        return gameStartsOn.Value.ToLocalTime().ToString("h:mm tt");
+    }
+}

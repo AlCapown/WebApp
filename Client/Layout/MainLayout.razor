@@ -1,0 +1,61 @@
+﻿@inherits FluxorLayout
+
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using WebApp.Client.Components.Common.GlobalErrorHandler
+@using WebApp.Client.Common.Styles
+@using WebApp.Client.Store.PageStore
+
+@inject NavigationManager Navigation
+@inject IState<PageState> PageState
+
+<MudThemeProvider IsDarkMode="true"/>
+<MudDialogProvider />
+<MudPopoverProvider />
+<GlobalErrorHandler>
+    <AuthorizeView>
+        <Authorized>
+            <MudLayout>
+                <MudAppBar Elevation="1">
+                    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle" aria-label="open navigation menu" />
+                    <MudText Typo="Typo.h6" Class="ml-3">@PageHeading</MudText>
+                    <MudSpacer  />
+                    <MudButton Color="Color.Inherit" OnClick="@BeginLogout">LogOut</MudButton>
+                </MudAppBar>
+                <MudDrawer @bind-Open="@DrawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2" Variant="@DrawerVariant.Temporary">
+                    <NavMenu />
+                </MudDrawer>
+                <MudMainContent>
+                    @Body
+                    <MudScrollToTop TopOffset="400">
+                        <MudFab StartIcon="@Icons.Material.Filled.KeyboardArrowUp" Color="Color.Primary" />
+                    </MudScrollToTop>
+                </MudMainContent>
+            </MudLayout>
+        </Authorized>
+        <NotAuthorized>  
+            <MudLayout>
+                <MudAppBar Elevation="1" />
+                <MudMainContent>
+                    @Body
+                </MudMainContent>
+            </MudLayout>
+        </NotAuthorized>
+    </AuthorizeView>
+</GlobalErrorHandler>
+
+@code {
+    private bool DrawerOpen { get; set; } = false;
+
+    private string PageHeading => PageState.Value.PageHeading;
+
+    private void DrawerToggle(MouseEventArgs args)
+    {
+        DrawerOpen = !DrawerOpen;
+    }
+
+    private void BeginLogout(MouseEventArgs args)
+    {
+        Navigation.NavigateTo("Account/Logout", true);
+    }
+}

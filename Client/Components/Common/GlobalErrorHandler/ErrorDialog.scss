@@ -1,0 +1,11 @@
+﻿@import '../../../Common/Styles/Breakpoints.scss';
+
+.wa_errorDialog {
+    @media (min-width: $breakpoint-sm) {
+        min-width: 30rem;
+    }
+
+    @media (max-width: $breakpoint-sm) {
+        min-width: 95%;
+    }
+}

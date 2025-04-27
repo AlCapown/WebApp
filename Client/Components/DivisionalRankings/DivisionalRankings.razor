@@ -1,0 +1,105 @@
+﻿@using WebApp.Client.Components.Common.WebAppComponentBase
+@using WebApp.Common.Constants;
+@using WebApp.Common.Enums;
+@using WebApp.Client.Store.GameStore
+@using WebApp.Client.Store.TeamStore
+
+@inherits WebAppComponentBase
+@inject IState<GameState> GameState
+@inject IState<TeamState> TeamState
+
+<MudGrid Justify="Justify.FlexStart">
+    <MudItem xs="12" sm="6" lg="5">
+        <DivisionalTable Division="NFC NORTH" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+    </MudItem>
+    <MudItem xs="12" sm="6" lg="5">
+        <DivisionalTable Division="NFC EAST" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+    </MudItem>
+    <MudItem xs="12" sm="6" lg="5">
+        <DivisionalTable Division="NFC SOUTH" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+    </MudItem>
+    <MudItem xs="12" sm="6" lg="5">
+        <DivisionalTable Division="NFC WEST" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+    </MudItem>
+    <MudItem xs="12" sm="6" lg="5">
+        <DivisionalTable Division="AFC NORTH" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+    </MudItem>
+    <MudItem xs="12" sm="6" lg="5">
+        <DivisionalTable Division="AFC EAST" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+    </MudItem>
+    <MudItem xs="12" sm="6" lg="5">
+        <DivisionalTable Division="AFC SOUTH" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+    </MudItem>
+    <MudItem xs="12" sm="6" lg="5">
+        <DivisionalTable Division="AFC WEST" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+    </MudItem>
+</MudGrid>
+
+@code 
+{
+    protected override void OnInitialized()
+    {
+        MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
+        {
+            SeasonId = SeasonConstants.CURRENT_SEASON_ID
+        });
+
+        MaybeDispatchAndTrack(new TeamActions.LoadTeams());
+
+        base.OnInitialized();
+    }
+
+    private List<TeamRecord> GetTeamRecords()
+    {
+        // TODO: Track division wins for tie breaking
+        
+        var games = GameState.Value.Games.Values
+            .Where(x => x.SeasonId == SeasonConstants.CURRENT_SEASON_ID)
+            .Where(x => x.IsComplete)
+            .Where(x => x.SeasonWeekTypeName == WeekType.RegularSeason || x.SeasonWeekTypeName == WeekType.PostSeason);
+
+        var teams = TeamState.Value.Teams.Values;
+
+        var scoresAsHomeTeam =
+            from team in teams
+            join game in games on team.TeamId equals game.HomeTeamId into ljg
+            from g in ljg.DefaultIfEmpty()
+            select new TeamRecord
+            {
+                TeamId = team.TeamId,
+                TeamName = team.TeamName,
+                Division = team.Division,
+                Wins = g is null ? 0 : g.HomeTeamScore > g.AwayTeamScore ? 1 : 0,
+                Ties = g is null ? 0 : g.HomeTeamScore == g.AwayTeamScore ? 1 : 0,
+                Losses = g is null ? 0 : g.HomeTeamScore < g.AwayTeamScore ? 1 : 0,
+            };
+
+        var scoresAsAwayTeam =
+            from team in teams
+            join game in games on team.TeamId equals game.AwayTeamId into ljg
+            from g in ljg.DefaultIfEmpty()
+            select new TeamRecord
+            {
+                TeamId = team.TeamId,
+                TeamName = team.TeamName,
+                Division = team.Division,
+                Wins = g is null ? 0 : g.HomeTeamScore < g.AwayTeamScore ? 1 : 0,
+                Ties = g is null ? 0 : g.HomeTeamScore == g.AwayTeamScore ? 1 : 0,
+                Losses = g is null ? 0 : g.HomeTeamScore > g.AwayTeamScore ? 1 : 0
+            };
+             
+        TeamRecord[] allScores = [..scoresAsHomeTeam, ..scoresAsAwayTeam];
+
+        return (from s in allScores
+                group s by s.TeamId into teamGroup
+                select new TeamRecord
+                {
+                    TeamId = teamGroup.Key,
+                    TeamName = teamGroup.Max(x => x.TeamName),
+                    Division = teamGroup.Max(x => x.Division),
+                    Wins = teamGroup.Sum(x => x.Wins),
+                    Ties = teamGroup.Sum(x => x.Ties),
+                    Losses = teamGroup.Sum(x => x.Losses)
+                }).ToList();
+    }
+}

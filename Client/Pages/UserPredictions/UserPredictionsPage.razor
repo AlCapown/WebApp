@@ -1,0 +1,26 @@
+﻿@using WebApp.Client.Components.TeamTable
+@using WebApp.Client.Components.CurrentSeasonGamesTable
+@using WebApp.Client.Components.GamePredictionForUser
+@using WebApp.Client.Components.Common.Page
+@using WebApp.Client.Store.Shared
+@using WebApp.Common.Constants
+
+@page "/UserPredictions/{UserId}"
+@attribute [Authorize]
+
+@inject NavigationManager Navigation
+
+<PageContainer PageHeading="User Predictions">
+    <GamePredictionsTable SeasonId="SeasonConstants.CURRENT_SEASON_ID" TeamId="SeasonConstants.CURRENT_TEAM_ID" UserId="@UserId" />
+</PageContainer>
+
+@code 
+{
+    [Parameter]
+    public string UserId { get; set; }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/Leaderboard");
+    }
+}

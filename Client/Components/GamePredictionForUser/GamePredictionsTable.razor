@@ -1,0 +1,193 @@
+﻿@using WebApp.Client.Common.Extensions
+@using WebApp.Client.Components.Common.LoadingWrapper
+@using WebApp.Client.Components.Common.WebAppComponentBase
+@using WebApp.Client.Store.GameStore
+@using WebApp.Client.Store.GamePredictionStore
+@using WebApp.Client.Store.UserStore
+@using WebApp.Common.Enums
+@using WebApp.Common.Models
+
+@inherits WebAppComponentBase
+
+@inject IState<GameState> GameState
+@inject IState<GamePredictionState> GamePredictionState
+@inject IState<UserState> UserState
+
+
+<div class="wa_table__container">
+    <div class="wa_table__header">
+        <MudText Typo="@Typo.h6">@($"Prediction History")</MudText>
+        <MudText Typo="@Typo.subtitle1">@GetUserFirstLastName()</MudText>
+        <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 15px 0px;" />
+    </div>
+    <SkeletonLoadingWrapper IsLoading=@IsLoading() Width="100%" Height="30rem">
+        <div class="wa_table__overflowContainer">
+            <MudTable Items="@GetTableItems()" Hover="true" SortLabel="Sort By" AllowUnsorted="false" Breakpoint="Breakpoint.None" Dense="true" Class="wa_table__mudOverrides">
+                <HeaderContent>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Week")</MudText></MudTh>
+                    <MudTh>
+                        <MudTableSortLabel SortBy="new Func<GamePredictionTableItem, object>(x => x.GameStartsOn)" InitialDirection="SortDirection.Descending">
+                            <MudText Typo="Typo.subtitle2">@("Starts")</MudText>
+                        </MudTableSortLabel>
+                    </MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Predict")</MudText></MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Actual")</MudText></MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Score")</MudText></MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Win")</MudText></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="@("Week")">
+                        <MudText Typo="Typo.body2">@context.Week</MudText>
+                    </MudTd>
+                    <MudTd DataLabel="@("Starts")">
+                        <MudText Style="white-space: pre-wrap" Typo="Typo.body2">@GameStartsOnDateString(context.GameStartsOn)</MudText>
+                        <MudText Typo="Typo.body2">@GameStartsOnTimeString(context.GameStartsOn)</MudText>
+                    </MudTd>
+                    <MudTd DataLabel="@("Predict")">
+                        <MudText Typo="Typo.body2">@($"{context.AwayTeamName} - {context.PredictedAwayTeamScore}")</MudText>
+                        <MudText Typo="Typo.body2">@("@")</MudText>
+                        <MudText Typo="Typo.body2">@($"{context.HomeTeamName} - {context.PredictedHomeTeamScore}")</MudText>
+                    </MudTd>
+                    <MudTd DataLabel="@("Actual")">
+                        <MudText Typo="Typo.body2">@($"{context.AwayTeamName} - {context.ActualAwayTeamScore}")</MudText>
+                        <MudText Typo="Typo.body2">@("@")</MudText>
+                        <MudText Typo="Typo.body2">@($"{context.HomeTeamName} - {context.ActualHomeTeamScore}")</MudText>
+                    </MudTd>
+                    <MudTd DataLabel="@("Score")">
+                        <MudText Typo="Typo.body2">@CalcScoreDifferential(context)</MudText>
+                    </MudTd>
+                    <MudTd DataLabel="@("Win")">
+                        <MudText Typo="Typo.body2">@WinString(context)</MudText>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </div>
+    </SkeletonLoadingWrapper>
+</div>
+
+@code {
+
+    [Parameter, EditorRequired]
+    public int SeasonId { get; set; }  
+
+    [Parameter, EditorRequired]
+    public int TeamId { get; set; }
+
+    [Parameter, EditorRequired]
+    public string UserId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
+        {
+            SeasonId = SeasonId,
+            TeamId = TeamId
+        });
+
+        MaybeDispatchAndTrack(new GamePredictionActions.GamePredictionSearch
+        {
+            SeasonId = SeasonId,
+            TeamId = TeamId,
+            UserId = UserId
+        });
+
+        MaybeDispatchAndTrack(new UserActions.GetUserById
+        {
+            UserId = UserId
+        });
+
+        base.OnInitialized();
+    }
+
+    private List<GamePredictionTableItem> GetTableItems()
+    {
+        var games = GameState.Value.Games.Values;
+        var gamePredictions = GamePredictionState.Value.GamePredictions.Values;
+
+        return
+           (from game in games
+            join gamePrediction in gamePredictions on game.GameId equals gamePrediction.GameId into gpt
+            from gp in (from gpSub in gpt
+                        where gpSub.UserId == UserId
+                        select gpSub).DefaultIfEmpty()
+            where game.SeasonId == SeasonId
+            where game.SeasonWeekTypeName == WeekType.RegularSeason
+            where game.HomeTeamId == TeamId || game.AwayTeamId == TeamId
+            orderby game.GameStartsOn descending
+            select new GamePredictionTableItem
+            {
+                GameId = game.GameId,
+                Week = game.Week,
+                GameStartsOn = game.GameStartsOn,
+                HomeTeamName = game.HomeTeamName,
+                PredictedHomeTeamScore = gp?.PredictedHomeTeamScore ?? 0,
+                ActualHomeTeamScore = game.HomeTeamScore,
+                AwayTeamName = game.AwayTeamName,
+                PredictedAwayTeamScore = gp?.PredictedAwayTeamScore ?? 0,
+                ActualAwayTeamScore = game.AwayTeamScore
+            }).ToList();
+    }
+
+    private string GetUserFirstLastName()
+    {
+        if (UserId is not null && UserState.Value.Users.TryGetValue(UserId, out User user))
+        {
+            return $"{user.FirstName} {user.LastName}";
+        }
+
+        return string.Empty;
+    }
+
+    private string GameStartsOnDateString(DateTimeOffset? gameStartsOn)
+    {
+        if (!gameStartsOn.HasValue)
+        {
+            return "-";
+        }
+
+        return gameStartsOn.Value.ToLocalTime().ToString("dddd MM/dd/yyyy");
+    }
+
+    private string GameStartsOnTimeString(DateTimeOffset? gameStartsOn)
+    {
+        if (!gameStartsOn.HasValue)
+        {
+            return "-";
+        }
+
+        return gameStartsOn.Value.ToLocalTime().ToString("h:mm tt");
+    }
+
+
+    private int CalcScoreDifferential(GamePredictionTableItem gp)
+    {
+        return Math.Abs(gp.ActualHomeTeamScore - gp.PredictedHomeTeamScore) +
+               Math.Abs(gp.ActualAwayTeamScore - gp.PredictedAwayTeamScore);
+    }
+
+    private string WinString(GamePredictionTableItem gp)
+    {       
+        bool win = gp.ActualHomeTeamScore == gp.ActualAwayTeamScore
+            ? false
+            : gp.PredictedHomeTeamScore == gp.PredictedAwayTeamScore
+            ? false
+            : gp.ActualHomeTeamScore > gp.ActualAwayTeamScore
+            ? gp.PredictedHomeTeamScore > gp.PredictedAwayTeamScore
+            : gp.PredictedHomeTeamScore < gp.PredictedAwayTeamScore;
+
+        return win ? "Yes" : "No";
+    }
+
+    private record GamePredictionTableItem
+    {
+        public int GameId { get; init; }
+        public int Week { get; init; }
+        public DateTimeOffset? GameStartsOn { get; set; }
+        public string HomeTeamName { get; init; }
+        public int PredictedHomeTeamScore { get; init; }
+        public int ActualHomeTeamScore { get; init; }
+        public string AwayTeamName { get; init; }
+        public int PredictedAwayTeamScore { get; init; }
+        public int ActualAwayTeamScore { get; init; }
+    }
+}

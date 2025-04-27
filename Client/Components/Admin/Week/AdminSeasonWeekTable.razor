@@ -1,0 +1,86 @@
+﻿@inherits WebAppComponentBase
+
+@using WebApp.Common.Models
+@using WebApp.Client.Common.Extensions
+@using WebApp.Client.Components.Common.LoadingWrapper
+@using WebApp.Client.Components.Common.WebAppComponentBase
+@using WebApp.Client.Store.SeasonWeekStore
+@using WebApp.Client.Store.SeasonStore
+@using WebApp.Common.Enums
+
+@inject IState<SeasonWeekState> SeasonWeekState
+@inject IState<SeasonState> SeasonState
+
+<div class="wa_table__container">
+    <div class="wa_table__header">
+        <MudText Typo="@Typo.h6">@GetSeasonDescription()</MudText>
+        <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 15px 0px;" />
+    </div>
+    <SkeletonLoadingWrapper IsLoading=@IsLoading() Width="100%" Height="30rem">
+        <div class="wa_table__overflowContainer">
+            <MudTable Items="@Weeks" Hover="true" SortLabel="Sort By" AllowUnsorted="false" Dense="true" Breakpoint="Breakpoint.None" Class="wa_table__mudOverrides">
+                <HeaderContent>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Week Type")</MudText></MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Week")</MudText></MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Description")</MudText></MudTh>
+                    <MudTh>
+                        <MudTableSortLabel SortBy="new Func<SeasonWeek, object>(x=> x.WeekStart)" InitialDirection="SortDirection.Ascending">
+                            <MudText Typo="Typo.subtitle2">@("Week Start")</MudText>
+                        </MudTableSortLabel>
+                    </MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Week End")</MudText></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Week Type"><MudText Typo="Typo.body2">@context.WeekType.ToFriendlyNameString()</MudText></MudTd>
+                    <MudTd DataLabel="Week"><MudText Typo="Typo.body2">@context.Week</MudText></MudTd>
+                    <MudTd DataLabel="Description"><MudText Typo="Typo.body2">@context.Description</MudText></MudTd>
+                    <MudTd DataLabel="Week Start">
+                        <MudText Typo="Typo.body2">@context.WeekStart.ToString("dddd")</MudText>
+                        <MudText Typo="Typo.body2">@context.WeekStart.ToString("MM/dd/yy")</MudText>
+                    </MudTd>
+                    <MudTd DataLabel="Week End">
+                        <MudText Typo="Typo.body2">@context.WeekEnd.ToString("dddd")</MudText>
+                        <MudText Typo="Typo.body2">@context.WeekEnd.ToString("MM/dd/yy")</MudText>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </div>
+    </SkeletonLoadingWrapper>
+</div>
+
+@code {
+
+    [Parameter]
+    public int SeasonId { get; set; }
+
+    private List<SeasonWeek> Weeks => SeasonWeekState.Value.Weeks
+        .Where(x => x.Value.SeasonId == SeasonId)
+        .Select(x => x.Value)
+        .ToList();
+
+    public string GetSeasonDescription()
+    {
+        if (SeasonState.Value.Seasons.TryGetValue(this.SeasonId, out Season Season))
+        {
+            return Season.Description;
+        }
+
+        return string.Empty;
+    }
+
+    protected override void OnInitialized()
+    {
+        MaybeDispatchAndTrack(new SeasonWeekActions.LoadSeasonWeekList
+        {
+            SeasonId = SeasonId,
+            DispatchErrorToWindow = true
+        });
+
+        MaybeDispatchAndTrack(new SeasonActions.LoadSeasonList
+        {
+            DispatchErrorToWindow = true
+        });
+
+        base.OnInitialized();
+    }
+}

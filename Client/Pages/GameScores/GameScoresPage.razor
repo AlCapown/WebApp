@@ -1,0 +1,9 @@
+﻿@using WebApp.Client.Components.Common.Page
+@using WebApp.Client.Components.CurrentSeasonGamesTable
+
+@page "/GameScores"
+@attribute [Authorize]
+
+<PageContainer PageHeading="Game Scores">
+    <CurrentSeasonGamesTable />
+</PageContainer>

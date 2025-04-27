@@ -1,0 +1,74 @@
+﻿@using WebApp.Client.Components.Common.LoadingWrapper
+@using WebApp.Client.Components.Common.WebAppComponentBase
+
+@inherits WebAppComponentBase
+@inject NavigationManager Navigation
+
+<div class="wa_table__container">
+    <div class="wa_table__header">
+        <MudText Typo="@Typo.h6">@Division</MudText>
+        <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 15px 0px;" />
+    </div>
+    <SkeletonLoadingWrapper IsLoading=@DisplayLoading Width="100%" Height="10rem">
+        <div class="wa_table__overflowContainer">
+            <MudTable Items=@OrderedTeamRecordsForDivision Hover ="true" Breakpoint="Breakpoint.None" Dense="true" Class="wa_table__mudOverrides">
+                <HeaderContent>
+                    <MudTh>
+                        <MudText Typo="Typo.subtitle2">Team</MudText>
+                    </MudTh>
+                    <MudTh>
+                        <MudText Typo="Typo.subtitle2">W-L-T</MudText>
+                    </MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="Team">
+                        <MudButton OnClick="e => OnTeamClicked(context.TeamName)" Variant="Variant.Text" EndIcon="@Icons.Material.Filled.NavigateNext">
+                            <MudText Typo="Typo.subtitle2">@context.TeamName</MudText>
+                        </MudButton>
+                    </MudTd>
+                    <MudTd DataLabel="Wins">
+                        <MudText Typo="Typo.body2">@(DisplayWinRecord(context))</MudText>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </div>
+    </SkeletonLoadingWrapper>
+</div>
+
+@code 
+{
+    [Parameter]
+    [EditorRequired]
+    public string Division { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public bool DisplayLoading { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public List<TeamRecord> TeamRecords {get; set;}
+
+    private List<TeamRecord> OrderedTeamRecordsForDivision => TeamRecords
+        .Where(x => x.Division == Division)
+        .OrderByDescending(x => x.Wins)
+        .ThenBy(x => x.Losses)
+        .ThenByDescending(x => x.Ties)
+        .ThenBy(x => x.TeamName)
+        .ToList();
+
+    private string DisplayWinRecord(TeamRecord teamRecord)
+    {
+        if (teamRecord.Ties == 0)
+        {
+            return $"{teamRecord.Wins}-{teamRecord.Losses}";
+        }
+
+        return $"{teamRecord.Wins}-{teamRecord.Losses}-{teamRecord.Ties}";
+    }
+
+    private void OnTeamClicked(string teamName)
+    {
+        Navigation.NavigateTo($"/GameScores?TeamSearchValue={teamName}");
+    }
+}

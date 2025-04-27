@@ -1,0 +1,52 @@
+﻿@using WebApp.Client.Infrastructure
+@using WebApp.Common.Constants
+@using WebApp.Client.Components.TeamTable
+@using WebApp.Client.Components.CurrentSeasonGamesTable
+@using WebApp.Client.Components.GamePredictionForUser
+@using WebApp.Client.Components.Common.Page
+@using WebApp.Client.Store.Shared
+@using WebApp.Client.Common.Extensions
+@using WebApp.Client.Components.CurrentWeekPredictions
+
+
+@page "/"
+@attribute [Authorize]
+
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+
+<PageContainer PageHeading="Home">
+    @if (CurrentUserId is not null)
+    {
+        <MudGrid Justify="Justify.FlexStart">
+            <MudItem xs="12">
+                <NextGamePredictionAlertBanner SeasonId="SeasonConstants.CURRENT_SEASON_ID" TeamId="SeasonConstants.CURRENT_TEAM_ID" UserId="@CurrentUserId" />
+            </MudItem>
+            <MudItem xs="12">
+                <CurrentWeekPredictions SeasonId="SeasonConstants.CURRENT_SEASON_ID" TeamId="SeasonConstants.CURRENT_TEAM_ID" />
+            </MudItem>
+            <MudItem xs="12">
+                <GamePredictionsTable SeasonId="SeasonConstants.CURRENT_SEASON_ID" TeamId="SeasonConstants.CURRENT_TEAM_ID" UserId="@CurrentUserId" />
+            </MudItem>
+        </MudGrid>
+    }
+</PageContainer>
+
+@code 
+{
+    #nullable enable
+
+    /// <summary>
+    /// The current logged in UserId.
+    /// </summary>
+    /// <remarks>
+    /// This is property is set during OnInitializedAsync therefore it is possible
+    /// to be null during first render.
+    /// </remarks>
+    private string? CurrentUserId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authenticationState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        CurrentUserId = authenticationState.User.GetUserId();
+    }
+}

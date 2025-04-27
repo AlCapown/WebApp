@@ -1,0 +1,29 @@
+﻿@inherits ComponentBase
+
+@if (IsLoading)
+{
+    <MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="@Width" Height="@Height" />
+}
+else
+{
+    @ChildContent
+}
+
+
+@code
+{
+    [Parameter]
+    [EditorRequired]
+    public bool IsLoading { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public string Width { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public string Height { get; set; }
+
+    [Parameter]
+    public RenderFragment ChildContent { get; set; }
+}

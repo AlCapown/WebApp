@@ -1,0 +1,28 @@
+﻿using System.Collections.Immutable;
+
+namespace WebApp.Server.Infrastructure;
+
+public sealed class MicrosoftPublisherDomainModel
+{
+    private static readonly MicrosoftPublisherDomainModel _instance = new();
+
+    private MicrosoftPublisherDomainModel() 
+    {
+        AssociatedApplications = ImmutableList.Create
+        ([
+            new Application 
+            { 
+                ApplicationId = "d0f40251-8829-4625-9129-cb8d1a0c3305" 
+            }
+        ]);
+    }
+
+    public static MicrosoftPublisherDomainModel Value => _instance;
+
+    public ImmutableList<Application> AssociatedApplications { get; init; }
+
+    public sealed record Application
+    {
+        public string ApplicationId { get; init; }
+    }
+}

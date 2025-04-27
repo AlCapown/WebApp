@@ -1,0 +1,16 @@
+﻿// Breakpoint values should match with our component library
+// https://github.com/Garderoben/MudBlazor/blob/de308ac42abf42e893d331beba08f2a87a805b41/src/MudBlazor/Styles/abstracts/_variables.scss
+
+$breakpoint-xs: 0px;
+$breakpoint-sm: 600px;
+$breakpoint-md: 960px;
+$breakpoint-lg: 1280px;
+$breakpoint-xl: 1920px;
+
+$breakpoints: ( xs: $breakpoint-xs, sm: $breakpoint-sm, md: $breakpoint-md, lg: $breakpoint-lg, xl: $breakpoint-xl );
+
+/* Media query notes
+ *
+ *  min-width: Greater than equal to this value
+ *  max-width: Less than or equal to this value
+ */

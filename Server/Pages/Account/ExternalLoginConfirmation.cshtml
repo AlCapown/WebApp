@@ -1,0 +1,39 @@
+﻿@page
+@model WebApp.Server.Pages.Account.ExternalLoginConfirmationModel
+@{
+    ViewData["Title"] = "External Login Confirmation";
+}
+@section Scripts {
+  @*<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/4.0.0/jquery.min.js"></script>*@
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.18.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validation-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+}
+
+<form id="externalLoginConfirmation" method="post" >
+    <div class="wa_card">
+        <div class="wa_card__content">
+            <h1>Please Confirm Your Personal Information</h1>
+            <h2>@Model.Email</h2>
+            <hr />
+            <div class="wa_card__formGroup">
+                <label asp-for="@Model.FirstName">First Name:</label>
+                <input asp-for="@Model.FirstName" type="text">
+                <span asp-validation-for="@Model.FirstName" class="wa_card_formGroup_validation"></span>
+            </div>
+            <div class="wa_card__formGroup">
+                <label asp-for="@Model.LastName">Last Name:</label>
+                <input asp-for="@Model.LastName" type="text" />
+                <span asp-validation-for="@Model.LastName" class="wa_card_formGroup_validation"></span>
+            </div>
+            <div class="wa_card__formGroup">
+                <label asp-for="@Model.InviteCode">Invite Code:</label>
+                <input asp-for="@Model.InviteCode" type="text" />
+                <span asp-validation-for="@Model.InviteCode" class="wa_card_formGroup_validation"></span>
+            </div>
+            <button type="submit">
+                <span>Confirm</span>
+            </button>
+        </div>
+    </div>
+</form>

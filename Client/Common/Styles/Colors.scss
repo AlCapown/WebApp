@@ -1,0 +1,9 @@
+﻿$surface-color: rgba(55, 55, 64, 1);
+$surface-color-light: lighten($surface-color, 8%);
+$surface-color-lighter: lighten($surface-color, 16%);
+
+
+$primaryColor: #776be7;
+$primaryColorDark: scale-color($primaryColor, $lightness: -10% );
+
+$softWhite: rgba(255,255,255,0.698);

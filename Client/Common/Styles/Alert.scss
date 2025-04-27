@@ -1,0 +1,17 @@
+﻿@import 'Breakpoints.scss';
+@import 'Colors.scss';
+
+.wa_alert__container {
+    position: relative;
+    display: block;
+    width: 50rem;
+    padding: 0;
+    background-color: $surface-color;
+    border-radius: var(--mud-default-borderradius);
+    border: 1px solid var(--mud-palette-lines-default);
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+    @media (max-width: $breakpoint-md) {
+        width: 100%;
+    }
+}

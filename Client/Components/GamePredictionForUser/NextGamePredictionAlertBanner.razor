@@ -1,0 +1,214 @@
+﻿@using WebApp.Client.Common.Extensions
+@using WebApp.Client.Components.Common.WebAppComponentBase
+@using WebApp.Client.Store.GameStore
+@using WebApp.Client.Store.GamePredictionStore
+@using WebApp.Client.Store.SeasonWeekStore
+@using WebApp.Common.Models
+@using WebApp.Client.Components.Common.CountdownTimer
+@using WebApp.Client.Components.Common.LoadingWrapper
+@using WebApp.Common.Enums
+
+@inherits WebAppComponentBase
+
+@inject IState<GameState> GameState
+@inject IState<GamePredictionState> GamePredictionState
+@inject IState<SeasonWeekState> SeasonWeekState
+@inject IDialogService DialogService
+
+<CountdownTimer @ref="CountdownTimer" />
+@if (IsLoading())
+{
+    <div class="wa_alert__container">
+        <SkeletonLoadingWrapper IsLoading="@IsLoading()" Width="100%" Height="3rem" />
+    </div>
+}
+else
+{
+    <MudGrid Justify="Justify.FlexStart">
+        @switch (GetNextGamePredictionStatus())
+        {
+            case NextGamePredictionStatuses.NoGameForThisWeek:
+                <MudItem xs="12">
+                    <div class="wa_alert__container">
+                        <MudAlert Class="wa_alert__container" Severity="Severity.Info">No game predictions can be made at this time. Check back later.</MudAlert>
+                    </div>
+                </MudItem>
+                break;
+            case NextGamePredictionStatuses.CanCreateNewPrediction:
+                <MudItem xs="12">
+                    <div class="wa_alert__container">
+                        <MudAlert Severity="Severity.Warning">You are missing a prediction for the next game. You have @RemainingTimeFormated remaining to add one.</MudAlert>
+                    </div>                    
+                </MudItem>
+                <MudItem xs="12">
+                    <MudButton OnClick="OpenPredictionDialog" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary">Make Prediction</MudButton>
+                </MudItem>
+                break;
+            case NextGamePredictionStatuses.HasPredictionThatIsEditable:
+                <MudItem xs="12">
+                    <div class="wa_alert__container">
+                        <MudAlert Severity="Severity.Success">Your prediction for this week has been recorded. The game starts in @RemainingTimeFormated</MudAlert>
+                    </div>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudButton OnClick="OpenPredictionDialog" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary">Change Prediction</MudButton>
+                </MudItem>
+                break;
+            case NextGamePredictionStatuses.PredictionNotEditable:
+                <MudItem xs="12">
+                    <div class="wa_alert__container">
+                        <MudAlert Severity="Severity.Info">Cannot create or change prediction since the game has started.</MudAlert>
+                    </div>
+                </MudItem>
+                break;
+            default:
+                break;
+        }
+    </MudGrid>
+}
+
+@code 
+{
+    [Parameter, EditorRequired]
+    public int SeasonId { get; set; }
+
+    [Parameter, EditorRequired]
+    public int TeamId { get; set; }
+
+    [Parameter, EditorRequired]
+    public string UserId { get; set; }
+
+    private CountdownTimer CountdownTimer { get; set; }
+
+    private string RemainingTimeFormated => string.Format(
+        "{0:D1} days {1:D2} hrs {2:D2} mins and {3:D2} secs",
+        CountdownTimer?.RemainingTime.Days ?? 0,
+        CountdownTimer?.RemainingTime.Hours ?? 0,
+        CountdownTimer?.RemainingTime.Minutes ?? 0,
+        CountdownTimer?.RemainingTime.Seconds ?? 0);
+
+    protected override void OnInitialized()
+    {
+        MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
+        {
+            SeasonId = SeasonId,
+            TeamId = TeamId,
+        });
+
+        MaybeDispatchAndTrack(new GamePredictionActions.GamePredictionSearch
+        {
+            SeasonId = SeasonId,
+            TeamId = TeamId,
+            UserId = UserId,
+        });
+
+        MaybeDispatchAndTrack(new SeasonWeekActions.LoadSeasonWeekList
+        {
+            SeasonId = SeasonId,
+        });
+
+        base.OnInitialized();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        MaybeStartCountdown();
+        base.OnAfterRender(firstRender);
+    }
+
+    private Game GetNextGame()
+    {
+        var todaysDate = DateOnly.FromDateTime(DateTime.Now);
+
+        return
+            (from game in GameState.Value.Games.Values
+             from week in SeasonWeekState.Value.Weeks.Values
+             where game.SeasonWeekId == week.SeasonWeekId
+             where game.SeasonId == SeasonId
+             where game.SeasonWeekTypeName == WeekType.RegularSeason
+             where game.HomeTeamId == TeamId || game.AwayTeamId == TeamId
+             where game.IsComplete == false
+             where todaysDate >= week.WeekStart && todaysDate <= week.WeekEnd
+             select game).FirstOrDefault();
+    }
+
+    private void MaybeStartCountdown()
+    {
+        if (CountdownTimer?.Started() ?? true)
+        {
+            return;
+        }
+
+        var nextGame = GetNextGame();
+
+        if (nextGame == null)
+        {
+            return;
+        }
+
+        var nextGameStartsOn = nextGame.GameStartsOn?.ToLocalTime().DateTime;
+
+        if (nextGameStartsOn != null && nextGameStartsOn > DateTime.Now)
+        {
+            CountdownTimer.Start(nextGameStartsOn.Value, () => StateHasChanged());
+        }
+    }
+
+    private async Task OpenPredictionDialog()
+    {
+        var nextGame = GetNextGame()
+            ?? throw new InvalidOperationException("There is no game you can make a prediction for at this time.");
+
+        var existingGamePrediction = GamePredictionState.Value.GamePredictions
+            .Where(x => x.Value.GameId == nextGame.GameId)
+            .Where(x => x.Value.UserId == UserId)
+            .Select(x => x.Value)
+            .FirstOrDefault();
+
+        var dialogParams = new DialogParameters<MakeGamePredictionDialog>();
+
+        dialogParams.Add(x => x.GameId, nextGame.GameId);
+        dialogParams.Add(x => x.HomeTeamName, nextGame.HomeTeamName);
+        dialogParams.Add(x => x.HomeTeamScore, existingGamePrediction?.PredictedHomeTeamScore ?? 0);
+        dialogParams.Add(x => x.AwayTeamName, nextGame.AwayTeamName);
+        dialogParams.Add(x => x.AwayTeamScore, existingGamePrediction?.PredictedAwayTeamScore ?? 0);
+
+        await DialogService.ShowAsync<MakeGamePredictionDialog>(string.Empty, dialogParams);
+    }
+
+    private NextGamePredictionStatuses GetNextGamePredictionStatus()
+    {
+        var nextGame = GetNextGame();
+
+        if (nextGame == null)
+        {
+            return NextGamePredictionStatuses.NoGameForThisWeek;
+        }
+
+        var gamePrediction = GamePredictionState.Value.GamePredictions
+            .Where(x => x.Value.GameId == nextGame.GameId)
+            .Where(x => x.Value.IsCurrentUser)
+            .Select(x => x.Value)
+            .FirstOrDefault();
+
+        if (gamePrediction == null && nextGame.GameStartsOn > DateTimeOffset.Now)
+        {
+            return NextGamePredictionStatuses.CanCreateNewPrediction;
+        }
+
+        if (gamePrediction != null && nextGame.GameStartsOn > DateTimeOffset.Now)
+        {
+            return NextGamePredictionStatuses.HasPredictionThatIsEditable;
+        }
+
+        return NextGamePredictionStatuses.PredictionNotEditable;
+    }
+
+    private enum NextGamePredictionStatuses
+    {
+        NoGameForThisWeek,
+        CanCreateNewPrediction,
+        HasPredictionThatIsEditable,
+        PredictionNotEditable
+    }
+}

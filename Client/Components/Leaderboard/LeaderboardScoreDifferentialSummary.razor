@@ -1,0 +1,93 @@
+﻿@using WebApp.Client.Components.Common.WebAppComponentBase
+@using WebApp.Client.Common.Extensions
+@using WebApp.Client.Components.Common.LoadingWrapper
+@using WebApp.Client.Components.GamePredictionForUser
+
+@inherits WebAppComponentBase
+@inject NavigationManager Navigation
+
+<div class="wa_table__container_large">
+    <div class="wa_table__header">
+        <MudText Typo="@Typo.h6">Score Differential Leaders</MudText>
+        <MudText Typo="@Typo.subtitle1">(Lower is Better)</MudText>
+        <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 15px 0px;" />
+    </div>
+    <SkeletonLoadingWrapper IsLoading=@DisplayLoading Width="100%" Height="30rem">
+        <div class="wa_table__overflowContainer">
+            <MudTable T="OrderedUserRanking" Items="GetLeaderboard()" Hover="true" Breakpoint="Breakpoint.None" Dense="false" Class="wa_table__mudOverrides">
+                <RowTemplate>
+                    <MudTd>
+                        <MudText Typo="Typo.body2">@((context.Index + 1).ToOrdinalNumberString())</MudText>
+                    </MudTd>
+                    <MudTd>
+                        <MudButton OnClick="@(e => OnUserClicked(@context.Value.UserId))" Variant="Variant.Text" EndIcon="@Icons.Material.Filled.NavigateNext">
+                            <MudText Typo="Typo.body2">@($"{context.Value.FirstName} {context.Value.LastName}")</MudText>
+                        </MudButton>
+                    </MudTd>
+                    <MudTd>
+                        <MudText Typo="Typo.body2">@($"{context.Value.ScoreDifferentialTotal} Points")</MudText>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </div>
+    </SkeletonLoadingWrapper>
+</div>
+
+@code {
+
+    [Parameter]
+    [EditorRequired]
+    public List<LeaderboardItem> Items { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public bool DisplayLoading { get; set; }
+
+    private List<OrderedUserRanking> GetLeaderboard()
+    {
+        if (Items.Count == 0)
+        {
+            return [];
+        }
+
+        var users = from item in Items
+                    from p in item.UserPredictions
+                    group p by p.Key into userGroup
+                    select new UserRanking
+                    {
+                        UserId = userGroup.Key,
+                        FirstName = userGroup.Max(x => x.Value.FirstName),
+                        LastName = userGroup.Max(x => x.Value.LastName),
+                        ScoreDifferentialTotal = userGroup.Sum(x => x.Value.ScoreDifferential)
+                    };
+
+        return users
+            .OrderBy(x => x.ScoreDifferentialTotal)
+            .ThenBy(x => x.UserId)
+            .Select((value, index) => new OrderedUserRanking
+            {
+                Value = value,
+                Index = index
+            })
+            .ToList();
+    }
+
+    private void OnUserClicked(string userId)
+    {
+        Navigation.NavigateTo($"/UserPredictions/{userId}");
+    }
+
+    private class UserRanking
+    {
+        public string UserId { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int ScoreDifferentialTotal { get; set; }
+    }
+
+    private class OrderedUserRanking
+    {
+        public int Index { get; set; }
+        public UserRanking Value { get; set; }
+    }
+}

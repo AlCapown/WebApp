@@ -1,0 +1,30 @@
+﻿@using WebApp.Common.Constants
+@using WebApp.Client.Components.Admin.Season
+@using WebApp.Client.Components.TeamTable
+@using WebApp.Client.Components.Common.Page
+
+
+@page "/Admin/Season/"
+@attribute [Authorize(Roles = AppRole.ADMIN)]
+
+@inject IDialogService DialogService
+
+<PageContainer PageHeading="Manage Season">
+    <MudGrid Justify="Justify.FlexStart">
+        <MudItem xs="12">
+            <MudButton OnClick="@AddNewSeason" Color="Color.Primary" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add">Add</MudButton>
+        </MudItem>
+        <MudItem xs="12">
+            <AdminSeasonTable />
+        </MudItem>
+    </MudGrid>
+</PageContainer>
+
+
+@code 
+{
+    private async Task AddNewSeason()
+    {
+        await DialogService.ShowAsync<AdminCreateSeasonDialog>("Create Season");
+    }
+}

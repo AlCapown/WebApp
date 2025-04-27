@@ -1,0 +1,17 @@
+﻿@using WebApp.Common.Constants
+
+@inherits FluxorComponent
+
+<MudNavMenu>
+    <MudNavLink Href="/">Home</MudNavLink>
+    <MudNavLink Href="/Leaderboard">Leaderboard</MudNavLink>
+    <MudNavLink Href="/GameScores">Game Scores</MudNavLink>
+    <MudNavLink Href="/DivisionalRankings">Divisional Rankings</MudNavLink>
+    <AuthorizeView Roles="@AppRole.ADMIN">
+        <MudNavGroup Title="Admin" Expanded="false">
+            <MudNavLink Href="/Admin/Season">Season</MudNavLink>
+            <MudNavLink Href="/Admin/Teams">Team List</MudNavLink>
+            <MudNavLink Href="/Hangfire">Hangfire</MudNavLink>
+        </MudNavGroup>
+    </AuthorizeView>
+</MudNavMenu>

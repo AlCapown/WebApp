@@ -1,0 +1,124 @@
+﻿@import 'Breakpoints.scss';
+@import 'Colors.scss';
+
+
+.wa_card {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0);
+    margin-top: 7rem;
+    width: 20rem;
+
+    @media (min-width: $breakpoint-sm) {
+        width: 30rem;
+    }
+}
+
+.wa_card__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: $surface-color;
+    padding: 1rem;
+    border-radius: 4px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+    h1 {
+        margin: 1rem;
+        font-size: 35px;
+        color: $softWhite;
+        text-align: center;
+    }
+
+    h2 {
+        margin: 1rem;
+        font-size: 22px;
+        color: $softWhite;
+        text-align: center;
+    }
+
+    hr {
+        border: none;
+        height: 3px;
+        margin: 0px, 0px, 2px, 0px;
+        width: 100%;
+        background: -webkit-gradient(linear, 0 0, 100% 0, from(rgba(0, 0, 0, 0)), color-stop(0.5, $primaryColor), to(rgba(0, 0, 0, 0)));
+        background: -webkit-linear-gradient(left, rgba(0, 0, 0, 0), $primaryColor, rgba(0, 0, 0, 0));
+        background: -moz-linear-gradient(left, rgba(0, 0, 0, 0), $primaryColor, rgba(0, 0, 0, 0));
+        background: -o-linear-gradient(left, rgba(0, 0, 0, 0), $primaryColor, rgba(0, 0, 0, 0));
+        background: linear-gradient(left, rgba(0, 0, 0, 0), $primaryColor, rgba(0, 0, 0, 0));
+
+        &after {
+            display: block;
+            content: '';
+            height: 30px;
+            background-image: -webkit-gradient(radial, 50% 0%, 0, 50% 0%, 116, color-stop(0%, #cccccc), color-stop(100%, rgba(255, 255, 255, 0)));
+            background-image: -webkit-radial-gradient(center top, farthest-side, #cccccc 0%, rgba(255, 255, 255, 0) 100%);
+            background-image: -moz-radial-gradient(center top, farthest-side, #cccccc 0%, rgba(255, 255, 255, 0) 100%);
+            background-image: -o-radial-gradient(center top, farthest-side, #cccccc 0%, rgba(255, 255, 255, 0) 100%);
+            background-image: radial-gradient(farthest-side at center top, #cccccc 0%, rgba(255, 255, 255, 0) 100%);
+        }
+    }
+
+    button {
+        background: $primaryColor;
+        border: none;
+        border-radius: 4px;
+        margin: 10px 10px;
+        padding: 10px 30px;
+        color: $softWhite;
+        width: 95%;
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.75;
+        letter-spacing: .02857em;
+        text-transform: uppercase;
+        box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+        -webkit-transition: all 0.3s;
+        -moz-transition: all 0.3s;
+        transition: all 0.3s;
+        position: relative;
+        overflow: hidden;
+
+        &:hover {
+            background: $primaryColorDark;
+        }
+    }
+
+    .wa_card__formGroup {
+        margin: 10px 10px;
+        padding: 10px 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        position: relative;
+        width: 95%;
+
+        input {
+            background: none;
+            color: $softWhite;
+            font-size: 16px;
+            display: block;
+            border: none;
+            border-radius: 0;
+            border-bottom: 1px solid $softWhite;
+
+            &:focus {
+                outline: none;
+            }
+        }
+
+        label {
+            color: $softWhite;
+            font-size: 16px;
+            font-weight: normal;
+            pointer-events: none;
+            margin-bottom: 1rem;
+        }
+
+        .wa_card_formGroup_validation {
+            color: #fa3d20;
+            margin-top: 0.775rem;
+        }
+    }
+}
