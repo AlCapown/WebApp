@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
-    <PackageReference Include="AspNetCore.SassCompiler" Version="1.86.2" />
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.87.0" />
     <PackageReference Include="Azure.Identity" Version="1.13.2" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="Fluxor" Version="6.6.0" />
@@ -43,7 +43,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.4" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.70.2" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.71.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Scrutor.AspNetCore" Version="3.3.0" />

@@ -7,17 +7,11 @@
 	<InvariantGlobalization>true</InvariantGlobalization>
 	<RunAOTCompilation>false</RunAOTCompilation>
 	<PublishTrimmed>true</PublishTrimmed>
-	<TrimMode>full</TrimMode>
+	<TrimMode>partial</TrimMode>
   </PropertyGroup>
 
   <ItemGroup>
-	<TrimmerRootAssembly Include="WebApp.Client" />
-	<TrimmerRootAssembly Include="Fluxor" />
-	<TrimmerRootAssembly Include="Fluxor.Blazor.Web" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="AspNetCore.SassCompiler" Version="1.86.2" />
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.87.0" />
     <PackageReference Include="Fluxor" Version="6.6.0" />
     <PackageReference Include="Fluxor.Blazor.Web" Version="6.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Analyzers" Version="9.0.4" />
@@ -25,7 +19,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="9.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="9.0.4" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4" />
-    <PackageReference Include="MudBlazor" Version="8.5.1" />
+    <PackageReference Include="MudBlazor" Version="8.6.0" />
     <PackageReference Include="System.Net.Http.Json" Version="9.0.4" />
     <PackageReference Include="System.Text.Json" Version="9.0.4" />
   </ItemGroup>
