@@ -1,4 +1,5 @@
-﻿using Hangfire;
+﻿using FluentValidation;
+using Hangfire;
 using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
@@ -16,14 +17,12 @@ using Serilog;
 using StackExchange.Redis;
 using System;
 using System.Text.Json.Serialization;
-using WebApp.Common.Constants;
 using WebApp.Database;
 using WebApp.Database.Tables;
 using WebApp.Server.Infrastructure;
 using WebApp.Server.Infrastructure.Exceptions;
 
 
-const string HANGFIRE_POLICY_NAME = "Hangfire";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,6 +68,10 @@ services.AddRazorPages();
 
 // Register external projects and wire up MediatR
 services.AddRequiredServices();
+
+// Fluent Validation
+services.AddValidatorsFromAssemblyContaining<Program>();
+
 
 // Custom Error Handler
 // TODO: Use new built in Error handler for .Net 8 and use Result pattern.
@@ -172,7 +175,7 @@ services
         {
             options.LogoutPath = "/Account/Logout";
             options.LoginPath = "/Account/Login";
-            options.ExpireTimeSpan = TimeSpan.FromDays(14);
+            options.ExpireTimeSpan = TimeSpan.FromDays(30);
             options.SlidingExpiration = true;
             options.Cookie.Name = "WebAppCookie";
             options.Cookie.HttpOnly = true;
@@ -182,15 +185,9 @@ services
     });
 
 
-// Add Authorization Policy for Hangfire Dashboard access
+// Add Authorization Policies
 services
-    .AddAuthorizationBuilder()
-    .AddPolicy(HANGFIRE_POLICY_NAME, policy =>
-    {
-        policy
-            .RequireAuthenticatedUser()
-            .RequireRole(AppRole.ADMIN);
-    });
+    .AddPolicies();
 
 // Add Hangfire for background job processing
 services
@@ -271,10 +268,9 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
-app.MapHangfireDashboardWithAuthorizationPolicy(HANGFIRE_POLICY_NAME);
+app.MapHangfireDashboardWithAuthorizationPolicy(Policy.Hangfire);
 app.MapFallbackToPage("/WasmIndex");
 app.UseHealthChecks("/api/healthchecks", WebApp.Server.Infrastructure.HealthChecks.GetHealthCheckOptions());
-
 
 try
 {
@@ -293,3 +289,5 @@ catch (Exception ex)
 ReoccurringJobsScheduler.Schedule();
 
 await app.RunAsync();
+
+public partial class Program { }

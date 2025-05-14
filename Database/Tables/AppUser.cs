@@ -15,6 +15,6 @@ public class AppUser : IdentityUser
     public string LastName { get; set; }
 
     #region Navigation Props
-    public ICollection<GamePrediction> GamePredictions { get; set; }
+    public virtual ICollection<GamePrediction> GamePredictions { get; set; }
     #endregion
 }

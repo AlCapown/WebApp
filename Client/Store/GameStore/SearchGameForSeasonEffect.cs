@@ -21,7 +21,7 @@ public sealed class SearchGamesForSeasonEffect : Effect<GameActions.SearchGamesF
 
     public override async Task HandleAsync(GameActions.SearchGamesForSeason action, IDispatcher dispatcher)
     {
-        await _client.GetAsync(new SearchGamesForSeasonPlan(action), "api/Game/Search", new Dictionary<string, string>
+        await _client.GetAsync(new SearchGamesForSeasonPlan(action), "/Api/Game/Search", new Dictionary<string, string>
         {
             { nameof(action.SeasonWeekId), action.SeasonWeekId?.ToString() },
             { nameof(action.SeasonId), action.SeasonId?.ToString() },

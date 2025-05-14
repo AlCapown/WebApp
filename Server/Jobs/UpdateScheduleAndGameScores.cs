@@ -1,7 +1,11 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using OneOf.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Common.Enums;
@@ -10,7 +14,6 @@ using WebApp.ExternalIntegrations.ESPN.Service.Models;
 using WebApp.Server.Infrastructure.Exceptions;
 using WebApp.Server.Services.BackgroundJobLogging.Command;
 using WebApp.Server.Services.GameService;
-using WebApp.Server.Services.GameService.Query;
 using WebApp.Server.Services.SeasonService.Command;
 using WebApp.Server.Services.SeasonService.Query;
 using WebApp.Server.Services.TeamService.Query;
@@ -87,14 +90,22 @@ public class UpdateScheduleAndGameScores
             return true;
         }
 
-        var searchResult = await _mediator.Send(new SearchGames.Query
+        var searchResult = await _mediator.Send(new GameSearch.Query
         {
             GameStartsOnMin = dateTimeNow.AddHours(-5),
             GameStartsOnMax = dateTimeNow.AddMinutes(10),
             IsGameComplete = false,
         }, token);
 
-        return searchResult.Games.Length != 0;
+        return searchResult.Match
+        (
+            success => success.Games.Length != 0,
+            validationProblem =>
+            {
+                AddError("Failed to query games.", validationProblem);
+                return false;
+            }
+        );
     }
 
     private async Task UpdateSeason(ESPNScoreboardModel scoreboard, CancellationToken token)
@@ -212,7 +223,7 @@ public class UpdateScheduleAndGameScores
                 continue;
             }
 
-            await _mediator.Send(new UpsertGame.Command
+            await _mediator.Send(new CreateOrUpdateGame.Command
             {
                 SeasonWeekId = seasonWeek.SeasonWeekId,
                 StartsOn = date,
@@ -232,7 +243,18 @@ public class UpdateScheduleAndGameScores
         _logCommand.Errors.Add(new AddBackgroundJobLog.Command.Error
         {
             Message = message,
+            ValidationErrors = null,
             StackTrace = stackTrace
+        });
+    }
+
+    private void AddError(string message, ValidationProblemDetails validationProblemDetails)
+    {
+        _logCommand.Errors.Add(new AddBackgroundJobLog.Command.Error
+        {
+            Message = message,
+            ValidationErrors = validationProblemDetails.Errors,
+            StackTrace = null
         });
     }
 }

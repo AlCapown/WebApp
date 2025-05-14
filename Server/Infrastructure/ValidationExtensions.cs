@@ -1,0 +1,65 @@
+#nullable enable
+
+using FluentValidation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace WebApp.Server.Infrastructure;
+
+public static class ValidationExtensions
+{
+    /// <summary>
+    /// Validates a request using the provided validator and returns a ValidationProblemDetails if validation fails.
+    /// </summary>
+    /// <typeparam name="TRequest">The type of the request to validate.</typeparam>
+    /// <param name="validator">The FluentValidation validator for the request.</param>
+    /// <param name="request">The request object to validate.</param>
+    /// <returns>
+    /// A ValidationProblemDetails object if validation fails, or null if validation succeeds.
+    /// </returns>
+    public static ValidationProblemDetails? ValidateRequest<TRequest>(this IValidator<TRequest> validator, TRequest request)
+    {
+        var validationResult = validator.Validate(request);
+        if (!validationResult.IsValid)
+        {
+            return new ValidationProblemDetails
+            {
+                Title = "Validation Error",
+                Status = StatusCodes.Status400BadRequest,
+                Detail = "One or more validation errors occurred.",
+                Errors = validationResult.ToDictionary()
+            };
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Validates a request using the provided validator and returns a ValidationProblemDetails if validation fails.
+    /// </summary>
+    /// <typeparam name="TRequest">The type of the request to validate.</typeparam>
+    /// <param name="validator">The FluentValidation validator for the request.</param>
+    /// <param name="request">The request object to validate.</param>
+    /// <param name="cancellationToken">Cancellation token for async operation.</param>
+    /// <returns>
+    /// A ValidationProblemDetails object if validation fails, or null if validation succeeds.
+    /// </returns>
+    public static async Task<ValidationProblemDetails?> ValidateRequestAsync<TRequest>(this IValidator<TRequest> validator, TRequest request, CancellationToken cancellationToken = default)
+    {
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+        if (!validationResult.IsValid)
+        {
+            return new ValidationProblemDetails
+            {
+                Title = "Validation Error",
+                Status = StatusCodes.Status400BadRequest,
+                Detail = "One or more validation errors occurred.",
+                Errors = validationResult.ToDictionary()
+            };
+        }
+
+        return null;
+    }
+}

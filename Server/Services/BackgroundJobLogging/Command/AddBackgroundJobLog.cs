@@ -21,6 +21,7 @@ public class AddBackgroundJobLog
         public class Error
         {
             public string Message { get; set; }
+            public IDictionary<string, string[]> ValidationErrors { get; set; }
             public string StackTrace { get; set; }
         }
     }
