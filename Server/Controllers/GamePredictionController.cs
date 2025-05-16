@@ -6,13 +6,15 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Common.Constants;
 using WebApp.Common.Models;
+using WebApp.Server.Infrastructure;
+using WebApp.Server.Services.GamePredictionService;
 using WebApp.Server.Services.GamePredictionService.Command;
-using WebApp.Server.Services.GamePredictionService.Query;
 
 namespace WebApp.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 [ValidateAntiForgeryToken]
 public sealed class GamePredictionController : ControllerBase
 {
@@ -25,7 +27,8 @@ public sealed class GamePredictionController : ControllerBase
 
     [HttpGet("{gamePredictionId:int}")]
     [ProducesResponseType(typeof(GetGamePredictionResponse), StatusCodes.Status200OK)]
-    [Authorize]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetGamePrediction([FromRoute] int gamePredictionId)
     {
         var result = await _mediator.Send(new GetGamePrediction.Query
@@ -33,32 +36,28 @@ public sealed class GamePredictionController : ControllerBase
             GamePredictionId = gamePredictionId
         }, HttpContext.RequestAborted);
 
-        return Ok(new GetGamePredictionResponse
-        {
-            GamePrediction = result.GamePrediction
-        });
+        return result.Match<IActionResult>
+        (
+            success => Ok(success),
+            validationProblem => BadRequest(validationProblem),
+            notFound => NotFound(notFound)
+        );
     }
 
     [HttpGet("search")]
     [ProducesResponseType(typeof(GamePredictionSearchResponse), StatusCodes.Status200OK)]
-    [Authorize]
-    public async Task<IActionResult> GetGamePredictionSearch(
-        [FromQuery] int? seasonId,
-        [FromQuery] int? gameId,
-        [FromQuery] string userId,
-        [FromQuery] bool? limitToCurrentUser,
-        [FromQuery] int? teamId)
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetGamePredictionSearch([FromQuery] GamePredictionSearch.Query query)
     { 
-        var result = await _mediator.Send(new GamePredictionSearch.Query
-        {
-            SeasonId = seasonId,
-            GameId = gameId,
-            UserId = userId,
-            LimitToCurrentUser = limitToCurrentUser,
-            TeamId = teamId
-        }, HttpContext.RequestAborted);
+        var result = await _mediator.Send(query, HttpContext.RequestAborted);
 
-        return Ok(result);
+        return result.Match<IActionResult>
+        (
+            success => Ok(success),
+            validationProblem => BadRequest(validationProblem),
+            notFound => NotFound(notFound)
+        );
     }
 
     [HttpPost("")]

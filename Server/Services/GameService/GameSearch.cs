@@ -15,9 +15,9 @@ using WebApp.Server.Infrastructure;
 
 namespace WebApp.Server.Services.GameService;
 
-using Result = OneOf<SearchGamesResponse, ValidationProblemDetails>;
+using Result = OneOf<GameSearchResponse, ValidationProblemDetails>;
 
-public sealed class GameSearch
+public static class GameSearch
 {
     public sealed record Query : IRequest<Result>
     {
@@ -99,7 +99,7 @@ public sealed class GameSearch
             if (problemDetails is not null)
             {
                 return problemDetails;
-            }   
+            }
 
             var gameQuery =
                 from g in _dbContext.Games.AsNoTracking()
@@ -123,17 +123,17 @@ public sealed class GameSearch
                     IsComplete = g.IsComplete
                 };
 
-            gameQuery = AddFilters(query, gameQuery);
+            gameQuery = AddFilters(gameQuery, query);
 
             var games = await gameQuery.ToArrayAsync(token);
 
-            return new SearchGamesResponse
+            return new GameSearchResponse
             {
                 Games = games
             };
         }
 
-        private static IQueryable<Game> AddFilters(Query query, IQueryable<Game> gameQuery)
+        private static IQueryable<Game> AddFilters(IQueryable<Game> gameQuery, Query query)
         {
             if (query.SeasonWeekId.HasValue)
             {
@@ -168,5 +168,6 @@ public sealed class GameSearch
             return gameQuery;
         }
     }
+
 }
 

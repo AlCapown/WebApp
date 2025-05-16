@@ -1,29 +1,34 @@
-﻿using MediatR;
+﻿#nullable enable
+
+using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using System;
+using OneOf;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Common.Constants;
 using WebApp.Database.Tables;
+using WebApp.Server.Infrastructure;
 
 namespace WebApp.Server.Services.AccountService.Query;
 
-public class GetCurrentAppUser
-{
-    public class Query : IRequest<Response> { }
+using Result = OneOf<GetCurrentAppUser.Response, NotFoundProblemDetails>;
 
-    public class Response
+public static class GetCurrentAppUser
+{
+    public sealed record Query : IRequest<Result> { }
+
+    public record Response
     {
-        public string UserId { get; set; }
-        public string UserName { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Email { get; set; }
-        public bool IsAdmin { get; set; }
+        public required string UserId { get; init; }
+        public string? UserName { get; init; }
+        public required string FirstName { get; init; }
+        public required string LastName { get; init; }
+        public string? Email { get; init; }
+        public bool IsAdmin { get; init; }
     }
 
-    public class Handler : IRequestHandler<Query, Response>
+    public sealed class Handler : IRequestHandler<Query, Result>
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly UserManager<AppUser> _userManager;
@@ -34,15 +39,26 @@ public class GetCurrentAppUser
             _userManager = userManager;
         }
 
-        public async Task<Response> Handle(Query query, CancellationToken token)
+        public async Task<Result> Handle(Query query, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
-            var claimsPrincipal = _contextAccessor.HttpContext?.User
-                ?? throw new InvalidOperationException("No user information in the current HttpContext.");
+            var claimsPrincipal = _contextAccessor.HttpContext?.User;
 
-            var user = await _userManager.GetUserAsync(claimsPrincipal)
-                ?? throw new InvalidOperationException("No information about the current user could be found.");
+            // Not sure how I feel about this. Maybe we should throw an exception instead. This is more
+            // of a dev error when calling this in an unauthenticated context.
+
+            if (claimsPrincipal is null)
+            {
+                return new NotFoundProblemDetails("Current User Not Found");
+            }
+
+            var user = await _userManager.GetUserAsync(claimsPrincipal);
+
+            if (user is null)
+            { 
+                return new NotFoundProblemDetails("Current User Not Found");
+            }
 
             return new Response
             {

@@ -28,11 +28,11 @@ public sealed class GameController : ControllerBase
     /// </summary>
     /// <param name="query">The search criteria, including optional filters such as SeasonId, SeasonWeekId, TeamId, and date range.</param>
     /// <returns>
-    /// Returns a 200 OK response with a <see cref="SearchGamesResponse"/> containing the list of games that match the search criteria.
+    /// Returns a 200 OK response with a <see cref="GameSearchResponse"/> containing the list of games that match the search criteria.
     /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the query parameters are invalid.
     /// </returns>
     [HttpGet("search")]
-    [ProducesResponseType(typeof(SearchGamesResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(GameSearchResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> SearchGames([FromQuery] GameSearch.Query query)
     {

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using OneOf;
 using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Database;
@@ -16,20 +17,59 @@ namespace WebApp.Server.Services.GameService;
 
 using Result = OneOf<Unit, ValidationProblemDetails>;
 
-public sealed class CreateOrUpdateGame
+public sealed partial class CreateOrUpdateGame
 {
-    public record Command : IRequest<Result>
+    public sealed record Command : IRequest<Result>
     {
+        /// <summary>
+        /// The identifier of the season week in which the game is scheduled.
+        /// </summary>
         public int SeasonWeekId { get; init; }
+
+        /// <summary>
+        /// The date and time when the game is scheduled to start.
+        /// </summary>
         public DateTimeOffset StartsOn { get; init; }
+
+        /// <summary>
+        /// The identifier of the home team participating in the game.
+        /// </summary>
         public int HomeTeamId { get; init; }
+
+        /// <summary>
+        /// The score of the home team.
+        /// </summary>
         public int HomeTeamScore { get; init; }
+
+        /// <summary>
+        /// The identifier of the away team participating in the game.
+        /// </summary>
         public int AwayTeamId { get; init; }
+
+        /// <summary>
+        /// The score of the away team.
+        /// </summary>
         public int AwayTeamScore { get; init; }
+
+        /// <summary>
+        /// The current quarter of the game (e.g., 1 for first quarter).
+        /// </summary>
         public int Quarter { get; init; }
+
+        /// <summary>
+        /// The current clock time in the game, formatted as MM:SS. Null if not applicable.
+        /// </summary>
         public string? ClockTime { get; init; }
+
+        /// <summary>
+        /// Indicates whether the game is complete.
+        /// </summary>
         public bool IsComplete { get; init; }
     }
+
+
+    [GeneratedRegex(@"^\d{1,2}:\d{2}$")]
+    private static partial Regex ClockTimeRegex();
 
     public sealed class CreateOrUpdateGameValidator : AbstractValidator<Command>
     {
@@ -40,7 +80,7 @@ public sealed class CreateOrUpdateGame
             _dbContext = dbContext;
 
             RuleFor(x => x.SeasonWeekId)
-                .NotEmpty()
+                .GreaterThan(0)
                 .MustAsync(async (seasonWeekId, cancellation) =>
                 {
                     return await _dbContext.SeasonWeeks
@@ -52,7 +92,7 @@ public sealed class CreateOrUpdateGame
                 .NotEmpty();
 
             RuleFor(x => x.HomeTeamId)
-                .NotEmpty()
+                .GreaterThan(0)
                 .MustAsync(async (homeTeamId, cancellation) =>
                 {
                     return await _dbContext.Teams
@@ -73,10 +113,10 @@ public sealed class CreateOrUpdateGame
                 }).WithMessage("Away team not found.");
 
             RuleFor(x => x.AwayTeamScore)
-                .GreaterThanOrEqualTo(0);
+                .GreaterThan(0);
 
             RuleFor(x => x.ClockTime)
-                .Matches(@"^\d{1,2}:\d{2}$")
+                .Matches(ClockTimeRegex())
                 .WithMessage("Clock time must be in the format MM:SS.");
         }
     }
@@ -140,3 +180,4 @@ public sealed class CreateOrUpdateGame
         }
     }
 }
+

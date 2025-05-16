@@ -24,11 +24,11 @@ public sealed record Game
     public bool IsComplete { get; init; }
 }
 
-public sealed record SearchGamesResponse
+public sealed record GameSearchResponse
 {
     public Game[] Games { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
-[JsonSerializable(typeof(SearchGamesResponse))]
+[JsonSerializable(typeof(GameSearchResponse))]
 public partial class SearchGamesResponseJsonContext : JsonSerializerContext { }

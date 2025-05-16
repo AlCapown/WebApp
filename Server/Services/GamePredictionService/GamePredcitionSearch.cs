@@ -1,38 +1,62 @@
-﻿using MediatR;
+﻿#nullable enable
+
+using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using OneOf;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Common.Extensions;
 using WebApp.Common.Models;
 using WebApp.Database;
+using WebApp.Server.Infrastructure;
 using WebApp.Server.Services.AccountService.Query;
 
-namespace WebApp.Server.Services.GamePredictionService.Query;
+namespace WebApp.Server.Services.GamePredictionService;
 
-public class GamePredictionSearch
+using Result = OneOf<GamePredictionSearchResponse, ValidationProblemDetails, NotFoundProblemDetails>;
+
+public sealed class GamePredictionSearch
 {
-    public class Query : IRequest<Result>
+    public sealed record Query : IRequest<Result>
     {
         public int? SeasonId { get; set; }
         public int? GameId { get; set; }
-        public string UserId { get; set; }
+        public string? UserId { get; set; }
         public bool? LimitToCurrentUser { get; set; }
         public int? TeamId { get; set; }
     }
 
-    public class Result
+    public sealed class GamePredictionSearchValidator : AbstractValidator<Query>
     {
-        public GamePrediction[] GamePredictions { get; set; }
+        public GamePredictionSearchValidator()
+        {
+            RuleFor(x => x.SeasonId)
+                .GreaterThan(0)
+                .When(x => x.SeasonId.HasValue);
+
+            RuleFor(x => x.GameId)
+                .GreaterThan(0)
+                .When(x => x.GameId.HasValue);
+
+            RuleFor(x => x.TeamId)
+                .GreaterThan(0)
+                .When(x => x.TeamId.HasValue);
+        }
     }
 
-    public class Handler : IRequestHandler<Query, Result>
+
+    public sealed class Handler : IRequestHandler<Query, Result>
     {
+        private readonly IValidator<Query> _validator;
         private readonly WebAppDbContext _dbContext;
         private readonly IMediator _mediator;
 
-        public Handler(WebAppDbContext dbContext, IMediator mediator)
+        public Handler(IValidator<Query> validator, WebAppDbContext dbContext, IMediator mediator)
         {
+            _validator = validator;
             _dbContext = dbContext;
             _mediator = mediator;
         }
@@ -41,7 +65,17 @@ public class GamePredictionSearch
         {
             token.ThrowIfCancellationRequested();
 
-            var currentUser = await _mediator.Send(new GetCurrentAppUser.Query(), token);
+            ValidationProblemDetails? problemDetails = _validator.ValidateRequest(query);
+            if (problemDetails is not null)
+            {
+                return problemDetails;
+            }
+
+            var getCurrentUserResult = await _mediator.Send(new GetCurrentAppUser.Query(), token);
+            if (getCurrentUserResult.TryPickT1(out NotFoundProblemDetails notFound, out GetCurrentAppUser.Response currentUser))
+            {
+                return notFound;
+            }
 
             var gamePredictionQuery = _dbContext.GamePredictions
                 .AsNoTracking()
@@ -60,17 +94,17 @@ public class GamePredictionSearch
                     PredictedAwayTeamScore = x.AwayTeamScore
                 });
 
-            gamePredictionQuery = AddFilters(query, gamePredictionQuery);
+            gamePredictionQuery = AddFilters(gamePredictionQuery, query);
 
-            var dbResult = await gamePredictionQuery.ToArrayAsync(token);
+            var gamePredictions = await gamePredictionQuery.ToArrayAsync(token);
 
-            return new Result
+            return new GamePredictionSearchResponse
             {
-                GamePredictions = dbResult,
+                GamePredictions = gamePredictions
             };
         }
 
-        private static IQueryable<GamePrediction> AddFilters(Query query, IQueryable<GamePrediction> gamePredictionQuery)
+        private static IQueryable<GamePrediction> AddFilters(IQueryable<GamePrediction> gamePredictionQuery, Query query)
         {
             if (query.SeasonId.HasValue)
             {

@@ -23,14 +23,14 @@
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
-    <PackageReference Include="AspNetCore.SassCompiler" Version="1.88.0" />
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.89.0" />
     <PackageReference Include="Azure.Identity" Version="1.14.0" />
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
     <PackageReference Include="Fluxor" Version="6.6.0" />
-    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.18" />
-    <PackageReference Include="Hangfire.Core" Version="1.8.18" />
-    <PackageReference Include="Hangfire.SqlServer" Version="1.8.18" />
+    <PackageReference Include="Hangfire.AspNetCore" Version="1.8.20" />
+    <PackageReference Include="Hangfire.Core" Version="1.8.20" />
+    <PackageReference Include="Hangfire.SqlServer" Version="1.8.20" />
     <PackageReference Include="MediatR" Version="12.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.5" />
@@ -51,6 +51,7 @@
     <PackageReference Include="Scrutor.AspNetCore" Version="3.3.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.37" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.5" />
     <PackageReference Include="System.Text.Json" Version="9.0.5" />
   </ItemGroup>
 
@@ -59,6 +60,10 @@
     <ProjectReference Include="..\Common\WebApp.Common.csproj" />
     <ProjectReference Include="..\Database\WebApp.Database.csproj" />
     <ProjectReference Include="..\External Integrations\ESPN\ESPN.Service\ESPN.Service.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\GamePredictionService\Query\" />
   </ItemGroup>
 
 

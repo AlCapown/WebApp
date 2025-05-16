@@ -31,15 +31,15 @@ public sealed class SearchGamesForSeasonEffect : Effect<GameActions.SearchGamesF
         });
     }
 
-    private sealed class SearchGamesForSeasonPlan : ApiLoadPlan<SearchGamesResponse>
+    private sealed class SearchGamesForSeasonPlan : ApiLoadPlan<GameSearchResponse>
     {
         public SearchGamesForSeasonPlan(GameActions.SearchGamesForSeason action) 
             : base(action) { }
 
-        public override JsonTypeInfo<SearchGamesResponse> ResponseJsonContext
-            => SearchGamesResponseJsonContext.Default.SearchGamesResponse;
+        public override JsonTypeInfo<GameSearchResponse> ResponseJsonContext
+            => SearchGamesResponseJsonContext.Default.GameSearchResponse;
 
-        public override FetchSuccessAction GetSuccessAction(SearchGamesResponse response) =>
+        public override FetchSuccessAction GetSuccessAction(GameSearchResponse response) =>
             new GameActions.SearchGamesForSeasonSuccess
             {
                 Games = response.Games
