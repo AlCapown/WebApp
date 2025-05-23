@@ -168,6 +168,4 @@ public static class GameSearch
             return gameQuery;
         }
     }
-
 }
-

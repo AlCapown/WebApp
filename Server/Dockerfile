@@ -23,4 +23,6 @@ RUN dotnet publish "./WebApp.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publ
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+ENV DOTNET_GCServer=1
+ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "WebApp.Server.dll"]

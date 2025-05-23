@@ -9,7 +9,7 @@ public sealed class NotFoundProblemDetails : ProblemDetails
 {
     public NotFoundProblemDetails(string detail)
     {
-        Title = "NotFound";
+        Title = "Not Found";
         Status = StatusCodes.Status404NotFound;
         Detail = detail;
     }

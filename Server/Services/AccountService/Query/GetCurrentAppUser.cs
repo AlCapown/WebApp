@@ -4,19 +4,18 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using OneOf;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Common.Constants;
 using WebApp.Database.Tables;
-using WebApp.Server.Infrastructure;
 
 namespace WebApp.Server.Services.AccountService.Query;
 
-using Result = OneOf<GetCurrentAppUser.Response, NotFoundProblemDetails>;
 
 public static class GetCurrentAppUser
 {
-    public sealed record Query : IRequest<Result> { }
+    public sealed record Query : IRequest<Response> { }
 
     public record Response
     {
@@ -28,7 +27,7 @@ public static class GetCurrentAppUser
         public bool IsAdmin { get; init; }
     }
 
-    public sealed class Handler : IRequestHandler<Query, Result>
+    public sealed class Handler : IRequestHandler<Query, Response>
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly UserManager<AppUser> _userManager;
@@ -39,26 +38,15 @@ public static class GetCurrentAppUser
             _userManager = userManager;
         }
 
-        public async Task<Result> Handle(Query query, CancellationToken token)
+        public async Task<Response> Handle(Query query, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
-            var claimsPrincipal = _contextAccessor.HttpContext?.User;
+            var claimsPrincipal = _contextAccessor.HttpContext?.User
+                ?? throw new InvalidOperationException("Current User Not Found.");
 
-            // Not sure how I feel about this. Maybe we should throw an exception instead. This is more
-            // of a dev error when calling this in an unauthenticated context.
-
-            if (claimsPrincipal is null)
-            {
-                return new NotFoundProblemDetails("Current User Not Found");
-            }
-
-            var user = await _userManager.GetUserAsync(claimsPrincipal);
-
-            if (user is null)
-            { 
-                return new NotFoundProblemDetails("Current User Not Found");
-            }
+            var user = await _userManager.GetUserAsync(claimsPrincipal)
+                ?? throw new InvalidOperationException("Current User Not Found.");
 
             return new Response
             {

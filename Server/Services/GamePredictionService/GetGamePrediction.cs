@@ -56,11 +56,7 @@ public static class GetGamePrediction
                 return problemDetails;
             }
 
-            var getCurrentUserResult = await _mediator.Send(new GetCurrentAppUser.Query(), token);
-            if (getCurrentUserResult.TryPickT1(out NotFoundProblemDetails notFound, out GetCurrentAppUser.Response currentUser))
-            {
-                return notFound;
-            }
+            var currentUser = await _mediator.Send(new GetCurrentAppUser.Query(), token);
 
             var dbResult = await _dbContext.GamePredictions
                 .AsNoTracking()

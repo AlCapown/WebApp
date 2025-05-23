@@ -1,14 +1,15 @@
-﻿using MediatR;
+﻿#nullable enable
+
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using System.Threading.Tasks;
+using WebApp.Client.Common.Extensions;
 using WebApp.Common.Constants;
 using WebApp.Common.Models;
 using WebApp.Server.Infrastructure;
 using WebApp.Server.Services.GamePredictionService;
-using WebApp.Server.Services.GamePredictionService.Command;
 
 namespace WebApp.Server.Controllers;
 
@@ -61,53 +62,50 @@ public sealed class GamePredictionController : ControllerBase
     }
 
     [HttpPost("")]
-    [ProducesResponseType(typeof(CreateGamePredictionResponse), StatusCodes.Status201Created)]
-    [Authorize]
+    [ProducesResponseType(typeof(CreateGamePredictionResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ForbiddenProblemDetails), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateGamePrediction([FromBody] CreateGamePredictionRequest body)
     {
         var result = await _mediator.Send(new UpsertGamePrediction.Command
         {
-            GameId = body.GameId.Value,
-            HomeTeamScore = body.HomeTeamScore.Value,
-            AwayTeamScore = body.AwayTeamScore.Value,
-            UserId = HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier)
+            GameId = body.GameId,
+            HomeTeamScore = body.HomeTeamScore,
+            AwayTeamScore = body.AwayTeamScore,
+            UserId = HttpContext.User.GetUserId(),
+            BypassGameStartTimeValidation = false
         }, HttpContext.RequestAborted);
 
-        return CreatedAtAction(
-            nameof(GetGamePrediction), 
-            new 
-            { 
-                result.GamePredictionId
-            }, 
-            new CreateGamePredictionResponse 
-            { 
-                GamePredictionId = result.GamePredictionId 
-            });
+        return result.Match<IActionResult>
+        (
+            success => Ok(success),
+            validationProblem => BadRequest(validationProblem),
+            forbiddenProblem => StatusCode(StatusCodes.Status403Forbidden, forbiddenProblem)
+        );
     }
 
+
     [HttpPost("{userId}")]
-    [ProducesResponseType(typeof(CreateGamePredictionResponse), StatusCodes.Status201Created)]
     [Authorize(Roles = AppRole.ADMIN)]
+    [ProducesResponseType(typeof(CreateGamePredictionResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(ForbiddenProblemDetails), StatusCodes.Status403Forbidden)]
     public async Task<IActionResult> CreateGamePredictionForUser([FromRoute] string userId, [FromBody] CreateGamePredictionRequest body)
     {
         var result = await _mediator.Send(new UpsertGamePrediction.Command
         {
-            GameId = body.GameId.Value,
-            HomeTeamScore = body.HomeTeamScore.Value,
-            AwayTeamScore = body.AwayTeamScore.Value,
+            GameId = body.GameId,
+            HomeTeamScore = body.HomeTeamScore,
+            AwayTeamScore = body.AwayTeamScore,
             UserId = userId,
             BypassGameStartTimeValidation = true
         }, HttpContext.RequestAborted);
 
-        return CreatedAtAction(
-            nameof(GetGamePrediction),
-            new
-            {
-                result.GamePredictionId
-            },
-            new CreateGamePredictionResponse
-            {
-                GamePredictionId = result.GamePredictionId
-            });
+        return result.Match<IActionResult>
+        (
+            success => Ok(success),
+            validationProblem => BadRequest(validationProblem),
+            forbiddenProblem => StatusCode(StatusCodes.Status403Forbidden, forbiddenProblem)
+        );
     }
 }

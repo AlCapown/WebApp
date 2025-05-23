@@ -16,7 +16,7 @@ using WebApp.Server.Services.AccountService.Query;
 
 namespace WebApp.Server.Services.GamePredictionService;
 
-using Result = OneOf<GamePredictionSearchResponse, ValidationProblemDetails, NotFoundProblemDetails>;
+using Result = OneOf<GamePredictionSearchResponse, ValidationProblemDetails, ForbiddenProblemDetails>;
 
 public sealed class GamePredictionSearch
 {
@@ -71,11 +71,7 @@ public sealed class GamePredictionSearch
                 return problemDetails;
             }
 
-            var getCurrentUserResult = await _mediator.Send(new GetCurrentAppUser.Query(), token);
-            if (getCurrentUserResult.TryPickT1(out NotFoundProblemDetails notFound, out GetCurrentAppUser.Response currentUser))
-            {
-                return notFound;
-            }
+            var currentUser = await _mediator.Send(new GetCurrentAppUser.Query(), token);
 
             var gamePredictionQuery = _dbContext.GamePredictions
                 .AsNoTracking()
