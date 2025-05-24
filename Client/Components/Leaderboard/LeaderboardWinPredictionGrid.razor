@@ -62,7 +62,7 @@
                 FirstName = g.Max(x => x.FirstName),
                 LastName = g.Max(x => x.LastName),
             })
-            .OrderBy(u => LeaderboardItems.Sum(l =>
+            .OrderByDescending(u => LeaderboardItems.Sum(l =>
             {
                 if (l.UserPredictions.TryGetValue(u.UserId, out UserPrediction p)) 
                 {
