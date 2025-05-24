@@ -1,6 +1,10 @@
-﻿using MediatR;
+﻿#nullable enable
+
+using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using OneOf;
 using System;
 using System.Security.Claims;
 using System.Threading;
@@ -8,19 +12,22 @@ using System.Threading.Tasks;
 using WebApp.Common.Constants;
 using WebApp.Common.Extensions;
 using WebApp.Database.Tables;
+using WebApp.Server.Infrastructure;
 
 namespace WebApp.Server.Services.AccountService.Command;
 
-public class CreateAppUser
+using Result = OneOf<AppUser, ValidationProblemDetails, ForbiddenProblemDetails>;
+
+public sealed class CreateAppUser
 {
-    public class Command : IRequest<AppUser>
+    public record Command : IRequest<Result>
     {
-        public ExternalLoginInfo ExternalLoginInfo { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public required ExternalLoginInfo ExternalLoginInfo { get; init; }
+        public required string FirstName { get; init; }
+        public required string LastName { get; init; }
     }
 
-    public class Handler : IRequestHandler<Command, AppUser>
+    public sealed class Handler : IRequestHandler<Command, Result>
     {
         private readonly UserManager<AppUser> _userManager;
         private readonly ILogger<CreateAppUser> _logger;
@@ -31,7 +38,7 @@ public class CreateAppUser
             _logger = logger;
         }
 
-        public async Task<AppUser> Handle(Command command, CancellationToken token)
+        public async Task<Result> Handle(Command command, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 

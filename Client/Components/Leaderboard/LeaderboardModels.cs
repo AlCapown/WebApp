@@ -2,24 +2,24 @@
 
 namespace WebApp.Client.Components.Leaderboard;
 
-public class LeaderboardItem
+public record LeaderboardItem
 {
-    public int Week { get; set; }
-    public Dictionary<string, UserPrediction> UserPredictions { get; set; }
+    public int Week { get; init; }
+    public IReadOnlyDictionary<string, UserPrediction> UserPredictions { get; init; }
 }
 
-public class UserPrediction
+public record UserPrediction
 {
-    public string UserId { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public int ScoreDifferential { get; set; }
-    public bool PredictedWinningTeam { get; set; }
+    public string UserId { get; init; }
+    public string FirstName { get; init; }
+    public string LastName { get; init; }
+    public int ScoreDifferential { get; init; }
+    public bool PredictedWinningTeam { get; init; }
 }
 
-public class User
+public record User
 {
-    public string UserId { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
+    public string UserId { get; init; }
+    public string FirstName { get; init; }
+    public string LastName { get; init; }
 }

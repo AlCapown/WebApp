@@ -20,12 +20,12 @@
                         <MudText Typo="Typo.body2">@((context.Index + 1).ToOrdinalNumberString())</MudText>
                     </MudTd>
                     <MudTd>
-                        <MudButton OnClick="@(e => OnUserClicked(@context.Value.UserId))" Variant="Variant.Text" EndIcon="@Icons.Material.Filled.NavigateNext">
-                            <MudText Typo="Typo.body2">@($"{context.Value.FirstName} {context.Value.LastName}")</MudText>
+                        <MudButton OnClick="@(e => OnUserClicked(@context.UserRanking.UserId))" Variant="Variant.Text" EndIcon="@Icons.Material.Filled.NavigateNext">
+                            <MudText Typo="Typo.body2">@($"{context.UserRanking.FirstName} {context.UserRanking.LastName}")</MudText>
                         </MudButton>
                     </MudTd>
                     <MudTd>
-                        <MudText Typo="Typo.body2">@($"{context.Value.ScoreDifferentialTotal} Points")</MudText>
+                        <MudText Typo="Typo.body2">@($"{context.UserRanking.ScoreDifferentialTotal} Points")</MudText>
                     </MudTd>
                 </RowTemplate>
             </MudTable>
@@ -37,20 +37,20 @@
 
     [Parameter]
     [EditorRequired]
-    public List<LeaderboardItem> Items { get; set; }
+    public IReadOnlyList<LeaderboardItem> LeaderboardItems { get; set; }
 
     [Parameter]
     [EditorRequired]
     public bool DisplayLoading { get; set; }
 
-    private List<OrderedUserRanking> GetLeaderboard()
+    private IReadOnlyList<OrderedUserRanking> GetLeaderboard()
     {
-        if (Items.Count == 0)
+        if (LeaderboardItems.Count == 0)
         {
             return [];
         }
 
-        var users = from item in Items
+        var users = from item in LeaderboardItems
                     from p in item.UserPredictions
                     group p by p.Key into userGroup
                     select new UserRanking
@@ -64,9 +64,9 @@
         return users
             .OrderBy(x => x.ScoreDifferentialTotal)
             .ThenBy(x => x.UserId)
-            .Select((value, index) => new OrderedUserRanking
+            .Select((UserRanking, index) => new OrderedUserRanking
             {
-                Value = value,
+                UserRanking = UserRanking,
                 Index = index
             })
             .ToList();
@@ -77,17 +77,17 @@
         Navigation.NavigateTo($"/UserPredictions/{userId}");
     }
 
-    private class UserRanking
+    private record UserRanking
     {
-        public string UserId { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public int ScoreDifferentialTotal { get; set; }
+        public string UserId { get; init; }
+        public string FirstName { get; init; }
+        public string LastName { get; init; }
+        public int ScoreDifferentialTotal { get; init; }
     }
 
-    private class OrderedUserRanking
+    private record OrderedUserRanking
     {
-        public int Index { get; set; }
-        public UserRanking Value { get; set; }
+        public int Index { get; init; }
+        public UserRanking UserRanking { get; init; }
     }
 }

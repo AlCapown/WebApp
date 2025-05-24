@@ -10,16 +10,16 @@
         <MudText Typo="@Typo.subtitle1">(Lower is Better)</MudText>
         <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 15px 0px;" />
     </div>
-    <SkeletonLoadingWrapper IsLoading=@IsLoading Width="100%" Height="30rem">
+    <SkeletonLoadingWrapper IsLoading=@DisplayLoading Width="100%" Height="30rem">
         <div class="wa_table__overflowContainer">
-            <MudDataGrid Items="Items" Breakpoint="Breakpoint.None" SortMode="SortMode.None" Dense="true" Elevation="2" Class="wa_table__mudOverrides">
+            <MudDataGrid Items="LeaderboardItems" Breakpoint="Breakpoint.None" SortMode="SortMode.None" Dense="true" Elevation="2" Class="wa_table__mudOverrides">
                 <Columns>
                     <PropertyColumn Property=@(x => x.Week) Title="Week">
                         <FooterTemplate>
                             <MudText Typo="Typo.subtitle2">Totals:</MudText>
                         </FooterTemplate>
                     </PropertyColumn>
-                    @foreach (var user in OrderedUsers)
+                    @foreach (var user in OrderedUsers())
                     {
                         <PropertyColumn Property=@(x => x.UserPredictions[user.UserId].ScoreDifferential) AggregateDefinition="SumAggregate">
                             <HeaderTemplate>
@@ -35,18 +35,36 @@
     </SkeletonLoadingWrapper>
 </div>
 
-@code {
+@code 
+{
     [Parameter]
     [EditorRequired]
-    public List<LeaderboardItem> Items { get; set; }
+    public IReadOnlyList<LeaderboardItem> LeaderboardItems { get; set; }
 
     [Parameter]
     [EditorRequired]
-    public List<User> OrderedUsers { get; set; }
+    public bool DisplayLoading { get; set; }
 
-    [Parameter]
-    [EditorRequired]
-    public bool IsLoading { get; set; }
+    private IReadOnlyList<User> OrderedUsers() 
+    {
+        if (LeaderboardItems.Count == 0)
+        {
+            return [];
+        }
+
+        return LeaderboardItems
+            .SelectMany(l => l.UserPredictions.Values)
+            .GroupBy(p => p.UserId)
+            .Select(g => new User
+            {
+                UserId = g.Key,
+                FirstName = g.Max(x => x.FirstName),
+                LastName = g.Max(x => x.LastName),
+            })
+            .OrderBy(u => LeaderboardItems.Sum(l => l.UserPredictions.TryGetValue(u.UserId, out UserPrediction p) ? p.ScoreDifferential : 0))
+            .ThenBy(u => u.UserId)
+            .ToList();
+    }
 
     private AggregateDefinition<LeaderboardItem> SumAggregate = new AggregateDefinition<LeaderboardItem>
     {

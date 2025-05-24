@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,14 +21,33 @@ using Result = OneOf<CreateGamePredictionResponse, ValidationProblemDetails, For
 
 public static class UpsertGamePrediction
 {
-    public record Command : IRequest<Result>
+    public sealed record Command : IRequest<Result>
     {
+        /// <summary>
+        /// The unique identifier of the game for which the prediction is being made.
+        /// </summary>
         public int? GameId { get; init; }
-        public int? HomeTeamScore { get; init; }
-        public int? AwayTeamScore { get; init; }
-        public string? UserId { get; init; }
-        public bool BypassGameStartTimeValidation { get; init; }
 
+        /// <summary>
+        /// The predicted score for the home team.
+        /// </summary>
+        public int? HomeTeamScore { get; init; }
+
+        /// <summary>
+        /// The predicted score for the away team.
+        /// </summary>
+        public int? AwayTeamScore { get; init; }
+
+        /// <summary>
+        /// The unique identifier of the user making the prediction.
+        /// </summary>
+        public string? UserId { get; init; }
+
+        /// <summary>
+        /// If true, bypasses the validation that prevents predictions after the game has started.
+        /// Used for administrative overrides.
+        /// </summary>
+        public bool BypassGameStartTimeValidation { get; init; }
     }
 
     public sealed class UpsertGamePredictionValidator : AbstractValidator<Command>
@@ -65,7 +83,7 @@ public static class UpsertGamePrediction
         }
     }
 
-    public class Handler : IRequestHandler<Command, Result>
+    public sealed class Handler : IRequestHandler<Command, Result>
     {
         private readonly WebAppDbContext _dbContext;
         private readonly IValidator<Command> _validator;
@@ -87,14 +105,13 @@ public static class UpsertGamePrediction
             }
 
             var game = await _dbContext.Games.FindAsync(cmd.GameId, cancellationToken);
-            Debug.Assert(game is not null);
 
-            if (!cmd.BypassGameStartTimeValidation && game.StartsOn.HasValue && game.StartsOn.Value < DateTimeOffset.Now)
+            if (!cmd.BypassGameStartTimeValidation && game!.StartsOn.HasValue && game!.StartsOn.Value < DateTimeOffset.Now)
             {
                 return new ForbiddenProblemDetails("You cannot modify or add a prediction for this game since it has already started.");
             }
 
-            if (game.HomeTeamId != SeasonConstants.CURRENT_TEAM_ID && game.AwayTeamId != SeasonConstants.CURRENT_TEAM_ID)
+            if (game!.HomeTeamId != SeasonConstants.CURRENT_TEAM_ID && game.AwayTeamId != SeasonConstants.CURRENT_TEAM_ID)
             {
                 return new ForbiddenProblemDetails("This is not a team you can make a prediction for.");
             }

@@ -21,6 +21,9 @@ public static class GetGamePrediction
 {
     public sealed record Query : IRequest<Result>
     {
+        /// <summary>
+        /// Unique identifier for the game prediction.
+        /// </summary>
         public int GamePredictionId { get; init; }
     }
 

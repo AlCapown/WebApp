@@ -17,40 +17,26 @@
     <MudTabPanel Text="Summary" Icon="@Icons.Material.Outlined.Summarize">
         <MudGrid>
             <MudItem xs="12" lg="6">
-                <LeaderboardScoreDifferentialSummary 
-                Items=@GetLeaderboardItems() 
-                DisplayLoading=@IsLoading() />
+                <LeaderboardScoreDifferentialSummary LeaderboardItems=@LeaderboardItems DisplayLoading=@IsLoading() />
             </MudItem>
             <MudItem xs="12" lg="6">
-                <LeaderboardWinPredictionSummary 
-                Items=@GetLeaderboardItems()
-                DisplayLoading=@IsLoading() />
+                <LeaderboardWinPredictionSummary LeaderboardItems=@LeaderboardItems DisplayLoading=@IsLoading() />
             </MudItem>
         </MudGrid>
     </MudTabPanel>
     <MudTabPanel Text="Details" Icon="@Icons.Material.Outlined.Details">
         <MudGrid>
             <MudItem xs="12" lg="6">
-                <LeaderboardScoreDifferentialGrid 
-                Items=@GetLeaderboardItems() 
-                OrderedUsers=@GetDistinctUsersOrdered(UserOrderBy.ScoreDifferential) 
-                IsLoading=@IsLoading() />
+                <LeaderboardScoreDifferentialGrid LeaderboardItems=@LeaderboardItems DisplayLoading=@IsLoading() />
             </MudItem>
             <MudItem xs="12" lg="6">
-                <LeaderboardWinPredictionGrid 
-                Items=@GetLeaderboardItems()
-                OrderedUsers=@GetDistinctUsersOrdered(UserOrderBy.WinPredictions)
-                DisplayLoading=@IsLoading() />
+                <LeaderboardWinPredictionGrid LeaderboardItems=@LeaderboardItems DisplayLoading=@IsLoading() />
             </MudItem>
             <MudItem xs="12" lg="6">
-                <LeaderboardScoreDifferentialChart 
-                LeaderboardItems=@GetLeaderboardItems()
-                DisplayLoading=@IsLoading() />
+                <LeaderboardScoreDifferentialChart LeaderboardItems=@LeaderboardItems DisplayLoading=@IsLoading() />
             </MudItem>
             <MudItem xs="12" lg="6">
-                <LeaderboardWinPredictionChart 
-                LeaderboardItems=@GetLeaderboardItems()                         
-                DisplayLoading=@IsLoading() />
+                <LeaderboardWinPredictionChart LeaderboardItems=@LeaderboardItems DisplayLoading=@IsLoading() />
             </MudItem>
         </MudGrid>
     </MudTabPanel>
@@ -68,6 +54,8 @@
     [SupplyParameterFromQuery]
     [Parameter]
     public int? TabIndex { get; set; }
+
+    private IReadOnlyList<LeaderboardItem> LeaderboardItems { get; set; } = [];
 
     private int _internalTabIndex;
 
@@ -117,109 +105,73 @@
             }
         }
 
+        ComputeLeaderboardItems();
+
         base.OnAfterRender(firstRender);
     }
 
-    private List<LeaderboardItem> GetLeaderboardItems()
+    private void ComputeLeaderboardItems()
     {
         var games = GameState.Value.Games.Values
             .Where(x => x.SeasonId == SeasonId)
             .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
             .Where(x => x.SeasonWeekTypeName == WeekType.RegularSeason)
-            .OrderBy(x => x.Week);
+            .OrderBy(x => x.Week)
+            .ToArray();
 
         var gamePredictions = GamePredictionState.Value.GamePredictions.Values
             .Where(x => x.SeasonId == SeasonId)
-            .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId);
+            .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
+            .ToArray();
 
         var users = gamePredictions
-            .DistinctBy(x => x.UserId);
+            .DistinctBy(x => x.UserId)
+            .ToArray();
 
-        List<LeaderboardItem> result = [];
+        var predictionLookup = gamePredictions
+            .ToDictionary(key => (key.UserId, key.GameId), value => value);
+
+        var result = new List<LeaderboardItem>(games.Length);
 
         foreach (var game in games)
         {
-            var item = new LeaderboardItem
-            {
-                Week = game.Week,
-                UserPredictions = new Dictionary<string, UserPrediction>()
-            };
+            var userPredictions = new Dictionary<string, UserPrediction>(users.Length);
 
             foreach (var user in users)
             {
-                var gamePrediction = gamePredictions
-                    .Where(x => x.UserId == user.UserId)
-                    .Where(x => x.GameId == game.GameId)
-                    .FirstOrDefault();
+                predictionLookup.TryGetValue((user.UserId, game.GameId), out var gamePrediction);
 
-                item.UserPredictions.Add(user.UserId, new UserPrediction
+                int scoreDifferential = 
+                    Math.Abs(game.HomeTeamScore - (gamePrediction?.PredictedHomeTeamScore ?? 0)) +
+                    Math.Abs(game.AwayTeamScore - (gamePrediction?.PredictedAwayTeamScore ?? 0));
+
+                bool predictedWinningTeam =
+                    game.HomeTeamScore != game.AwayTeamScore &&
+                    gamePrediction != null &&
+                    gamePrediction.PredictedHomeTeamScore != gamePrediction.PredictedAwayTeamScore &&
+                    (
+                        (game.HomeTeamScore > game.AwayTeamScore && gamePrediction.PredictedHomeTeamScore > gamePrediction.PredictedAwayTeamScore) ||
+                        (game.HomeTeamScore < game.AwayTeamScore && gamePrediction.PredictedHomeTeamScore < gamePrediction.PredictedAwayTeamScore)
+                    );
+
+                userPredictions[user.UserId] = new UserPrediction
                 {
                     UserId = user.UserId,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    ScoreDifferential = 
-                        Math.Abs(game.HomeTeamScore - (gamePrediction?.PredictedHomeTeamScore ?? 0)) +
-                        Math.Abs(game.AwayTeamScore - (gamePrediction?.PredictedAwayTeamScore ?? 0)),
-                    PredictedWinningTeam = game.HomeTeamScore == game.AwayTeamScore
-                        ? false
-                        : gamePrediction is null || gamePrediction.PredictedHomeTeamScore == gamePrediction.PredictedAwayTeamScore
-                        ? false
-                        : game.HomeTeamScore > game.AwayTeamScore
-                        ? gamePrediction?.PredictedHomeTeamScore > gamePrediction.PredictedAwayTeamScore
-                        : gamePrediction?.PredictedHomeTeamScore < gamePrediction.PredictedAwayTeamScore
-                });
+                    ScoreDifferential = scoreDifferential,
+                    PredictedWinningTeam = predictedWinningTeam
+                };
             }
 
-            result.Add(item);
+            result.Add(new LeaderboardItem
+            {
+                Week = game.Week,
+                UserPredictions = userPredictions
+            });
         }
 
-        return result;
-    }
-
-    private List<User> GetDistinctUsersOrdered(UserOrderBy userOrderBy)
-    {
-        var leaderboard = GetLeaderboardItems();
-
-        if (leaderboard.Count == 0)
-        {
-            return [];
-        }
-
-        var users = from l in leaderboard
-                    from p in l.UserPredictions
-                    group p by p.Key into userGroup
-                    select new
-                    {
-                        UserId = userGroup.Key,
-                        FirstName = userGroup.Max(x => x.Value.FirstName),
-                        LastName = userGroup.Max(x => x.Value.LastName),
-                        DiffCount = userGroup.Sum(x => x.Value.ScoreDifferential),
-                        WinCount = userGroup.Sum(x => x.Value.PredictedWinningTeam ? 1 : 0)
-                    };
-
-        switch (userOrderBy)
-        {
-            case UserOrderBy.ScoreDifferential:
-                users = users.OrderBy(x => x.DiffCount).ThenBy(x => x.UserId);
-                break;
-            case UserOrderBy.WinPredictions:
-                users = users.OrderByDescending(x => x.WinCount).ThenBy(x => x.UserId);
-                break;
-        }
-
-        return users.Select(x => new User
-        {
-            UserId = x.UserId,
-            FirstName = x.FirstName,
-            LastName = x.LastName
-        })
-        .ToList();
-    }
-
-    private enum UserOrderBy
-    {
-        ScoreDifferential,
-        WinPredictions
+        LeaderboardItems = result;
     }
 
     private sealed record LeaderboardPageLocalState

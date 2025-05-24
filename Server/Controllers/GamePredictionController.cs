@@ -26,6 +26,15 @@ public sealed class GamePredictionController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Retrieves a specific game prediction by its unique identifier.
+    /// </summary>
+    /// <param name="gamePredictionId">The unique identifier of the game prediction.</param>
+    /// <returns>
+    /// 200 OK with the game prediction if found.<br/>
+    /// 400 Bad Request if the request is invalid.<br/>
+    /// 404 Not Found if the game prediction does not exist.
+    /// </returns>
     [HttpGet("{gamePredictionId:int}")]
     [ProducesResponseType(typeof(GetGamePredictionResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -45,6 +54,15 @@ public sealed class GamePredictionController : ControllerBase
         );
     }
 
+    /// <summary>
+    /// Searches for game predictions based on the provided query parameters.
+    /// </summary>
+    /// <param name="query">The search criteria for filtering game predictions.</param>
+    /// <returns>
+    /// 200 OK with the search results.<br/>
+    /// 400 Bad Request if the query is invalid.<br/>
+    /// 404 Not Found if no predictions match the criteria.
+    /// </returns>
     [HttpGet("search")]
     [ProducesResponseType(typeof(GamePredictionSearchResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -61,6 +79,15 @@ public sealed class GamePredictionController : ControllerBase
         );
     }
 
+    /// <summary>
+    /// Creates or updates a game prediction for the current authenticated user.
+    /// </summary>
+    /// <param name="body">The prediction details to create or update.</param>
+    /// <returns>
+    /// 200 OK with the created or updated prediction.<br/>
+    /// 400 Bad Request if the request is invalid.<br/>
+    /// 403 Forbidden if the operation is not allowed.
+    /// </returns>
     [HttpPost("")]
     [ProducesResponseType(typeof(CreateGamePredictionResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
@@ -84,7 +111,16 @@ public sealed class GamePredictionController : ControllerBase
         );
     }
 
-
+    /// <summary>
+    /// Creates or updates a game prediction for a specified user. Only accessible by administrators.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user for whom the prediction is being created or updated.</param>
+    /// <param name="body">The prediction details to create or update.</param>
+    /// <returns>
+    /// 200 OK with the created or updated prediction.<br/>
+    /// 400 Bad Request if the request is invalid.<br/>
+    /// 403 Forbidden if the operation is not allowed.
+    /// </returns>
     [HttpPost("{userId}")]
     [Authorize(Roles = AppRole.ADMIN)]
     [ProducesResponseType(typeof(CreateGamePredictionResponse), StatusCodes.Status200OK)]

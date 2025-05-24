@@ -97,7 +97,8 @@ public class ExternalLoginConfirmationModel : PageModel
                 LastName = LastName
             }, HttpContext.RequestAborted);
 
-            await _signInManager.SignInAsync(appUser, isPersistent: true);
+            // TODO: Actually check if the user was created successfully
+            await _signInManager.SignInAsync(appUser.AsT0, isPersistent: true);
             return Redirect(Url.Content("~/"));
         }
         catch (Exception e)

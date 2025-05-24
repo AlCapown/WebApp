@@ -18,15 +18,39 @@ namespace WebApp.Server.Services.GamePredictionService;
 
 using Result = OneOf<GamePredictionSearchResponse, ValidationProblemDetails, ForbiddenProblemDetails>;
 
-public sealed class GamePredictionSearch
+public static class GamePredictionSearch
 {
     public sealed record Query : IRequest<Result>
     {
-        public int? SeasonId { get; set; }
-        public int? GameId { get; set; }
-        public string? UserId { get; set; }
-        public bool? LimitToCurrentUser { get; set; }
-        public int? TeamId { get; set; }
+        /// <summary>
+        /// The identifier for the season to filter game predictions.
+        /// Optional. If provided, only predictions for games in the specified season will be included.
+        /// </summary>
+        public int? SeasonId { get; init; }
+
+        /// <summary>
+        /// The identifier for a specific game to filter predictions.
+        /// Optional. If provided, only predictions for the specified game will be included.
+        /// </summary>
+        public int? GameId { get; init; }
+
+        /// <summary>
+        /// The identifier of the user to filter predictions.
+        /// Optional. If provided, only predictions made by this user will be included.
+        /// </summary>
+        public string? UserId { get; init; }
+
+        /// <summary>
+        /// If true, limits the results to predictions made by the current authenticated user.
+        /// Optional. If not set or false, predictions from all users may be included.
+        /// </summary>
+        public bool? LimitToCurrentUser { get; init; }
+
+        /// <summary>
+        /// The identifier for a team to filter predictions.
+        /// Optional. If provided, only predictions for games involving this team (as home or away) will be included.
+        /// </summary>
+        public int? TeamId { get; init; }
     }
 
     public sealed class GamePredictionSearchValidator : AbstractValidator<Query>
