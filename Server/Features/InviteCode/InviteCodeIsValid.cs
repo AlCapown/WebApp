@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-using MediatR;
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -31,7 +31,7 @@ public static class InviteCodeIsValid
             _dbContext = dbContext;
         }
 
-        public async Task<Result> Handle(Query query, CancellationToken token)
+        public async ValueTask<Result> Handle(Query query, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 

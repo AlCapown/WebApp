@@ -1,7 +1,7 @@
 ﻿#nullable enable
 
 using FluentValidation;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using OneOf;
@@ -43,7 +43,7 @@ public static class GetUserById
             _validator = validator;
         }
 
-        public async Task<Result> Handle(Query query, CancellationToken token)
+        public async ValueTask<Result> Handle(Query query, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 

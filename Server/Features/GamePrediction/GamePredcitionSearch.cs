@@ -1,7 +1,7 @@
 ﻿#nullable enable
 
 using FluentValidation;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -89,7 +89,7 @@ public static class GamePredictionSearch
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<Result> Handle(Query query, CancellationToken token)
+        public async ValueTask<Result> Handle(Query query, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 

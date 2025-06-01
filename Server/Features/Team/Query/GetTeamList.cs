@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Mediator;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
@@ -21,7 +21,7 @@ public class GetTeamList
             _dbContext = dbContext;
         }
 
-        public async Task<GetTeamsResponse> Handle(Query query, CancellationToken token)
+        public async ValueTask<GetTeamsResponse> Handle(Query query, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 

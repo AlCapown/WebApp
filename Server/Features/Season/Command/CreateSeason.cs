@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Mediator;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
 using System.Threading.Tasks;
@@ -24,7 +24,7 @@ public class CreateSeason
             _dbContext = dbContext;
         }
 
-        public async Task<int> Handle(Command cmd, CancellationToken token)
+        public async ValueTask<int> Handle(Command cmd, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 

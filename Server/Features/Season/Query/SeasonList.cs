@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Mediator;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
@@ -22,7 +22,7 @@ public class SeasonList
             _dbContext = dbContext;
         }
 
-        public async Task<GetSeasonListResponse> Handle(Query query, CancellationToken token)
+        public async ValueTask<GetSeasonListResponse> Handle(Query query, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 

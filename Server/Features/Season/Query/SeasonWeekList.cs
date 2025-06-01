@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Mediator;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
@@ -26,7 +26,7 @@ public class SeasonWeekList
             _dbContext = dbContext;
         }
 
-        public async Task<GetSeasonWeekListResponse> Handle(Query query, CancellationToken token)
+        public async ValueTask<GetSeasonWeekListResponse> Handle(Query query, CancellationToken token)
         {
             var weekQuery =
                 from sw in _dbContext.SeasonWeeks.AsNoTracking()

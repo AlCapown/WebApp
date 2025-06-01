@@ -1,7 +1,7 @@
 ﻿#nullable enable
 
 using FluentValidation;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
@@ -91,7 +91,7 @@ public static class GameSearch
             _dbContext = dbContext;
         }
 
-        public async Task<Result> Handle(Query query, CancellationToken token)
+        public async ValueTask<Result> Handle(Query query, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 

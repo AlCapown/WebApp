@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using OneOf;
@@ -36,7 +36,7 @@ public sealed class CreateUser
             _logger = logger;
         }
 
-        public async Task<Result> Handle(Command command, CancellationToken token)
+        public async ValueTask<Result> Handle(Command command, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 

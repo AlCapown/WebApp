@@ -1,7 +1,7 @@
 ﻿#nullable enable
 
 using FluentValidation;
-using MediatR;
+using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
@@ -93,7 +93,7 @@ public static class UpsertGamePrediction
             _validator = validator;
         }
 
-        public async Task<Result> Handle(Command cmd, CancellationToken cancellationToken)
+        public async ValueTask<Result> Handle(Command cmd, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

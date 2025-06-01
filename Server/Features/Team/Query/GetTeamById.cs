@@ -1,11 +1,10 @@
-﻿using MediatR;
+﻿using Mediator;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Common.Models;
 using WebApp.Database;
-
 
 namespace WebApp.Server.Features.TeamService.Query;
 
@@ -25,7 +24,7 @@ public class GetTeamById
             _dbContext = dbContext;
         }
 
-        public async Task<Team> Handle(Query query, CancellationToken token)
+        public async ValueTask<Team> Handle(Query query, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
@@ -42,7 +41,7 @@ public class GetTeamById
                     Division = x.Division.DivisionName,
                     Conference = x.Division.Conference.ConferenceName
                 })
-                .FirstOrDefaultAsync(cancellationToken: token);
+                .FirstOrDefaultAsync(token);
 
             return team;
         }

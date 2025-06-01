@@ -1,6 +1,6 @@
 ﻿#nullable enable
 
-using MediatR;
+using Mediator;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;
@@ -44,7 +44,7 @@ public sealed class CreateBackgroundJobLog
             _dbContext = dbContext;
         }
 
-        public async Task<Unit> Handle (Command command, CancellationToken token)
+        public async ValueTask<Unit> Handle (Command command, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 

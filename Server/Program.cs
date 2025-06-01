@@ -19,6 +19,7 @@ using System;
 using System.Text.Json.Serialization;
 using WebApp.Database;
 using WebApp.Database.Tables;
+using WebApp.ExternalIntegrations.ESPN.Service;
 using WebApp.Server.Infrastructure;
 using WebApp.Server.Infrastructure.Exceptions;
 
@@ -66,8 +67,12 @@ services
 // Register Razor Pages for login/account pages
 services.AddRazorPages();
 
-// Register external projects and wire up MediatR
-services.AddRequiredServices();
+services.AddMediator(options =>
+{
+    options.ServiceLifetime = ServiceLifetime.Scoped;
+});
+
+services.RegisterESPNServices();
 
 // Fluent Validation
 services.AddValidatorsFromAssemblyContaining<Program>();
