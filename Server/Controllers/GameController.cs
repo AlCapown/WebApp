@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WebApp.Common.Models;
-using WebApp.Server.Services.GameService;
+using WebApp.Server.Features.Game;
 
 namespace WebApp.Server.Controllers;
 

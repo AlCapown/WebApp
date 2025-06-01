@@ -134,7 +134,7 @@ else
 
     private void MaybeStartCountdown()
     {
-        if (CountdownTimer?.Started() ?? true)
+        if (CountdownTimer?.Started ?? true)
         {
             return;
         }

@@ -10,20 +10,12 @@ public record User
     public string FirstName { get; init; }
     public string LastName { get; init; }
     public string Email { get; init; }
+    public bool IsAdmin { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(User))]
 public partial class UserJsonContext : JsonSerializerContext { }
-
-public record GetUserByIdResponse
-{
-    public User User { get; init; }
-}
-
-[JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
-[JsonSerializable(typeof(GetUserByIdResponse))]
-public partial class GetUserByIdResponseJsonContext : JsonSerializerContext { }
 
 
 public record CurrentUserInfoResponse

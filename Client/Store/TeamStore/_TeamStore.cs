@@ -1,6 +1,5 @@
 ﻿using Fluxor;
 using System.Collections.Immutable;
-using WebApp.Client.Store.Shared;
 using WebApp.Common.Models;
 
 namespace WebApp.Client.Store.TeamStore;

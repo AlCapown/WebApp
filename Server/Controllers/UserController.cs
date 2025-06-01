@@ -8,10 +8,10 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Common.Models;
-using WebApp.Server.Services.AccountService.Query;
+using WebApp.Server.Features.Account;
+using WebApp.Server.Infrastructure;
 
 namespace WebApp.Server.Controllers;
-
 
 [Route("api/[controller]")]
 [ApiController]
@@ -25,9 +25,19 @@ public sealed class UserController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Gets information about the currently authenticated user.
+    /// </summary>
+    /// <remarks>
+    /// Returns authentication status, claim types, and claims for the current user.
+    /// If the user is not authenticated, returns IsAuthenticated = false.
+    /// </remarks>
+    /// <returns>
+    /// <see cref="CurrentUserInfoResponse"/> containing user authentication and claim information.
+    /// </returns>
     [HttpGet]
-    [ProducesResponseType(typeof(CurrentUserInfoResponse), StatusCodes.Status200OK)]
     [AllowAnonymous]
+    [ProducesResponseType(typeof(CurrentUserInfoResponse), StatusCodes.Status200OK)]
     public IActionResult GetCurrentUserInfo()
     {
         if (User?.Identity?.IsAuthenticated is null || !User.Identity.IsAuthenticated)
@@ -56,19 +66,32 @@ public sealed class UserController : ControllerBase
         });
     }
 
+    /// <summary>
+    /// Retrieves a user by their unique identifier.
+    /// </summary>
+    /// <param name="userId">The unique identifier of the user to retrieve.</param>
+    /// <returns>
+    /// Returns <see cref="User"/> if found.<br/>
+    /// Returns <see cref="ValidationProblemDetails"/> if the request is invalid.<br/>
+    /// Returns <see cref="NotFoundProblemDetails"/> if the user does not exist.
+    /// </returns>
     [HttpGet("{userId}")]
-    [ProducesResponseType(typeof(GetUserByIdResponse), StatusCodes.Status200OK)]
     [Authorize]
+    [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserById([FromRoute] string userId)
     {
-        var user = await _mediator.Send(new GetUser.Query
+        var result = await _mediator.Send(new GetUserById.Query
         {
             UserId = userId
         }, HttpContext.RequestAborted);
 
-        return Ok(new GetUserByIdResponse
-        {
-            User = user
-        });
+        return result.Match<IActionResult>
+        (
+            success => Ok(success),
+            validationProblem => BadRequest(validationProblem),
+            notFound => NotFound(notFound)
+        );
     }
 }

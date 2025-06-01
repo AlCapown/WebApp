@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using WebApp.Common.Constants;
 using WebApp.Common.Enums;
 using WebApp.Common.Models;
-using WebApp.Server.Services.SeasonService.Command;
-using WebApp.Server.Services.SeasonService.Query;
+using WebApp.Server.Features.SeasonService.Command;
+using WebApp.Server.Features.SeasonService.Query;
 
 namespace WebApp.Server.Controllers;
 

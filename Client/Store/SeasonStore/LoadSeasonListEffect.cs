@@ -53,7 +53,7 @@ public static partial class SeasonActions
     public sealed record LoadSeasonListFailure : FetchFailureAction { }
 }
 
-public sealed class SeasonListSuccessReducer : Reducer<SeasonState, SeasonActions.LoadSeasonListSuccess>
+public sealed class LoadSeasonListSuccessReducer : Reducer<SeasonState, SeasonActions.LoadSeasonListSuccess>
 {
     public override SeasonState Reduce(SeasonState state, SeasonActions.LoadSeasonListSuccess action) =>
         state with

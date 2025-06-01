@@ -5,11 +5,13 @@
 	<SignAssembly>false</SignAssembly>
 	<Nullable>disable</Nullable>
 	<InvariantGlobalization>true</InvariantGlobalization>
-	<RunAOTCompilation>false</RunAOTCompilation>
 	<PublishTrimmed>true</PublishTrimmed>
-	<TrimMode>partial</TrimMode>
+	<TrimMode>full</TrimMode>
+	<IsAotCompatible>true</IsAotCompatible>
+	<RunAOTCompilation>false</RunAOTCompilation>
   </PropertyGroup>
 
+	
   <ItemGroup>
     <PackageReference Include="AspNetCore.SassCompiler" Version="1.89.0" />
     <PackageReference Include="Fluxor" Version="6.6.0" />
@@ -30,5 +32,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common\WebApp.Common.csproj" />
-  </ItemGroup>	
+  </ItemGroup>
+
 </Project>

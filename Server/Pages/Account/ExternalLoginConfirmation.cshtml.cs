@@ -2,14 +2,16 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Common.Extensions;
 using WebApp.Database.Tables;
-using WebApp.Server.Services.AccountService.Command;
-using WebApp.Server.Services.InviteCodeService.Query;
+using WebApp.Server.Features.Account;
+using WebApp.Server.Features.InviteCode;
+using WebApp.Server.Infrastructure;
 
 namespace WebApp.Server.Pages.Account;
 
@@ -40,19 +42,25 @@ public class ExternalLoginConfirmationModel : PageModel
 
     private readonly SignInManager<AppUser> _signInManager;
     private readonly IMediator _mediator;
+    private readonly ILogger<ExternalLoginConfirmationModel> _logger;
 
-    public ExternalLoginConfirmationModel(SignInManager<AppUser> signInManager, IMediator mediator)
+    public ExternalLoginConfirmationModel(
+        SignInManager<AppUser> signInManager, 
+        IMediator mediator, 
+        ILogger<ExternalLoginConfirmationModel> logger)
     {
         _signInManager = signInManager;
         _mediator = mediator;
+        _logger = logger;
     }
 
     public async Task<IActionResult> OnGetAsync()
     {
         var info = await _signInManager.GetExternalLoginInfoAsync();
 
-        if (info == null)
+        if (info is null)
         {
+            _logger.LogInformation("External login info was NULL. Redirecting to login.");
             return RedirectToPage("Account/Login");
         }
 
@@ -67,8 +75,9 @@ public class ExternalLoginConfirmationModel : PageModel
     {
         var info = await _signInManager.GetExternalLoginInfoAsync();
 
-        if (info == null)
+        if (info is null)
         {
+            _logger.LogInformation("External login info was NULL. Redirecting to login.");
             return RedirectToPage("/Account/Login");
         }
 
@@ -84,26 +93,32 @@ public class ExternalLoginConfirmationModel : PageModel
 
         if (!inviteCodeValidation.IsValid) 
         {
-            ModelState.AddModelError(nameof(InviteCode), "Invite code is not valid");
+            ModelState.AddModelError(nameof(InviteCode), "Invite code is not valid.");
             return Page();
         }
 
         try
         {
-            var appUser = await _mediator.Send(new CreateAppUser.Command
+            var appUserResult = await _mediator.Send(new CreateUser.Command
             {
                 ExternalLoginInfo = info,
                 FirstName = FirstName,
                 LastName = LastName
             }, HttpContext.RequestAborted);
 
-            // TODO: Actually check if the user was created successfully
-            await _signInManager.SignInAsync(appUser.AsT0, isPersistent: true);
+            if (appUserResult.TryPickT1(out InternalServerErrorProblemDetails problem, out AppUser appUser))
+            {
+                ModelState.AddModelError(string.Empty, problem.Detail);
+                return Page();
+            }
+
+            await _signInManager.SignInAsync(appUser, isPersistent: true);
             return Redirect(Url.Content("~/"));
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            ModelState.AddModelError(string.Empty, e.Message);
+            _logger.LogError(ex, "Failed to create user.");
+            ModelState.AddModelError(string.Empty, "Failed to create user.");
         }
         
         return Page();

@@ -75,7 +75,7 @@ public static partial class SeasonWeekActions
     }
 }
 
-public sealed class SeasonWeekSuccessReducer : Reducer<SeasonWeekState, SeasonWeekActions.LoadSeasonWeekSuccess>
+public sealed class LoadSeasonWeekSuccessReducer : Reducer<SeasonWeekState, SeasonWeekActions.LoadSeasonWeekSuccess>
 {
     public override SeasonWeekState Reduce(SeasonWeekState state, SeasonWeekActions.LoadSeasonWeekSuccess action) =>
         state with

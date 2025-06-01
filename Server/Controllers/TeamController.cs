@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WebApp.Common.Models;
-using WebApp.Server.Services.TeamService.Query;
+using WebApp.Server.Features.TeamService.Query;
 
 namespace WebApp.Server.Controllers;
 

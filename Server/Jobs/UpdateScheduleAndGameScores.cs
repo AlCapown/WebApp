@@ -1,22 +1,19 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using OneOf.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Common.Enums;
 using WebApp.ExternalIntegrations.ESPN.Service.Api;
 using WebApp.ExternalIntegrations.ESPN.Service.Models;
+using WebApp.Server.Features.Game;
+using WebApp.Server.Features.SeasonService.Command;
+using WebApp.Server.Features.SeasonService.Query;
+using WebApp.Server.Features.TeamService.Query;
 using WebApp.Server.Infrastructure.Exceptions;
-using WebApp.Server.Services.BackgroundJobLogging.Command;
-using WebApp.Server.Services.GameService;
-using WebApp.Server.Services.SeasonService.Command;
-using WebApp.Server.Services.SeasonService.Query;
-using WebApp.Server.Services.TeamService.Query;
+using WebApp.Server.Services.BackgroundJobLogging;
 
 namespace WebApp.Server.Jobs;
 
@@ -27,14 +24,14 @@ public class UpdateScheduleAndGameScores
 
     private Dictionary<string, int> TeamLookupByAbbreviation;
 
-    private readonly AddBackgroundJobLog.Command _logCommand;
+    private readonly CreateBackgroundJobLog.Command _logCommand;
 
     public UpdateScheduleAndGameScores(IMediator mediator, IESPNApi espnApi)
     {
         _mediator = mediator;
         _espnApi = espnApi;
 
-        _logCommand = new AddBackgroundJobLog.Command
+        _logCommand = new CreateBackgroundJobLog.Command
         {
             BackgroundJobName = nameof(UpdateScheduleAndGameScores),
             Started = DateTimeOffset.Now
@@ -240,7 +237,7 @@ public class UpdateScheduleAndGameScores
 
     private void AddError(string message, string stackTrace = null)
     {
-        _logCommand.Errors.Add(new AddBackgroundJobLog.Command.Error
+        _logCommand.Errors.Add(new CreateBackgroundJobLog.Command.Error
         {
             Message = message,
             ValidationErrors = null,
@@ -250,7 +247,7 @@ public class UpdateScheduleAndGameScores
 
     private void AddError(string message, ValidationProblemDetails validationProblemDetails)
     {
-        _logCommand.Errors.Add(new AddBackgroundJobLog.Command.Error
+        _logCommand.Errors.Add(new CreateBackgroundJobLog.Command.Error
         {
             Message = message,
             ValidationErrors = validationProblemDetails.Errors,

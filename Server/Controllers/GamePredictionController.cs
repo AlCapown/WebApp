@@ -8,8 +8,8 @@ using System.Threading.Tasks;
 using WebApp.Client.Common.Extensions;
 using WebApp.Common.Constants;
 using WebApp.Common.Models;
+using WebApp.Server.Features.GamePrediction;
 using WebApp.Server.Infrastructure;
-using WebApp.Server.Services.GamePredictionService;
 
 namespace WebApp.Server.Controllers;
 

@@ -10,6 +10,8 @@ using WebApp.Client.Api;
 using WebApp.Client.Common.Constants;
 using WebApp.Client.Infrastructure;
 using WebApp.Client.Store.Shared;
+using WebApp.Client.Store;
+
 
 
 #if DEBUG
@@ -44,10 +46,12 @@ public class Program
         {
             options.ScanAssemblies(typeof(Program).Assembly);
             options.AddMiddleware<FetchMiddleware>();
+
 #if DEBUG
             options.UseReduxDevTools();
 #endif
         });
+        builder.Services.AddSingleton<FluxorAotHints>();
 
         builder.Services.AddSingleton<AuthenticationStateProvider, WebAppAuthenticationStateProvider>();
         builder.Services.AddSingleton(sp => (WebAppAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());

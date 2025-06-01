@@ -21,18 +21,18 @@ public sealed class GetUserByIdEffect : Effect<UserActions.GetUserById>
         await _client.GetAsync(new GetUserByIdPlan(action), $"api/User/{action.UserId}");
     }
 
-    private sealed class GetUserByIdPlan : ApiLoadPlan<GetUserByIdResponse>
+    private sealed class GetUserByIdPlan : ApiLoadPlan<User>
     {
         public GetUserByIdPlan(UserActions.GetUserById action)
             : base(action) { }
 
-        public override JsonTypeInfo<GetUserByIdResponse> ResponseJsonContext =>
-            GetUserByIdResponseJsonContext.Default.GetUserByIdResponse;
+        public override JsonTypeInfo<User> ResponseJsonContext =>
+            UserJsonContext.Default.User;
 
-        public override FetchSuccessAction GetSuccessAction(GetUserByIdResponse response) =>
+        public override FetchSuccessAction GetSuccessAction(User user) =>
             new UserActions.GetUserByIdSuccess
             {
-                User = response.User
+                User = user
             };
 
         public override FetchFailureAction GetFailureAction(ApiError apiError) =>
