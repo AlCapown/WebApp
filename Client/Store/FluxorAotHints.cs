@@ -2,8 +2,14 @@
 
 namespace WebApp.Client.Store;
 
+/// <summary>
+/// This doesn't actually work. Trying to get around the issue with AOT trimming in Fluxor.
+/// </summary>
 public class FluxorAotHints
 {
+    // Middleware
+    [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(Shared.FetchMiddleware))]
+
     // FetchStore
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(FetchStore.FetchFeature))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(FetchStore.FetchActions))]
@@ -63,6 +69,5 @@ public class FluxorAotHints
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(UserStore.UserActions))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(UserStore.GetUserByIdEffect))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(UserStore.GetUserByIdSuccessReducer))]
-
     public FluxorAotHints() { }
 }

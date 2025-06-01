@@ -13,7 +13,6 @@ using WebApp.Client.Store.Shared;
 using WebApp.Client.Store;
 
 
-
 #if DEBUG
 using Fluxor.Blazor.Web.ReduxDevTools;
 #endif
@@ -44,14 +43,13 @@ public class Program
         // https://github.com/mrpmorris/Fluxor
         builder.Services.AddFluxor(options =>
         {
-            options.ScanAssemblies(typeof(Program).Assembly);
+            options.ScanAssemblies(typeof(FluxorAotHints).Assembly);
             options.AddMiddleware<FetchMiddleware>();
 
 #if DEBUG
             options.UseReduxDevTools();
 #endif
         });
-        builder.Services.AddSingleton<FluxorAotHints>();
 
         builder.Services.AddSingleton<AuthenticationStateProvider, WebAppAuthenticationStateProvider>();
         builder.Services.AddSingleton(sp => (WebAppAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
