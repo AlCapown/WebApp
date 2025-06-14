@@ -1,9 +1,11 @@
-﻿using System.Text.Json;
+﻿using System.ComponentModel;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace WebApp.Common.Models;
 
-public record Team
+[ImmutableObject(true)]
+public sealed record Team
 {
     public int TeamId { get; init; }
     public string TeamFullName { get; init; }
@@ -18,11 +20,12 @@ public record Team
 [JsonSerializable(typeof(Team))]
 public partial class TeamJsonContext : JsonSerializerContext { }
 
-public record GetTeamsResponse
+
+public sealed record TeamSearchResponse
 {
     public Team[] Teams { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
-[JsonSerializable(typeof(GetTeamsResponse))]
+[JsonSerializable(typeof(TeamSearchResponse))]
 public partial class GetTeamsResponseJsonContext : JsonSerializerContext { }

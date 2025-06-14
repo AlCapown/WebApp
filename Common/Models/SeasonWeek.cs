@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -6,6 +7,7 @@ using WebApp.Common.Enums;
 
 namespace WebApp.Common.Models;
 
+[ImmutableObject(true)]
 public record SeasonWeek
 {
     public int SeasonWeekId { get; init; }
@@ -34,6 +36,7 @@ public class UpdateSeasonWeekRequest
 {
     [Required]
     public DateOnly? WeekStart { get; set; }
+
     [Required]
     public DateOnly? WeekEnd { get; set; }
 }

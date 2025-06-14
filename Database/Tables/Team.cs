@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace WebApp.Database.Tables;
 
 /* 
- * TODO: Team locations can change like the OAK Raiders (now Las Vegas) that has effect on their name. 
+ * TODO: Teams can change cities like the OAK Raiders (now Las Vegas) that has effect on their name. 
  *
  * Current Idea: Should create a team Meta data table with all of the information 
  * that can change. This table should just have TeamId and a FK to a row in this table

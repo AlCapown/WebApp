@@ -14,5 +14,4 @@ public static class SeasonConstants
     /// Currently set for Vikings.
     /// </remarks>
     public const int CURRENT_TEAM_ID = 9;
-
 }

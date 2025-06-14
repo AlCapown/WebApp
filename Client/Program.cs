@@ -4,13 +4,15 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
+using Polly;
+using Polly.Extensions.Http;
 using System;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
 using WebApp.Client.Common.Constants;
 using WebApp.Client.Infrastructure;
-using WebApp.Client.Store.Shared;
 using WebApp.Client.Store;
+using WebApp.Client.Store.Shared;
 
 
 #if DEBUG
@@ -37,7 +39,13 @@ public class Program
                 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
                 client.DefaultRequestHeaders.Add("Accept", "application/json; charset=utf-8");
             })
-            .AddHttpMessageHandler<XSRFHttpMessageHandler>();
+            .AddHttpMessageHandler<XSRFHttpMessageHandler>()
+            .AddPolicyHandler
+            (
+                HttpPolicyExtensions
+                    .HandleTransientHttpError()
+                    .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
+            );
 
         // Fluxor for state management
         // https://github.com/mrpmorris/Fluxor

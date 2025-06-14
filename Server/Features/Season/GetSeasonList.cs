@@ -1,4 +1,6 @@
-﻿using Mediator;
+﻿#nullable enable
+
+using Mediator;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
@@ -7,16 +9,13 @@ using WebApp.Common.Constants;
 using WebApp.Common.Models;
 using WebApp.Database;
 
-namespace WebApp.Server.Features.SeasonService.Query;
+namespace WebApp.Server.Features.Season;
 
-public class SeasonById
+public static class GetSeasonList
 {
-    public class Query : IRequest<Season>
-    {
-        public int SeasonId { get; set; }
-    }
+    public sealed record Query : IRequest<GetSeasonListResponse> { }
 
-    public class Handler : IRequestHandler<Query, Season>
+    public sealed class Handler : IRequestHandler<Query, GetSeasonListResponse>
     {
         private readonly WebAppDbContext _dbContext;
 
@@ -25,22 +24,24 @@ public class SeasonById
             _dbContext = dbContext;
         }
 
-        public async ValueTask<Season> Handle(Query query, CancellationToken token)
+        public async ValueTask<GetSeasonListResponse> Handle(Query query, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
-            var season = await _dbContext.Seasons
+            var seasons = await _dbContext.Seasons
                 .AsNoTracking()
-                .Where(x => x.SeasonId == query.SeasonId)
-                .Select(x => new Season
+                .Select(x => new Common.Models.Season
                 {
                     SeasonId = x.SeasonId,
                     Description = x.Description,
                     IsCurrent = x.SeasonId == SeasonConstants.CURRENT_SEASON_ID,
                 })
-                .FirstOrDefaultAsync(token);
+                .ToArrayAsync(token);
 
-            return season;
+            return new GetSeasonListResponse
+            {
+                Seasons = seasons
+            };
         }
     }
 }

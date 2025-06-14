@@ -45,14 +45,21 @@ services
         options.KnownNetworks.Add(IPNetwork.Parse("172.16.0.0/12"));
     });
 
-// Redis Connection Multiplexer
-var redisConnection = ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis"));
+// Caching
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = configuration.GetConnectionString("Redis");
+    options.InstanceName = "WebApp";
+});
+
+builder.Services.AddHybridCache();
+
 
 // Register Data Protection
 services
     .AddDataProtection()
     .SetApplicationName("WebApp")
-    .PersistKeysToStackExchangeRedis(redisConnection);
+    .PersistKeysToStackExchangeRedis(ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")));
 
 // Register Controllers with Json Serialization Options
 services
@@ -67,6 +74,7 @@ services
 // Register Razor Pages for login/account pages
 services.AddRazorPages();
 
+// Source Generator version of Mediator
 services.AddMediator(options =>
 {
     options.ServiceLifetime = ServiceLifetime.Scoped;
@@ -116,7 +124,7 @@ services
         }
     });
 
-// Register Antiforgery token to protect against XSRF vulnerabilities
+// Register Anti-forgery token to protect against XSRF vulnerabilities
 services
     .AddAntiforgery(options =>
     {
@@ -219,11 +227,11 @@ services
 
 var app = builder.Build();
 
-app.Logger.LogInformation("Application Name: {Application}", app.Environment.ApplicationName);
-app.Logger.LogInformation("Hosting Environment: {Environment}", app.Environment.EnvironmentName);
-app.Logger.LogInformation("WebApp Sql Connection String: {SQLConnection}", app.Configuration.GetConnectionString("Database"));
-app.Logger.LogInformation("Hangfire Sql Connection String: {HangfireConnection}", app.Configuration.GetConnectionString("HangfireDatabase"));
-app.Logger.LogInformation("Redis Connection String: {RedisConnection}", app.Configuration.GetConnectionString("Redis"));
+//app.Logger.LogInformation("Application Name: {Application}", app.Environment.ApplicationName);
+//app.Logger.LogInformation("Hosting Environment: {Environment}", app.Environment.EnvironmentName);
+//app.Logger.LogInformation("WebApp Sql Connection String: {SQLConnection}", app.Configuration.GetConnectionString("Database"));
+//app.Logger.LogInformation("Hangfire Sql Connection String: {HangfireConnection}", app.Configuration.GetConnectionString("HangfireDatabase"));
+//app.Logger.LogInformation("Redis Connection String: {RedisConnection}", app.Configuration.GetConnectionString("Redis"));
 
 app.UseForwardedHeaders();
 

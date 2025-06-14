@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using WebApp.Common.Constants;
 using WebApp.Common.Enums;
 using WebApp.Common.Models;
+using WebApp.Server.Features.Season;
 using WebApp.Server.Features.SeasonService.Command;
-using WebApp.Server.Features.SeasonService.Query;
+using WebApp.Server.Infrastructure;
 
 namespace WebApp.Server.Controllers;
 
@@ -24,11 +25,11 @@ public sealed class SeasonController : ControllerBase
     }
 
     [HttpGet("")]
-    [ProducesResponseType(typeof(GetSeasonListResponse), StatusCodes.Status200OK)]
     [Authorize]
+    [ProducesResponseType(typeof(GetSeasonListResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetSeasonList()
     {
-        var result = await _mediator.Send(new SeasonList.Query(), HttpContext.RequestAborted);
+        var result = await _mediator.Send(new GetSeasonList.Query(), HttpContext.RequestAborted);
         return Ok(result);
     }
 
@@ -47,16 +48,21 @@ public sealed class SeasonController : ControllerBase
     }
 
     [HttpGet("{seasonId:int}")]
-    [ProducesResponseType(typeof(Season), StatusCodes.Status200OK)]
     [Authorize]
+    [ProducesResponseType(typeof(Season), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetSeason([FromRoute] int seasonId)
     {
-        var result = await _mediator.Send(new SeasonById.Query
+        var result = await _mediator.Send(new GetSeasonById.Query
         {
             SeasonId = seasonId,
         }, HttpContext.RequestAborted);
 
-        return Ok(result);
+        return result.Match<IActionResult>
+        (
+            success => Ok(success),
+            notFound => NotFound(notFound)
+        );
     }
 
     [HttpPut("{seasonId:int}")]
@@ -74,31 +80,50 @@ public sealed class SeasonController : ControllerBase
     }
 
     [HttpGet("{seasonId:int}/week")]
-    [ProducesResponseType(typeof(GetSeasonWeekListResponse), StatusCodes.Status200OK)]
     [Authorize]
+    [ProducesResponseType(typeof(GetSeasonWeekListResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetWeekList([FromRoute] int seasonId, [FromQuery] WeekType? weekType)
     {
-        var result = await _mediator.Send(new SeasonWeekList.Query
+        var result = await _mediator.Send(new SeasonWeekSearch.Query
         {
             SeasonId = seasonId,
             WeekType = weekType
         }, HttpContext.RequestAborted);
 
-        return Ok(result);
+        return result.Match<IActionResult>
+        (
+            success => Ok(success),
+            validationProblem => BadRequest(validationProblem)
+        );
     }
 
     [HttpGet("{seasonId:int}/week/{SeasonWeekId:int}")]
-    [ProducesResponseType(typeof(SeasonWeek), StatusCodes.Status200OK)]
     [Authorize]
+    [ProducesResponseType(typeof(SeasonWeek), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(BadRequestResult), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetWeek([FromRoute] int seasonId, [FromRoute] int seasonWeekId)
     {
-        var result = await _mediator.Send(new GetSeasonWeek.Query
+        var result = await _mediator.Send(new SeasonWeekSearch.Query
         {
             SeasonId = seasonId,
             SeasonWeekId = seasonWeekId
         }, HttpContext.RequestAborted);
 
-        return Ok(result);
+        return result.Match<IActionResult>
+        (
+            success =>
+            {
+                if(success is null)
+                {
+                    return NotFound(new NotFoundProblemDetails(""));
+                }
+
+                return Ok(success);
+            },
+            badRequest => BadRequest(badRequest)
+        );
     }
 
     [HttpPut("{seasonId:int}/week/{SeasonWeekId:int}")]

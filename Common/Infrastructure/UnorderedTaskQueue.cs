@@ -10,9 +10,10 @@ namespace WebApp.Common.Infrastructure;
 /// <remarks>
 /// There is no guarantee that the tasks will be processed in order of being queued. 
 /// </remarks>
-public sealed class UnorderedTaskQueue
+public sealed class UnorderedTaskQueue : IDisposable
 {
     private readonly SemaphoreSlim _semaphore;
+    private bool _disposed;
 
     public UnorderedTaskQueue()
     {
@@ -30,6 +31,15 @@ public sealed class UnorderedTaskQueue
         finally
         {
             _semaphore.Release();
+        }
+    }
+
+    public void Dispose()
+    {
+        if(!_disposed)
+        {
+            _disposed = true;
+            _semaphore.Dispose();
         }
     }
 }

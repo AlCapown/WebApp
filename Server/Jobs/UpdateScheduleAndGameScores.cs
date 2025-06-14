@@ -9,9 +9,9 @@ using WebApp.Common.Enums;
 using WebApp.ExternalIntegrations.ESPN.Service.Api;
 using WebApp.ExternalIntegrations.ESPN.Service.Models;
 using WebApp.Server.Features.Game;
+using WebApp.Server.Features.Season;
 using WebApp.Server.Features.SeasonService.Command;
-using WebApp.Server.Features.SeasonService.Query;
-using WebApp.Server.Features.TeamService.Query;
+using WebApp.Server.Features.Team;
 using WebApp.Server.Infrastructure.Exceptions;
 using WebApp.Server.Services.BackgroundJobLogging;
 
@@ -164,8 +164,19 @@ public class UpdateScheduleAndGameScores
 
     private async Task CreateTeamLookupByAbbreviation(CancellationToken token)
     {
-        var teamList = await _mediator.Send(new GetTeamList.Query(), token);
-        TeamLookupByAbbreviation = teamList.Teams.ToDictionary(key => key.Abbreviation, value => value.TeamId, StringComparer.OrdinalIgnoreCase);
+        var result = await _mediator.Send(new TeamSearch.Query(), token);
+
+        var teamList = result.Match
+        (
+            success => success.Teams,
+            failure =>
+            {
+                AddError("Failed to get Team List");
+                return [];
+            }
+        );
+
+        TeamLookupByAbbreviation = teamList.ToDictionary(key => key.Abbreviation, value => value.TeamId, StringComparer.OrdinalIgnoreCase);
     }
 
     private async Task UpdateGames(ESPNScoreboardModel scoreboard, CancellationToken token)
@@ -207,16 +218,25 @@ public class UpdateScheduleAndGameScores
                 continue;
             }
 
-            var seasonWeek = await _mediator.Send(new GetSeasonWeekByWeekAndWeekType.Query
+            var seasonWeekResult = await _mediator.Send(new SeasonWeekSearch.Query
             {
                 SeasonId = year,
                 Week = week,
                 WeekType = weekType.Value,
             }, token);
 
-            if (seasonWeek == null)
+            var seasonWeek = seasonWeekResult.Match
+            (
+                success => success.SeasonWeeks.FirstOrDefault(),
+                validationProblem =>
+                {
+                    AddError($"Failed to find the SeasonWeek with the following search params; SeasonId: {year} Week: {week} WeekType: {weekType.Value}", validationProblem);
+                    return null;
+                }
+            );
+
+            if (seasonWeek is null)
             {
-                AddError($"Failed to find the SeasonWeek with the following search params; SeasonId: {year} Week: {week} WeekType: {weekType.Value}");
                 continue;
             }
 

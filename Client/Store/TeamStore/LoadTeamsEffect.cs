@@ -22,15 +22,15 @@ public sealed class LoadTeamsEffect : Effect<TeamActions.LoadTeams>
         await _client.GetAsync(new LoadTeamsPlan(action), "api/Team");
     }
 
-    private sealed class LoadTeamsPlan : ApiLoadPlan<GetTeamsResponse>
+    private sealed class LoadTeamsPlan : ApiLoadPlan<TeamSearchResponse>
     {
         public LoadTeamsPlan(TeamActions.LoadTeams action)
             : base(action) { }
 
-        public override JsonTypeInfo<GetTeamsResponse> ResponseJsonContext =>
-            GetTeamsResponseJsonContext.Default.GetTeamsResponse;
+        public override JsonTypeInfo<TeamSearchResponse> ResponseJsonContext =>
+            GetTeamsResponseJsonContext.Default.TeamSearchResponse;
 
-        public override FetchSuccessAction GetSuccessAction(GetTeamsResponse response) =>
+        public override FetchSuccessAction GetSuccessAction(TeamSearchResponse response) =>
             new TeamActions.LoadTeamsSuccess
             {
                 Teams = response.Teams,

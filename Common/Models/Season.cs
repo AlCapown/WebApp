@@ -1,10 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace WebApp.Common.Models;
 
-public record Season
+[ImmutableObject(true)]
+public sealed record Season
 {
     public int SeasonId { get; init; }
     public string Description { get; init; }
