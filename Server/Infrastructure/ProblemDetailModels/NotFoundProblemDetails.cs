@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApp.Server.Infrastructure;
+namespace WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 public sealed class NotFoundProblemDetails : ProblemDetails
 {

@@ -44,7 +44,7 @@ public class Program
             (
                 HttpPolicyExtensions
                     .HandleTransientHttpError()
-                    .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
+                    .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
             );
 
         // Fluxor for state management

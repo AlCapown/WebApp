@@ -13,6 +13,7 @@ using WebApp.Common.Constants;
 using WebApp.Common.Models;
 using WebApp.Database;
 using WebApp.Server.Infrastructure;
+using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Features.GamePrediction;
 
@@ -62,7 +63,7 @@ public static class UpsertGamePrediction
                 .GreaterThan(0)
                 .MustAsync(async (gameId, cancellation) =>
                 {
-                    return await _dbContext.Games.FindAsync(gameId, cancellation) is not null;
+                    return await _dbContext.Games.FindAsync([gameId], cancellation) is not null;
                 }).WithMessage($"Invalid {nameof(Command.GameId)}");
 
             RuleFor(x => x.HomeTeamScore)
@@ -77,7 +78,7 @@ public static class UpsertGamePrediction
                 .NotEmpty()
                 .MustAsync(async (userId, cancellation) =>
                 {
-                    return await _dbContext.AppUsers.FindAsync(userId, cancellation) is not null;
+                    return await _dbContext.AppUsers.FindAsync([userId], cancellation) is not null;
                 }).WithMessage($"Invalid {nameof(Command.UserId)}");
         }
     }
@@ -103,7 +104,7 @@ public static class UpsertGamePrediction
                 return problemDetails;
             }
 
-            var game = await _dbContext.Games.FindAsync(cmd.GameId, cancellationToken);
+            var game = await _dbContext.Games.FindAsync([cmd.GameId], cancellationToken);
 
             if (!cmd.BypassGameStartTimeValidation && game!.StartsOn.HasValue && game.StartsOn.Value < DateTimeOffset.Now)
             {

@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Database;
 
-namespace WebApp.Server.Services.BackgroundJobLogging;
+namespace WebApp.Server.Features.BackgroundJobLogging;
 
 public sealed class CreateBackgroundJobLog
 {

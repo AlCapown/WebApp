@@ -14,6 +14,7 @@ using WebApp.Common.Extensions;
 using WebApp.Common.Models;
 using WebApp.Database;
 using WebApp.Server.Infrastructure;
+using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Features.GamePrediction;
 

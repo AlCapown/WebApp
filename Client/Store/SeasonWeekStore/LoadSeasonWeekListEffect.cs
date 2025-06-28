@@ -23,15 +23,15 @@ public sealed class LoadSeasonWeekListEffect : Effect<SeasonWeekActions.LoadSeas
         await _client.GetAsync(new LoadSeasonWeekListPlan(action), $"api/Season/{action.SeasonId}/Week");
     }
 
-    private sealed class LoadSeasonWeekListPlan : ApiLoadPlan<GetSeasonWeekListResponse>
+    private sealed class LoadSeasonWeekListPlan : ApiLoadPlan<SeasonWeekSearchResponse>
     {
         public LoadSeasonWeekListPlan(SeasonWeekActions.LoadSeasonWeekList action)
             : base(action) { }
 
-        public override JsonTypeInfo<GetSeasonWeekListResponse> ResponseJsonContext =>
-            GetSeasonWeekListResponseJsonContext.Default.GetSeasonWeekListResponse;
+        public override JsonTypeInfo<SeasonWeekSearchResponse> ResponseJsonContext =>
+            GetSeasonWeekListResponseJsonContext.Default.SeasonWeekSearchResponse;
 
-        public override FetchSuccessAction GetSuccessAction(GetSeasonWeekListResponse response)
+        public override FetchSuccessAction GetSuccessAction(SeasonWeekSearchResponse response)
         {
             var action = FetchStartedAction as SeasonWeekActions.LoadSeasonWeekList;
 

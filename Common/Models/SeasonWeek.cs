@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using WebApp.Common.Enums;
@@ -8,7 +7,7 @@ using WebApp.Common.Enums;
 namespace WebApp.Common.Models;
 
 [ImmutableObject(true)]
-public record SeasonWeek
+public sealed record SeasonWeek
 {
     public int SeasonWeekId { get; init; }
     public int SeasonId { get; init; }
@@ -23,22 +22,20 @@ public record SeasonWeek
 [JsonSerializable(typeof(SeasonWeek))]
 public partial class SeasonWeekJsonContext : JsonSerializerContext { }
 
-public record GetSeasonWeekListResponse
+public record SeasonWeekSearchResponse
 {
     public SeasonWeek[] SeasonWeeks { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
-[JsonSerializable(typeof(GetSeasonWeekListResponse))]
+[JsonSerializable(typeof(SeasonWeekSearchResponse))]
 public partial class GetSeasonWeekListResponseJsonContext : JsonSerializerContext { }
 
-public class UpdateSeasonWeekRequest
+[ImmutableObject(true)]
+public sealed record UpdateSeasonWeekRequest
 {
-    [Required]
-    public DateOnly? WeekStart { get; set; }
-
-    [Required]
-    public DateOnly? WeekEnd { get; set; }
+    public DateOnly? WeekStart { get; init; }
+    public DateOnly? WeekEnd { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]

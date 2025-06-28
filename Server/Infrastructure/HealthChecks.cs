@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+﻿#nullable enable
+
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +10,7 @@ using System;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Linq;
+using Microsoft.IdentityModel.Protocols.Configuration;
 
 namespace WebApp.Server.Infrastructure;
 
@@ -15,15 +18,24 @@ public static class HealthChecks
 {
     public static IServiceCollection RegisterHealthChecks(this IServiceCollection services, IConfigurationManager configurationManager)
     {
-        services.AddHealthChecks()
-            .AddSqlServer(
-                connectionString: configurationManager.GetConnectionString("Database"),
+        string sqlConnectionString = configurationManager.GetConnectionString("Database")
+            ?? throw new InvalidConfigurationException("Database connection string is not configured.");
+
+        string hangfireConnectionString = configurationManager.GetConnectionString("HangfireDatabase")
+            ?? throw new InvalidConfigurationException("Hangfire database connection string is not configured.");
+
+        services
+            .AddHealthChecks()
+            .AddSqlServer
+            (
+                connectionString: sqlConnectionString,
                 name: "Database",
                 healthQuery: "SELECT 1;",
                 failureStatus: HealthStatus.Degraded
             )
-            .AddSqlServer(
-                connectionString: configurationManager.GetConnectionString("HangfireDatabase"),
+            .AddSqlServer
+            (
+                connectionString: hangfireConnectionString,
                 name: "Hangfire",
                 healthQuery: "SELECT 1;",
                 failureStatus: HealthStatus.Degraded
@@ -51,7 +63,7 @@ public static class HealthChecks
             await httpContext.Response.WriteAsJsonAsync(new
             {
                 status = healthReport.Status.ToString(),
-                version = Assembly.GetEntryAssembly().GetName().Version.ToString(),
+                version = Assembly.GetEntryAssembly()?.GetName()?.Version?.ToString(),
                 checks = healthReport.Entries.Select(e => new
                 {
                     description = e.Key,

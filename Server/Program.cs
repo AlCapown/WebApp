@@ -21,8 +21,6 @@ using WebApp.Database;
 using WebApp.Database.Tables;
 using WebApp.ExternalIntegrations.ESPN.Service;
 using WebApp.Server.Infrastructure;
-using WebApp.Server.Infrastructure.Exceptions;
-
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -86,9 +84,8 @@ services.RegisterESPNServices();
 services.AddValidatorsFromAssemblyContaining<Program>();
 
 
-// Custom Error Handler
-// TODO: Use new built in Error handler for .Net 8 and use Result pattern.
-services.AddCustomErrorHandlerForModelStateValidation();
+// Exception Handling Middleware
+services.AddExceptionHandler<ApiExceptionHandler>();
 
 // Register HealthChecks
 services.RegisterHealthChecks(configuration);
@@ -227,18 +224,20 @@ services
 
 var app = builder.Build();
 
-//app.Logger.LogInformation("Application Name: {Application}", app.Environment.ApplicationName);
-//app.Logger.LogInformation("Hosting Environment: {Environment}", app.Environment.EnvironmentName);
-//app.Logger.LogInformation("WebApp Sql Connection String: {SQLConnection}", app.Configuration.GetConnectionString("Database"));
-//app.Logger.LogInformation("Hangfire Sql Connection String: {HangfireConnection}", app.Configuration.GetConnectionString("HangfireDatabase"));
-//app.Logger.LogInformation("Redis Connection String: {RedisConnection}", app.Configuration.GetConnectionString("Redis"));
+
+#if DEBUG
+app.Logger.LogInformation("Application Name: {Application}", app.Environment.ApplicationName);
+app.Logger.LogInformation("Hosting Environment: {Environment}", app.Environment.EnvironmentName);
+app.Logger.LogInformation("WebApp Sql Connection String: {SQLConnection}", app.Configuration.GetConnectionString("Database"));
+app.Logger.LogInformation("Hangfire Sql Connection String: {HangfireConnection}", app.Configuration.GetConnectionString("HangfireDatabase"));
+app.Logger.LogInformation("Redis Connection String: {RedisConnection}", app.Configuration.GetConnectionString("Redis"));
+#endif
 
 app.UseForwardedHeaders();
 
 app.UseWhen(x => x.Request.Path.Value.StartsWith("/api", StringComparison.InvariantCultureIgnoreCase), builder =>
 {
-    // TODO: Use result pattern
-    builder.UseExceptionHandler(ApiExceptionHandler.Get());
+    builder.UseExceptionHandler("/");
 });
 
 if (app.Environment.IsDevelopment())

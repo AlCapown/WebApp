@@ -8,7 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Common.Constants;
 using WebApp.Database;
-using WebApp.Server.Infrastructure;
+using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Features.Season;
 
@@ -21,7 +21,7 @@ public static class GetSeasonById
         public int SeasonId { get; init; }
     }
 
-    public class Handler : IRequestHandler<Query, Result>
+    public sealed class Handler : IRequestHandler<Query, Result>
     {
         private readonly WebAppDbContext _dbContext;
 

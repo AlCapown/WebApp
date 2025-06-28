@@ -9,7 +9,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Common.Models;
 using WebApp.Server.Features.Account;
-using WebApp.Server.Infrastructure;
+using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Controllers;
 

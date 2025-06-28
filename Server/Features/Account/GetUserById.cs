@@ -11,6 +11,7 @@ using WebApp.Common.Constants;
 using WebApp.Common.Models;
 using WebApp.Database.Tables;
 using WebApp.Server.Infrastructure;
+using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Features.Account;
 

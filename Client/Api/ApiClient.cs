@@ -188,9 +188,12 @@ public sealed class ApiClient : IApiClient
             {
                 Error = new ApiError
                 {
+                    Title = apiError.Title,
+                    Detail = apiError.Detail,
+                    Status = apiError.Status,
+                    StackTrace = apiError.StackTrace,
+                    TraceId = apiError.TraceId,
                     FetchName = apiLoadPlan.FetchStartedAction.FetchName,
-                    Message = apiError.Message,
-                    StatusCode = apiError.StatusCode,
                     RetryAction = apiLoadPlan.FetchStartedAction
                 }
             });
@@ -199,7 +202,7 @@ public sealed class ApiClient : IApiClient
         return new ApiResponse<TResponse>
         {
             IsSuccess = false,
-            StatusCode = apiError.StatusCode,
+            StatusCode = apiError.Status,
             Response = null
         };
     }
@@ -218,8 +221,8 @@ public sealed class ApiClient : IApiClient
                 HttpStatusCode.ServiceUnavailable => await response.Content.ReadFromJsonAsync(ApiErrorJsonContext.Default.ApiError),
                 HttpStatusCode.Unauthorized => new ApiError
                 {
-                    Message = "Unauthorized",
-                    StatusCode = (int)response.StatusCode
+                    Title = "Unauthorized",
+                    Status = (int)response.StatusCode
                 },
                 _ => UnknownApiErrorOccurred((int)response.StatusCode),
             };
@@ -232,14 +235,14 @@ public sealed class ApiClient : IApiClient
 
     private static ApiError UnknownApiErrorOccurred(int statusCode) => new()
     {
-        Message = "An unknown error occurred.",
-        StatusCode = statusCode
+        Title = "An unknown error occurred.",
+        Status = statusCode
     };
 
     private static ApiError GetApiErrorFromException(Exception exception) => new()
     {
-        Message = exception.Message,
-        StatusCode = 500,
+        Title = exception.Message,
+        Status = 500,
     };
 
     #endregion

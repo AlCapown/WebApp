@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using WebApp.Common.Constants;
 using WebApp.Common.Extensions;
 using WebApp.Database.Tables;
-using WebApp.Server.Infrastructure;
+using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Features.Account;
 

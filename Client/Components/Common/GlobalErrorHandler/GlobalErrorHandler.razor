@@ -87,7 +87,7 @@
     private async Task ShowApiErrorDialog(ApiError apiError)
     {
         var dialogPrams = new DialogParameters<ErrorDialog>();
-        dialogPrams.Add(x => x.Message, apiError.Message);
+        dialogPrams.Add(x => x.Message, apiError.Detail);
         dialogPrams.Add(x => x.IsRetriable, apiError.RetryAction is not null);
         
         var dialog = await DialogService.ShowAsync<ErrorDialog>("Api Error", dialogPrams);

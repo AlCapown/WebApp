@@ -9,12 +9,14 @@ public record ErrorBase { }
 
 public sealed record ApiError : ErrorBase
 {
-    public string Message { get; init; }
-    public int StatusCode { get; init; }
+    public string Title { get; init; }
+    public int Status { get; init; }
+    public string Detail { get; init; }
+    public string TraceId { get; init; }
+    public string StackTrace { get; init; }
     public ImmutableDictionary<string, ImmutableList<string>> Errors { get; init; }
     public string FetchName { get; init; }
     public object RetryAction { get; init; }
-    public string TraceId { get; init; }
 }
 
 public sealed record LocalError : ErrorBase

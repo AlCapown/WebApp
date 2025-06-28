@@ -1,4 +1,6 @@
-﻿using Mediator;
+﻿#nullable enable
+
+using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,8 +9,7 @@ using WebApp.Common.Constants;
 using WebApp.Common.Enums;
 using WebApp.Common.Models;
 using WebApp.Server.Features.Season;
-using WebApp.Server.Features.SeasonService.Command;
-using WebApp.Server.Infrastructure;
+using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Controllers;
 
@@ -24,6 +25,12 @@ public sealed class SeasonController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>
+    /// Retrieves a list of all seasons.
+    /// </summary>
+    /// <returns>
+    /// Returns a 200 OK response with a <see cref="GetSeasonListResponse"/> containing the list of seasons.
+    /// </returns>
     [HttpGet("")]
     [Authorize]
     [ProducesResponseType(typeof(GetSeasonListResponse), StatusCodes.Status200OK)]
@@ -33,20 +40,41 @@ public sealed class SeasonController : ControllerBase
         return Ok(result);
     }
 
+    /// <summary>
+    /// Creates a new season.
+    /// </summary>
+    /// <param name="body">The season creation request payload.</param>
+    /// <returns>
+    /// Returns a 201 Created response on success.
+    /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the request is invalid.
+    /// </returns>
     [HttpPost("")]
-    [ProducesResponseType(typeof(void), StatusCodes.Status201Created)]
     [Authorize(Roles = AppRole.ADMIN)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateSeason([FromBody] CreateSeasonRequest body)
     {
         var result = await _mediator.Send(new CreateSeason.Command
         {
-            SeasonId = body.SeasonId.Value,
+            SeasonId = body.SeasonId,
             Description = body.Description
         }, HttpContext.RequestAborted);
 
-        return CreatedAtAction(nameof(GetSeason), new { seasonId = result }, new CreateSeasonResponse { SeasonId = result });
+        return result.Match<IActionResult>
+        (
+            success => Created(),
+            validation => BadRequest(validation)
+        );
     }
 
+    /// <summary>
+    /// Retrieves a specific season by its ID.
+    /// </summary>
+    /// <param name="seasonId">The unique identifier of the season.</param>
+    /// <returns>
+    /// Returns a 200 OK response with the <see cref="Season"/> if found.
+    /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the season does not exist.
+    /// </returns>
     [HttpGet("{seasonId:int}")]
     [Authorize]
     [ProducesResponseType(typeof(Season), StatusCodes.Status200OK)]
@@ -65,23 +93,49 @@ public sealed class SeasonController : ControllerBase
         );
     }
 
+    /// <summary>
+    /// Updates the details of a specific season.
+    /// </summary>
+    /// <param name="seasonId">The unique identifier of the season to update.</param>
+    /// <param name="body">The updated season data.</param>
+    /// <returns>
+    /// Returns a 204 No Content response on success.
+    /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the request is invalid.
+    /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the season does not exist.
+    /// </returns>
     [HttpPut("{seasonId:int}")]
-    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [Authorize(Roles = AppRole.ADMIN)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateSeason([FromRoute] int seasonId, [FromBody] UpdateSeasonRequest body)
     {
-        await _mediator.Send(new UpdateSeason.Command
+        var result = await _mediator.Send(new UpdateSeason.Command
         {
             SeasonId = seasonId,
             Description = body.Description
         }, HttpContext.RequestAborted);
 
-        return NoContent();
+        return result.Match<IActionResult>
+        (
+            success => NoContent(),
+            validationProblem => BadRequest(validationProblem),
+            notFound => NotFound(notFound)
+        );
     }
 
+    /// <summary>
+    /// Retrieves a list of weeks for a specific season, optionally filtered by week type.
+    /// </summary>
+    /// <param name="seasonId">The unique identifier of the season.</param>
+    /// <param name="weekType">Optional week type filter.</param>
+    /// <returns>
+    /// Returns a 200 OK response with a <see cref="SeasonWeekSearchResponse"/> containing the list of weeks.
+    /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the query is invalid.
+    /// </returns>
     [HttpGet("{seasonId:int}/week")]
     [Authorize]
-    [ProducesResponseType(typeof(GetSeasonWeekListResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(SeasonWeekSearchResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetWeekList([FromRoute] int seasonId, [FromQuery] WeekType? weekType)
     {
@@ -98,6 +152,16 @@ public sealed class SeasonController : ControllerBase
         );
     }
 
+    /// <summary>
+    /// Retrieves a specific week for a season by its ID.
+    /// </summary>
+    /// <param name="seasonId">The unique identifier of the season.</param>
+    /// <param name="seasonWeekId">The unique identifier of the season week.</param>
+    /// <returns>
+    /// Returns a 200 OK response with the <see cref="SeasonWeek"/> if found.
+    /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the update is invalid.
+    /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the week does not exist.
+    /// </returns>
     [HttpGet("{seasonId:int}/week/{SeasonWeekId:int}")]
     [Authorize]
     [ProducesResponseType(typeof(SeasonWeek), StatusCodes.Status200OK)]
@@ -126,19 +190,37 @@ public sealed class SeasonController : ControllerBase
         );
     }
 
+    /// <summary>
+    /// Updates the details of a specific week for a season.
+    /// </summary>
+    /// <param name="seasonId">The unique identifier of the season.</param>
+    /// <param name="seasonWeekId">The unique identifier of the season week to update.</param>
+    /// <param name="request">The updated week data.</param>
+    /// <returns>
+    /// Returns a 204 No Content response on success.
+    /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the request is invalid.
+    /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the week does not exist.
+    /// </returns>
     [HttpPut("{seasonId:int}/week/{SeasonWeekId:int}")]
-    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [Authorize(Roles = AppRole.ADMIN)]
+    [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> UpdateWeek([FromRoute] int seasonId, [FromRoute] int seasonWeekId, [FromBody] UpdateSeasonWeekRequest request)
     {
-        await _mediator.Send(new UpdateWeekForSeason.Command
+        var result = await _mediator.Send(new UpdateWeekForSeason.Command
         {
             SeasonId = seasonId,
             SeasonWeekId = seasonWeekId,
-            WeekStart = request.WeekStart.Value,
-            WeekEnd = request.WeekEnd.Value
+            WeekStart = request.WeekStart,
+            WeekEnd = request.WeekEnd
         }, HttpContext.RequestAborted);
 
-        return NoContent();
+        return result.Match<IActionResult>
+        (
+            success => NoContent(),
+            badRequest => BadRequest(badRequest),
+            notFound => NotFound(notFound)
+        );
     }
 }

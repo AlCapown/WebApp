@@ -18,7 +18,7 @@ using WebApp.Server.Infrastructure;
 
 namespace WebApp.Server.Features.Season;
 
-using Result = OneOf<GetSeasonWeekListResponse, ValidationProblemDetails>;
+using Result = OneOf<SeasonWeekSearchResponse, ValidationProblemDetails>;
 
 public static class SeasonWeekSearch
 {
@@ -66,6 +66,8 @@ public static class SeasonWeekSearch
 
         public async ValueTask<Result> Handle(Query query, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             ValidationProblemDetails? problemDetails = _validator.ValidateRequest(query);
             if (problemDetails is not null)
             {
@@ -82,13 +84,13 @@ public static class SeasonWeekSearch
                     LocalCacheExpiration = TimeSpan.FromMinutes(20),
                     Expiration = TimeSpan.FromMinutes(60),
                 },
-                tags: [CacheTags.SeasonWeek],
+                tags: null,
                 cancellationToken: cancellationToken
             );
 
-            return new GetSeasonWeekListResponse
+            return new SeasonWeekSearchResponse
             {
-                SeasonWeeks = [.. AddFilters(seasonWeeks, query)]
+                SeasonWeeks = [.. Filter(seasonWeeks, query)]
             };
         }
 
@@ -110,7 +112,7 @@ public static class SeasonWeekSearch
                 .ToArrayAsync(token);
         }
 
-        private static IEnumerable<SeasonWeek> AddFilters(IEnumerable<SeasonWeek> seasonWeekQuery, Query query)
+        private static IEnumerable<SeasonWeek> Filter(IEnumerable<SeasonWeek> seasonWeekQuery, Query query)
         {
             if(query.SeasonWeekId.HasValue)
             {

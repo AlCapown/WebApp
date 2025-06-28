@@ -43,7 +43,7 @@ public class ServerSideValidationHandler : ComponentBase, IDisposable
         }
         else
         {
-            UnboundError = error.Message;
+            UnboundError = error.Detail;
         }
 
         CurrentEditContext.NotifyValidationStateChanged();

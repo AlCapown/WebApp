@@ -11,7 +11,7 @@ using WebApp.Common.Extensions;
 using WebApp.Database.Tables;
 using WebApp.Server.Features.Account;
 using WebApp.Server.Features.InviteCode;
-using WebApp.Server.Infrastructure;
+using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Pages.Account;
 

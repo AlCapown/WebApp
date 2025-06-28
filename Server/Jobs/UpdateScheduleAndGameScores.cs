@@ -8,12 +8,10 @@ using System.Threading.Tasks;
 using WebApp.Common.Enums;
 using WebApp.ExternalIntegrations.ESPN.Service.Api;
 using WebApp.ExternalIntegrations.ESPN.Service.Models;
+using WebApp.Server.Features.BackgroundJobLogging;
 using WebApp.Server.Features.Game;
 using WebApp.Server.Features.Season;
-using WebApp.Server.Features.SeasonService.Command;
 using WebApp.Server.Features.Team;
-using WebApp.Server.Infrastructure.Exceptions;
-using WebApp.Server.Services.BackgroundJobLogging;
 
 namespace WebApp.Server.Jobs;
 
@@ -58,16 +56,6 @@ public class UpdateScheduleAndGameScores
         {
             throw;
         }
-        catch (WebAppValidationException ex)
-        {
-            foreach(var error in ex.GetErrors())
-            {
-                foreach(var value in error.Value)
-                {
-                    AddError($"{error.Key}: {value}");
-                }
-            }
-        }
         catch (Exception ex)
         {
             AddError(ex.Message, ex.StackTrace);
@@ -111,13 +99,28 @@ public class UpdateScheduleAndGameScores
 
         int year = league.CalendarStartDate.Year;
 
-        await _mediator.Send(new UpdateSeason.Command
+        var result = await _mediator.Send(new UpdateSeason.Command
         {
             SeasonId = year,
             Description = $"{year}-{year + 1} Football Season",
             SeasonStart = DateOnly.FromDateTime(league.CalendarStartDate),
             SeasonEnd = DateOnly.FromDateTime(league.CalendarEndDate)
         }, token);
+
+        _ = result.Match
+        (
+            success => success,
+            validationProblem =>
+            {
+                AddError($"Failed to update the Season with ID: {year}", validationProblem);
+                return Unit.Value;
+            },
+            notFoundProblem =>
+            {
+                AddError($"Failed to find the Season with ID: {year}");
+                return Unit.Value;
+            }
+        );
     }
 
     private async Task UpdateSeasonWeeks(ESPNScoreboardModel scoreboard, CancellationToken token)
@@ -149,7 +152,7 @@ public class UpdateScheduleAndGameScores
                     continue;
                 }
 
-                await _mediator.Send(new UpsertWeekForSeason.Command
+                var result = await _mediator.Send(new UpsertWeekForSeason.Command
                 {
                     SeasonId = league.CalendarStartDate.Year,
                     Week = week,
@@ -158,6 +161,16 @@ public class UpdateScheduleAndGameScores
                     WeekStart = DateOnly.FromDateTime(entry.StartDate),
                     WeekEnd = DateOnly.FromDateTime(entry.EndDate),
                 }, token);
+
+                result.Match
+                (
+                    success => success,
+                    validationProblem =>
+                    {
+                        AddError($"Failed to upsert the Week for Season with ID: {league.CalendarStartDate.Year} Week: {week} WeekType: {weekType.Value}", validationProblem);
+                        return Unit.Value;
+                    }
+                );
             }
         }
     }

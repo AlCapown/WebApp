@@ -1,4 +1,6 @@
-﻿using System.Collections.Immutable;
+﻿# nullable enable
+
+using System.Collections.Immutable;
 
 namespace WebApp.Server.Infrastructure;
 
@@ -8,21 +10,21 @@ public sealed class MicrosoftPublisherDomainModel
 
     private MicrosoftPublisherDomainModel() 
     {
-        AssociatedApplications = ImmutableList.Create
+        AssociatedApplications = ImmutableArray.Create
         ([
-            new Application 
-            { 
-                ApplicationId = "d0f40251-8829-4625-9129-cb8d1a0c3305" 
+            new Application()
+            {
+                ApplicationId = "d0f40251-8829-4625-9129-cb8d1a0c3305"
             }
         ]);
     }
 
     public static MicrosoftPublisherDomainModel Value => _instance;
 
-    public ImmutableList<Application> AssociatedApplications { get; init; }
+    public ImmutableArray<Application> AssociatedApplications { get; init; }
 
     public sealed record Application
     {
-        public string ApplicationId { get; init; }
+        public required string ApplicationId { get; init; }
     }
 }

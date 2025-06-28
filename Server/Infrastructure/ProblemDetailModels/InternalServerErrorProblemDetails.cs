@@ -3,9 +3,8 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Diagnostics;
 
-namespace WebApp.Server.Infrastructure;
+namespace WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 public sealed class InternalServerErrorProblemDetails : ProblemDetails
 {

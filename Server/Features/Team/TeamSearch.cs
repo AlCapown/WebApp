@@ -73,7 +73,7 @@ public static class TeamSearch
                     LocalCacheExpiration = TimeSpan.FromMinutes(20),
                     Expiration = TimeSpan.FromMinutes(60),
                 },
-                tags: [CacheTags.Team],
+                tags: null,
                 cancellationToken: cancellationToken
             );
 
