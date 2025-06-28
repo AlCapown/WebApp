@@ -1,4 +1,5 @@
 ﻿using Fluxor;
+using System;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
@@ -25,7 +26,7 @@ public sealed class CreateSeasonEffect : Effect<SeasonActions.CreateSeason>
         {
             dispatcher.DispatchFetch(new SeasonActions.LoadSeason
             {
-                SeasonId = result.Response.SeasonId,
+                SeasonId = action.Request.SeasonId.Value,
                 HideLoading = true,
                 DispatchErrorToWindow = false,
                 ForceDispatch = true
@@ -34,18 +35,18 @@ public sealed class CreateSeasonEffect : Effect<SeasonActions.CreateSeason>
     }
 
     private sealed class CreateSeasonPlan 
-        : ApiLoadPlanWithBody<CreateSeasonResponse, CreateSeasonRequest>
+        : ApiLoadPlanWithBody<NoContentResponse, CreateSeasonRequest>
     {
         public CreateSeasonPlan(SeasonActions.CreateSeason action) 
             : base(action) { }
 
-        public override JsonTypeInfo<CreateSeasonResponse> ResponseJsonContext =>
-            CreateSeasonResponseJsonContext.Default.CreateSeasonResponse;
+        public override JsonTypeInfo<NoContentResponse> ResponseJsonContext =>
+            throw new NotImplementedException();
 
         public override JsonTypeInfo<CreateSeasonRequest> BodyJsonContext =>
             CreateSeasonRequestJsonContext.Default.CreateSeasonRequest;
 
-        public override FetchSuccessAction GetSuccessAction(CreateSeasonResponse response) =>
+        public override FetchSuccessAction GetSuccessAction(NoContentResponse response) =>
             new SeasonActions.CreateSeasonSuccess();
 
         public override FetchFailureAction GetFailureAction(ApiError apiError) =>

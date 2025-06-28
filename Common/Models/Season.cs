@@ -40,14 +40,6 @@ public class CreateSeasonRequest
 [JsonSerializable(typeof(CreateSeasonRequest))]
 public partial class CreateSeasonRequestJsonContext : JsonSerializerContext { }
 
-public record CreateSeasonResponse
-{
-    public int SeasonId { get; init; }
-}
-
-[JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
-[JsonSerializable(typeof(CreateSeasonResponse))]
-public partial class CreateSeasonResponseJsonContext : JsonSerializerContext { }
 
 public class UpdateSeasonRequest
 {
