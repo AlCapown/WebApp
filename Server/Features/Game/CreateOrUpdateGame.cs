@@ -84,7 +84,8 @@ public static partial class CreateOrUpdateGame
                 .MustAsync(async (seasonWeekId, cancellation) =>
                 {
                     return await _dbContext.SeasonWeeks.FindAsync([seasonWeekId], cancellation) is not null;
-                }).WithMessage($"Invalid {nameof(Command.SeasonWeekId)}");
+                })
+                .WithMessage($"Invalid {nameof(Command.SeasonWeekId)}");
 
             RuleFor(x => x.StartsOn)
                 .NotEmpty();
@@ -94,7 +95,8 @@ public static partial class CreateOrUpdateGame
                 .MustAsync(async (homeTeamId, cancellation) =>
                 {
                     return await _dbContext.Teams.FindAsync([homeTeamId], cancellation) is not null;
-                }).WithMessage($"Invalid {nameof(Command.HomeTeamId)}");
+                })
+                .WithMessage($"Invalid {nameof(Command.HomeTeamId)}");
 
             RuleFor(x => x.HomeTeamScore)
                 .GreaterThanOrEqualTo(0);
@@ -104,7 +106,8 @@ public static partial class CreateOrUpdateGame
                 .MustAsync(async (awayTeamId, cancellation) =>
                 {
                     return await _dbContext.Teams.FindAsync([awayTeamId], cancellation) is not null;
-                }).WithMessage($"Invalid {nameof(Command.AwayTeamId)}");
+                })
+                .WithMessage($"Invalid {nameof(Command.AwayTeamId)}");
 
             RuleFor(x => x.AwayTeamScore)
                 .GreaterThan(0);

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
-using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -67,8 +67,8 @@ public static class GetGamePrediction
             }
 
             // Should never be calling this command from an unauthenticated context.
-            string userId = _httpContextAccessor.HttpContext?.User.Claims.GetUserId()
-                ?? throw new InvalidOperationException("Current logged in user could not be found.");
+            string? userId = _httpContextAccessor.HttpContext?.User.Claims.GetUserId();
+            Debug.Assert(userId is not null);
 
             var dbResult = await _dbContext.GamePredictions
                 .AsNoTracking()

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
 using System;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Common.Enums;
@@ -19,7 +18,7 @@ using Result = OneOf<Unit, ValidationProblemDetails>;
 
 public static class UpsertWeekForSeason
 {
-    public record Command : IRequest<Result>
+    public sealed record Command : IRequest<Result>
     {
         public int? SeasonId { get; init; }
         public int? Week { get; init; }

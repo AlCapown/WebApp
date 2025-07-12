@@ -16,7 +16,7 @@ namespace WebApp.Server.Features.Account;
 
 using Result = OneOf<AppUser, InternalServerErrorProblemDetails>;
 
-public sealed class CreateUser
+public static class CreateUser
 {
     public sealed record Command : IRequest<Result>
     {
@@ -28,9 +28,9 @@ public sealed class CreateUser
     public sealed class Handler : IRequestHandler<Command, Result>
     {
         private readonly UserManager<AppUser> _userManager;
-        private readonly ILogger<CreateUser> _logger;
+        private readonly ILogger<Handler> _logger;
 
-        public Handler(UserManager<AppUser> userManager, ILogger<CreateUser> logger)
+        public Handler(UserManager<AppUser> userManager, ILogger<Handler> logger)
         {
             _userManager = userManager;
             _logger = logger;

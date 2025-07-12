@@ -67,7 +67,7 @@ public static class TeamSearch
             (
                 key: nameof(TeamSearch),
                 state: (_dbContext),
-                factory: static async (dbContext, token) => await GetTeamListAsync(dbContext, token),
+                factory: static async (dbContext, cancellationToken) => await GetTeamListAsync(dbContext, cancellationToken),
                 options: new HybridCacheEntryOptions
                 {
                     LocalCacheExpiration = TimeSpan.FromMinutes(20),
@@ -83,7 +83,7 @@ public static class TeamSearch
             };
         }
 
-        private static async Task<Common.Models.Team[]> GetTeamListAsync(WebAppDbContext dbContext, CancellationToken token)
+        private static async Task<Common.Models.Team[]> GetTeamListAsync(WebAppDbContext dbContext, CancellationToken cancellationToken)
         {
             return await dbContext.Teams
                 .AsNoTracking()
@@ -97,7 +97,7 @@ public static class TeamSearch
                     Division = x.Division.DivisionName,
                     Conference = x.Division.Conference.ConferenceName
                 })
-                .ToArrayAsync(token);
+                .ToArrayAsync(cancellationToken);
         }
 
         private static IEnumerable<Common.Models.Team> AddFilters(IEnumerable<Common.Models.Team> teams, Query query)

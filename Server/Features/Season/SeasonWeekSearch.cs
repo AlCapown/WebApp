@@ -78,7 +78,7 @@ public static class SeasonWeekSearch
             (
                 key: $"{nameof(SeasonWeekSearch)}_{query.SeasonId}",
                 state: (dbContext: _dbContext, query.SeasonId),
-                factory: static async (state, token) => await GetSeasonWeeksAsync(state.dbContext, state.SeasonId, token),
+                factory: static async (state, cancellationToken) => await GetSeasonWeeksAsync(state.dbContext, state.SeasonId, cancellationToken),
                 options: new HybridCacheEntryOptions
                 {
                     LocalCacheExpiration = TimeSpan.FromMinutes(20),
@@ -94,7 +94,7 @@ public static class SeasonWeekSearch
             };
         }
 
-        private static async Task<SeasonWeek[]> GetSeasonWeeksAsync(WebAppDbContext dbContext, int seasonId,  CancellationToken token)
+        private static async Task<SeasonWeek[]> GetSeasonWeeksAsync(WebAppDbContext dbContext, int seasonId,  CancellationToken cancellationToken)
         {
             return await dbContext.SeasonWeeks
                 .AsNoTracking()
@@ -109,7 +109,7 @@ public static class SeasonWeekSearch
                     WeekStart = x.WeekStart,
                     WeekEnd = x.WeekEnd
                 })
-                .ToArrayAsync(token);
+                .ToArrayAsync(cancellationToken);
         }
 
         private static IEnumerable<SeasonWeek> Filter(IEnumerable<SeasonWeek> seasonWeekQuery, Query query)

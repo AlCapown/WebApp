@@ -11,16 +11,16 @@ using WebApp.Database;
 
 namespace WebApp.Server.Features.BackgroundJobLogging;
 
-public sealed class CreateBackgroundJobLog
+public static class CreateBackgroundJobLog
 {
-    public record Command : IRequest<Unit>
+    public sealed record Command : IRequest<Unit>
     {
         public required string BackgroundJobName { get; set; }
         public DateTimeOffset? Started { get; set; }
         public DateTimeOffset? Ended { get; set; }
         public List<Error> Errors { get; set; } = [];
 
-        public record Error
+        public sealed record Error
         {
             public string? Message { get; set; }
             public IDictionary<string, string[]>? ValidationErrors { get; set; }
@@ -44,7 +44,7 @@ public sealed class CreateBackgroundJobLog
             _dbContext = dbContext;
         }
 
-        public async ValueTask<Unit> Handle (Command command, CancellationToken token)
+        public async ValueTask<Unit> Handle(Command command, CancellationToken token)
         {
             token.ThrowIfCancellationRequested();
 
