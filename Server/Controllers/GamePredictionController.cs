@@ -137,8 +137,6 @@ public sealed class GamePredictionController : ControllerBase
             BypassGameStartTimeValidation = true
         }, HttpContext.RequestAborted);
 
-
-
         return result.Match<IActionResult>
         (
             success => Ok(success),

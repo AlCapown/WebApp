@@ -10,13 +10,13 @@ public sealed class MicrosoftPublisherDomainModel
 
     private MicrosoftPublisherDomainModel() 
     {
-        AssociatedApplications = ImmutableArray.Create
-        ([
+        AssociatedApplications = 
+        [
             new Application()
             {
                 ApplicationId = "d0f40251-8829-4625-9129-cb8d1a0c3305"
             }
-        ]);
+        ];
     }
 
     public static MicrosoftPublisherDomainModel Value => _instance;

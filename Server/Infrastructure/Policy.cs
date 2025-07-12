@@ -46,7 +46,7 @@ public static class Policy
             .AddPolicy(User, policy =>
             {
                 policy.RequireAuthenticatedUser();
-                policy.RequireRole(AppRole.USER);
+                policy.RequireRole(AppRole.USER, AppRole.ADMIN);
             });
 
         return services;

@@ -64,7 +64,8 @@ public static class UpsertGamePrediction
                 .MustAsync(async (gameId, cancellation) =>
                 {
                     return await _dbContext.Games.FindAsync([gameId], cancellation) is not null;
-                }).WithMessage($"Invalid {nameof(Command.GameId)}");
+                })
+                .WithMessage($"Invalid {nameof(Command.GameId)}");
 
             RuleFor(x => x.HomeTeamScore)
                 .NotEmpty()
@@ -79,7 +80,8 @@ public static class UpsertGamePrediction
                 .MustAsync(async (userId, cancellation) =>
                 {
                     return await _dbContext.AppUsers.FindAsync([userId], cancellation) is not null;
-                }).WithMessage($"Invalid {nameof(Command.UserId)}");
+                })
+                .WithMessage($"Invalid {nameof(Command.UserId)}");
         }
     }
 
@@ -116,10 +118,11 @@ public static class UpsertGamePrediction
                 return new ForbiddenProblemDetails("This is not a team you can make a prediction for.");
             }
 
-            var prediction = await _dbContext.GamePredictions
-                .Where(x => x.GameId == cmd.GameId)
-                .Where(x => x.UserId == cmd.UserId)
-                .FirstOrDefaultAsync(cancellationToken);
+            var prediction = await _dbContext.GamePredictions.FirstOrDefaultAsync
+            (
+                x => x.GameId == cmd.GameId && x.UserId == cmd.UserId,
+                cancellationToken
+            );
 
             int? gamePredictionId;
 
