@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -100,9 +99,7 @@ public static class GamePredictionSearch
                 return problemDetails;
             }
 
-            // Should never be calling this command from an unauthenticated context.
-            string userId = _httpContextAccessor.HttpContext?.User.Claims.GetUserId()
-                ?? throw new InvalidOperationException("Current logged in user could not be found.");
+            string? userId = _httpContextAccessor.HttpContext?.User.Claims.GetUserId();
 
             var gamePredictionQuery = _dbContext.GamePredictions
                 .AsNoTracking()

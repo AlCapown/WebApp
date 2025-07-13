@@ -17,10 +17,12 @@ using Serilog;
 using StackExchange.Redis;
 using System;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using WebApp.Database;
 using WebApp.Database.Tables;
 using WebApp.ExternalIntegrations.ESPN.Service;
 using WebApp.Server.Infrastructure;
+using WebApp.Server.Infrastructure.Options;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,6 +36,15 @@ var services = builder.Services;
 var configuration = builder.Configuration;
 var environment = builder.Environment;
 
+// Configure Options
+services.Configure<Authentication>(configuration.GetSection("Authentication"));
+Authentication authenticationConfig = configuration.GetSection("Authentication").Get<Authentication>();
+
+services.Configure<ConnectionStrings>(builder.Configuration.GetSection("ConnectionStrings"));
+ConnectionStrings connectionStrings = configuration.GetSection("ConnectionStrings").Get<ConnectionStrings>();
+
+services.Configure<AzureOpenAI>(builder.Configuration.GetSection("AzureOpenAI"));
+
 // Configure x-forwarded headers
 services
     .Configure<ForwardedHeadersOptions>(options =>
@@ -43,21 +54,24 @@ services
         options.KnownNetworks.Add(IPNetwork.Parse("172.16.0.0/12"));
     });
 
-// Caching
+// Configure Redis as distributed cache
+var redisConnection = ConnectionMultiplexer.Connect(connectionStrings.Redis);
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(redisConnection);
+
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = configuration.GetConnectionString("Redis");
     options.InstanceName = "WebApp";
+    options.ConnectionMultiplexerFactory = () => Task.FromResult<IConnectionMultiplexer>(redisConnection);
 });
 
 builder.Services.AddHybridCache();
-
 
 // Register Data Protection
 services
     .AddDataProtection()
     .SetApplicationName("WebApp")
-    .PersistKeysToStackExchangeRedis(ConnectionMultiplexer.Connect(configuration.GetConnectionString("Redis")));
+    .PersistKeysToStackExchangeRedis(redisConnection);
 
 // Register Controllers with Json Serialization Options
 services
@@ -77,6 +91,9 @@ services.AddMediator(options =>
 {
     options.ServiceLifetime = ServiceLifetime.Scoped;
 });
+
+// AI Services
+services.AddAIServices();
 
 services.RegisterESPNServices();
 
@@ -110,7 +127,7 @@ services
 services
     .AddDbContext<WebAppDbContext>(options =>
     {
-        options.UseSqlServer(configuration.GetConnectionString("Database"), ServerOptions =>
+        options.UseSqlServer(connectionStrings.Database, ServerOptions =>
         {
             ServerOptions.MigrationsAssembly("WebApp.Database");
         });
@@ -155,25 +172,25 @@ services
     })
     .AddMicrosoftAccount(microsoftOptions =>
     {
-        microsoftOptions.ClientId = configuration["Authentication:Microsoft:ClientId"];
-        microsoftOptions.ClientSecret = configuration["Authentication:Microsoft:ClientSecret"];
-        microsoftOptions.AuthorizationEndpoint = configuration["Authentication:Microsoft:AuthorizationEndpoint"];
-        microsoftOptions.TokenEndpoint = configuration["Authentication:Microsoft:TokenEndpoint"];
+        microsoftOptions.ClientId = authenticationConfig.Microsoft.ClientId;
+        microsoftOptions.ClientSecret = authenticationConfig.Microsoft.ClientSecret;
+        microsoftOptions.AuthorizationEndpoint = authenticationConfig.Microsoft.AuthorizationEndpoint;
+        microsoftOptions.TokenEndpoint = authenticationConfig.Microsoft.TokenEndpoint;
         microsoftOptions.UsePkce = true;
     })
     .AddGoogle(googleOptions =>
     {
-        googleOptions.ClientId = configuration["Authentication:Google:ClientId"];
-        googleOptions.ClientSecret = configuration["Authentication:Google:ClientSecret"];
-        googleOptions.AuthorizationEndpoint = configuration["Authentication:Google:AuthorizationEndpoint"];
-        googleOptions.TokenEndpoint = configuration["Authentication:Google:TokenEndpoint"];
+        googleOptions.ClientId = authenticationConfig.Google.ClientId;
+        googleOptions.ClientSecret = authenticationConfig.Google.ClientSecret;
+        googleOptions.AuthorizationEndpoint = authenticationConfig.Google.AuthorizationEndpoint;
+        googleOptions.TokenEndpoint = authenticationConfig.Google.TokenEndpoint;
         googleOptions.UsePkce = true;
     })
     .AddOpenIdConnect("Yahoo", "Yahoo", yahooOptions =>
     {
-        yahooOptions.ClientId = configuration["Authentication:Yahoo:ClientId"];
-        yahooOptions.ClientSecret = configuration["Authentication:Yahoo:ClientSecret"];
-        yahooOptions.Authority = configuration["Authentication:Yahoo:AuthorityEndpoint"];
+        yahooOptions.ClientId = authenticationConfig.Yahoo.ClientId;
+        yahooOptions.ClientSecret = authenticationConfig.Yahoo.ClientSecret;
+        yahooOptions.Authority = authenticationConfig.Yahoo.AuthorityEndpoint;
         yahooOptions.ResponseType = OpenIdConnectResponseType.Code;
         yahooOptions.UsePkce = true;
         yahooOptions.Scope.Add("email");
@@ -228,9 +245,9 @@ var app = builder.Build();
 #if DEBUG
 app.Logger.LogInformation("Application Name: {Application}", app.Environment.ApplicationName);
 app.Logger.LogInformation("Hosting Environment: {Environment}", app.Environment.EnvironmentName);
-app.Logger.LogInformation("WebApp Sql Connection String: {SQLConnection}", app.Configuration.GetConnectionString("Database"));
-app.Logger.LogInformation("Hangfire Sql Connection String: {HangfireConnection}", app.Configuration.GetConnectionString("HangfireDatabase"));
-app.Logger.LogInformation("Redis Connection String: {RedisConnection}", app.Configuration.GetConnectionString("Redis"));
+app.Logger.LogInformation("WebApp Sql Connection String: {SQLConnection}", connectionStrings.Database);
+app.Logger.LogInformation("Hangfire Sql Connection String: {HangfireConnection}", connectionStrings.HangfireDatabase);
+app.Logger.LogInformation("Redis Connection String: {RedisConnection}", connectionStrings.Redis);
 #endif
 
 app.UseForwardedHeaders();

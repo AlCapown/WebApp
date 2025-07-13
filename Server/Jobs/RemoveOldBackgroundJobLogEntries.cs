@@ -7,7 +7,7 @@ using WebApp.Database;
 
 namespace WebApp.Server.Jobs;
 
-public class RemoveOldBackgroundJobLogEntries
+public sealed class RemoveOldBackgroundJobLogEntries
 {
     private readonly WebAppDbContext _dbContext;
 

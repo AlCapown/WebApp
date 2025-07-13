@@ -55,7 +55,7 @@ public sealed class GamePredictionController : ControllerBase
     }
 
     /// <summary>
-    /// Searches for game predictions based on the provided query parameters.
+    /// Searches for user game predictions based on the provided query parameters.
     /// </summary>
     /// <param name="query">The search criteria for filtering game predictions.</param>
     /// <returns>

@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,9 +65,7 @@ public static class GetGamePrediction
                 return problemDetails;
             }
 
-            // Should never be calling this command from an unauthenticated context.
             string? userId = _httpContextAccessor.HttpContext?.User.Claims.GetUserId();
-            Debug.Assert(userId is not null);
 
             var dbResult = await _dbContext.GamePredictions
                 .AsNoTracking()
