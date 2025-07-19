@@ -107,9 +107,9 @@ public partial class SearchGamesResponseJsonContext : JsonSerializerContext { }
 public sealed record GameSummary
 {
     /// <summary>
-    /// The unique identifier for the game AI summary record.
+    /// The unique identifier for the game summary record.
     /// </summary>
-    public int GameAISummaryId { get; init; }
+    public int GameSummaryId { get; init; }
 
     /// <summary>
     /// The identifier for the game.

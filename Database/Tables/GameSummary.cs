@@ -12,7 +12,7 @@ public class GameSummary
     [Key]
     [Required]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int GameAISummaryId { get; set; }
+    public int GameSummaryId { get; set; }
 
     [Required]
     public int GameId { get; set; }
@@ -43,5 +43,9 @@ public class GameAISummaryMap : BaseEntityMap<GameSummary>
             .WithOne(p => p.GameAISummary)
             .HasForeignKey<GameSummary>(p => p.GameId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder
+            .Property(p => p.DateCreated)
+            .HasDefaultValueSql(SqlServerFunctions.SYS_DATETIME_OFFSET);
     }
 }

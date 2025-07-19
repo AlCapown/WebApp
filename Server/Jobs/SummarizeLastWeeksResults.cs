@@ -39,13 +39,16 @@ public sealed class SummarizeLastWeeksResults
         {
             var (lastGameId, secondToLastGameId) = await GetRecentGames(cancellationToken);
 
-            var shouldRun = await ShouldRunJob(lastGameId, cancellationToken);
-
-            if (shouldRun)
+            if (lastGameId.HasValue)
             {
-                var summary = await SummarizeResults(lastGameId, secondToLastGameId, cancellationToken);
+                var shouldRun = await ShouldRunJob(lastGameId.Value, cancellationToken);
 
-                await CreateGameSummary(lastGameId, summary, cancellationToken);
+                if (shouldRun)
+                {
+                    var summary = await SummarizeResults(lastGameId.Value, secondToLastGameId, cancellationToken);
+
+                    await CreateGameSummary(lastGameId.Value, summary, cancellationToken);
+                }
             }
         }
         catch (OperationCanceledException)
@@ -82,7 +85,7 @@ public sealed class SummarizeLastWeeksResults
         return !summaryExists;
     }
 
-    private async Task<(int LastGameId, int SecondToLastGameId)> GetRecentGames(CancellationToken cancellationToken)
+    private async Task<(int? LastGameId, int? SecondToLastGameId)> GetRecentGames(CancellationToken cancellationToken)
     {
         var searchGamesResult = await _mediator.Send(new GameSearch.Query
         {
@@ -93,16 +96,20 @@ public sealed class SummarizeLastWeeksResults
 
         var games = searchGamesResult.Match
         (
-            success => success,
-            validationProblem => throw new InvalidOperationException(validationProblem.Detail)
+            success => success.Games,
+            validationProblem =>
+            {
+                AddError("Failed to search for games.", validationProblem);
+                return [];
+            }
         );
 
-        var ordered = games.Games.OrderBy(x => x.GameStartsOn).ToArray();
+        var ordered = games.OrderBy(x => x.GameStartsOn).ToArray();
 
         return (ordered[^1].GameId, ordered[^2].GameId);
     }
 
-    private async Task<string> SummarizeResults(int LastGameId, int SecondToLastGameId, CancellationToken cancellationToken)
+    private async Task<string> SummarizeResults(int LastGameId, int? SecondToLastGameId, CancellationToken cancellationToken)
     {
         var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
         var history = new ChatHistory();
@@ -145,7 +152,7 @@ public sealed class SummarizeLastWeeksResults
             Summary = summary
         }, cancellationToken);
 
-        result.Match<Unit>
+        result.Match
         (
             success => Unit.Value,
             validationProblem =>

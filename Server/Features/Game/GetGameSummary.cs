@@ -74,7 +74,7 @@ public static class GetGameSummary
                 .Where(x => x.GameId == query.GameId)
                 .Select(x => new GameSummary
                 {
-                    GameAISummaryId = x.GameAISummaryId,
+                    GameSummaryId = x.GameSummaryId,
                     GameId = x.GameId,
                     Summary = x.Summary
                 })

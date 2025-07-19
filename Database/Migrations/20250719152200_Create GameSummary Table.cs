@@ -15,15 +15,15 @@ namespace WebApp.Database.Migrations
                 name: "GameSummary",
                 columns: table => new
                 {
-                    GameAISummaryId = table.Column<int>(type: "int", nullable: false)
+                    GameSummaryId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     GameId = table.Column<int>(type: "int", nullable: false),
                     Summary = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
-                    DateCreated = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET(0)", nullable: false)
+                    DateCreated = table.Column<DateTimeOffset>(type: "DATETIMEOFFSET(0)", nullable: false, defaultValueSql: "SYSDATETIMEOFFSET()")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GameSummary", x => x.GameAISummaryId);
+                    table.PrimaryKey("PK_GameSummary", x => x.GameSummaryId);
                     table.ForeignKey(
                         name: "FK_GameSummary_Game_GameId",
                         column: x => x.GameId,

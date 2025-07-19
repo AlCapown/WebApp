@@ -482,14 +482,16 @@ namespace WebApp.Database.Migrations
 
             modelBuilder.Entity("WebApp.Database.Tables.GameSummary", b =>
                 {
-                    b.Property<int>("GameAISummaryId")
+                    b.Property<int>("GameSummaryId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GameAISummaryId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GameSummaryId"));
 
                     b.Property<DateTimeOffset>("DateCreated")
-                        .HasColumnType("DATETIMEOFFSET(0)");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DATETIMEOFFSET(0)")
+                        .HasDefaultValueSql("SYSDATETIMEOFFSET()");
 
                     b.Property<int>("GameId")
                         .HasColumnType("int");
@@ -499,7 +501,7 @@ namespace WebApp.Database.Migrations
                         .HasMaxLength(2147483647)
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("GameAISummaryId");
+                    b.HasKey("GameSummaryId");
 
                     b.HasIndex("GameId")
                         .IsUnique();
