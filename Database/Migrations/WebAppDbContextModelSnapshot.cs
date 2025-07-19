@@ -439,33 +439,6 @@ namespace WebApp.Database.Migrations
                     b.ToTable("Game");
                 });
 
-            modelBuilder.Entity("WebApp.Database.Tables.GameAISummary", b =>
-                {
-                    b.Property<int>("GameAISummaryId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GameAISummaryId"));
-
-                    b.Property<DateTimeOffset>("DateCreated")
-                        .HasColumnType("DATETIMEOFFSET(0)");
-
-                    b.Property<int>("GameId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Summary")
-                        .IsRequired()
-                        .HasMaxLength(2147483647)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("GameAISummaryId");
-
-                    b.HasIndex("GameId")
-                        .IsUnique();
-
-                    b.ToTable("GameAISummary");
-                });
-
             modelBuilder.Entity("WebApp.Database.Tables.GamePrediction", b =>
                 {
                     b.Property<int>("GamePredictionId")
@@ -505,6 +478,33 @@ namespace WebApp.Database.Migrations
                         .IsUnique();
 
                     b.ToTable("GamePrediction");
+                });
+
+            modelBuilder.Entity("WebApp.Database.Tables.GameSummary", b =>
+                {
+                    b.Property<int>("GameAISummaryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GameAISummaryId"));
+
+                    b.Property<DateTimeOffset>("DateCreated")
+                        .HasColumnType("DATETIMEOFFSET(0)");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("GameAISummaryId");
+
+                    b.HasIndex("GameId")
+                        .IsUnique();
+
+                    b.ToTable("GameSummary");
                 });
 
             modelBuilder.Entity("WebApp.Database.Tables.InviteCode", b =>
@@ -1046,17 +1046,6 @@ namespace WebApp.Database.Migrations
                     b.Navigation("SeasonWeek");
                 });
 
-            modelBuilder.Entity("WebApp.Database.Tables.GameAISummary", b =>
-                {
-                    b.HasOne("WebApp.Database.Tables.Game", "Game")
-                        .WithOne("GameAISummary")
-                        .HasForeignKey("WebApp.Database.Tables.GameAISummary", "GameId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Game");
-                });
-
             modelBuilder.Entity("WebApp.Database.Tables.GamePrediction", b =>
                 {
                     b.HasOne("WebApp.Database.Tables.Game", "Game")
@@ -1072,6 +1061,17 @@ namespace WebApp.Database.Migrations
                         .IsRequired();
 
                     b.Navigation("AppUser");
+
+                    b.Navigation("Game");
+                });
+
+            modelBuilder.Entity("WebApp.Database.Tables.GameSummary", b =>
+                {
+                    b.HasOne("WebApp.Database.Tables.Game", "Game")
+                        .WithOne("GameAISummary")
+                        .HasForeignKey("WebApp.Database.Tables.GameSummary", "GameId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.Navigation("Game");
                 });

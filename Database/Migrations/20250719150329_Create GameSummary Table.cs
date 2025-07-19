@@ -12,7 +12,7 @@ namespace WebApp.Database.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "GameAISummary",
+                name: "GameSummary",
                 columns: table => new
                 {
                     GameAISummaryId = table.Column<int>(type: "int", nullable: false)
@@ -23,9 +23,9 @@ namespace WebApp.Database.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GameAISummary", x => x.GameAISummaryId);
+                    table.PrimaryKey("PK_GameSummary", x => x.GameAISummaryId);
                     table.ForeignKey(
-                        name: "FK_GameAISummary_Game_GameId",
+                        name: "FK_GameSummary_Game_GameId",
                         column: x => x.GameId,
                         principalTable: "Game",
                         principalColumn: "GameId",
@@ -33,8 +33,8 @@ namespace WebApp.Database.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_GameAISummary_GameId",
-                table: "GameAISummary",
+                name: "IX_GameSummary_GameId",
+                table: "GameSummary",
                 column: "GameId",
                 unique: true);
         }
@@ -43,7 +43,7 @@ namespace WebApp.Database.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "GameAISummary");
+                name: "GameSummary");
         }
     }
 }
