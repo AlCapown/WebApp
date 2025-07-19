@@ -50,14 +50,14 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.7.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.7" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.7" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.73.1" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.74.0" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.60.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="OneOf" Version="3.0.271" />
     <PackageReference Include="Scrutor.AspNetCore" Version="3.3.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.8.41" />
+    <PackageReference Include="StackExchange.Redis" Version="2.8.47" />
     <PackageReference Include="System.Text.Encodings.Web" Version="9.0.7" />
     <PackageReference Include="System.Text.Json" Version="9.0.7" />
   </ItemGroup>

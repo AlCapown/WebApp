@@ -47,7 +47,7 @@ public class Game
     public virtual Team HomeTeam { get; set; }
     public virtual Team AwayTeam { get; set; }
     public virtual ICollection<GamePrediction> GamePredictions { get; set; }
-    public virtual GameAISummary GameAISummary { get; set; }
+    public virtual GameSummary GameAISummary { get; set; }
     #endregion
 }
 

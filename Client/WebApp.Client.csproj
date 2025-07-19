@@ -8,6 +8,7 @@
         <PublishTrimmed>true</PublishTrimmed>
         <TrimMode>partial</TrimMode>
         <RunAOTCompilation>false</RunAOTCompilation>
+        <UserSecretsId>94b30ece-280f-4f2e-98e4-a3cab7e5b1b7</UserSecretsId>
     </PropertyGroup>
 
 	<!--<ItemGroup>

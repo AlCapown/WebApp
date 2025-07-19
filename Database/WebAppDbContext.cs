@@ -32,7 +32,7 @@ public sealed class WebAppDbContext : IdentityDbContext<AppUser>
     public DbSet<Season> Seasons { get; set; }
     public DbSet<SeasonWeek> SeasonWeeks { get; set; }
     public DbSet<Game> Games { get; set; }
-    public DbSet<GameAISummary> GameAISummaries { get; set; }
+    public DbSet<GameSummary> GameSummaries { get; set; }
     public DbSet<GamePrediction> GamePredictions { get; set; }
     public DbSet<Team> Teams { get; set; }
     public DbSet<Division> Divisions { get; set; }

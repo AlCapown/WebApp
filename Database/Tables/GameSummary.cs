@@ -6,8 +6,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WebApp.Database.Tables;
 
-[Table(nameof(GameAISummary))]
-public class GameAISummary
+[Table(nameof(GameSummary))]
+public class GameSummary
 {
     [Key]
     [Required]
@@ -30,9 +30,9 @@ public class GameAISummary
     #endregion
 }
 
-public class GameAISummaryMap : BaseEntityMap<GameAISummary>
+public class GameAISummaryMap : BaseEntityMap<GameSummary>
 {
-    protected override void InternalMap(EntityTypeBuilder<GameAISummary> builder)
+    protected override void InternalMap(EntityTypeBuilder<GameSummary> builder)
     {
         builder
             .HasIndex(p => p.GameId)
@@ -41,7 +41,7 @@ public class GameAISummaryMap : BaseEntityMap<GameAISummary>
         builder
             .HasOne(p => p.Game)
             .WithOne(p => p.GameAISummary)
-            .HasForeignKey<GameAISummary>(p => p.GameId)
+            .HasForeignKey<GameSummary>(p => p.GameId)
             .OnDelete(DeleteBehavior.Restrict);
     }
 }

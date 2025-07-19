@@ -34,13 +34,6 @@ public static class ConfigureAIServices
             return kernel;
         });
 
-        services.AddScoped(serviceProvider =>
-        {
-            return serviceProvider
-                .GetRequiredService<Kernel>()
-                .GetRequiredService<IChatCompletionService>();
-        });
-
         return services;
     }
 }

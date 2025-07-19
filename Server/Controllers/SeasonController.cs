@@ -45,7 +45,7 @@ public sealed class SeasonController : ControllerBase
     /// </summary>
     /// <param name="body">The season creation request payload.</param>
     /// <returns>
-    /// Returns a 201 Created response on success.
+    /// Returns a 201 Created response on success. <br/>
     /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the request is invalid.
     /// </returns>
     [HttpPost("")]
@@ -72,7 +72,7 @@ public sealed class SeasonController : ControllerBase
     /// </summary>
     /// <param name="seasonId">The unique identifier of the season.</param>
     /// <returns>
-    /// Returns a 200 OK response with the <see cref="Season"/> if found.
+    /// Returns a 200 OK response with the <see cref="Season"/> if found. <br/>
     /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the season does not exist.
     /// </returns>
     [HttpGet("{seasonId:int}")]
@@ -99,8 +99,8 @@ public sealed class SeasonController : ControllerBase
     /// <param name="seasonId">The unique identifier of the season to update.</param>
     /// <param name="body">The updated season data.</param>
     /// <returns>
-    /// Returns a 204 No Content response on success.
-    /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the request is invalid.
+    /// Returns a 204 No Content response on success. <br/>
+    /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the request is invalid. <br/>
     /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the season does not exist.
     /// </returns>
     [HttpPut("{seasonId:int}")]
@@ -130,7 +130,7 @@ public sealed class SeasonController : ControllerBase
     /// <param name="seasonId">The unique identifier of the season.</param>
     /// <param name="weekType">Optional week type filter.</param>
     /// <returns>
-    /// Returns a 200 OK response with a <see cref="SeasonWeekSearchResponse"/> containing the list of weeks.
+    /// Returns a 200 OK response with a <see cref="SeasonWeekSearchResponse"/> containing the list of weeks. <br/>
     /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the query is invalid.
     /// </returns>
     [HttpGet("{seasonId:int}/week")]
@@ -158,8 +158,8 @@ public sealed class SeasonController : ControllerBase
     /// <param name="seasonId">The unique identifier of the season.</param>
     /// <param name="seasonWeekId">The unique identifier of the season week.</param>
     /// <returns>
-    /// Returns a 200 OK response with the <see cref="SeasonWeek"/> if found.
-    /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the update is invalid.
+    /// Returns a 200 OK response with the <see cref="SeasonWeek"/> if found. <br/>
+    /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the update is invalid. <br/>
     /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the week does not exist.
     /// </returns>
     [HttpGet("{seasonId:int}/week/{SeasonWeekId:int}")]
@@ -197,8 +197,8 @@ public sealed class SeasonController : ControllerBase
     /// <param name="seasonWeekId">The unique identifier of the season week to update.</param>
     /// <param name="request">The updated week data.</param>
     /// <returns>
-    /// Returns a 204 No Content response on success.
-    /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the request is invalid.
+    /// Returns a 204 No Content response on success. <br/>
+    /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the request is invalid. <br/>
     /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the week does not exist.
     /// </returns>
     [HttpPut("{seasonId:int}/week/{SeasonWeekId:int}")]

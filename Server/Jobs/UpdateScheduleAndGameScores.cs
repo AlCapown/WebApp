@@ -28,7 +28,6 @@ public class UpdateScheduleAndGameScores
     {
         _mediator = mediator;
         _espnApi = espnApi;
-
         _logCommand = new CreateBackgroundJobLog.Command
         {
             BackgroundJobName = nameof(UpdateScheduleAndGameScores),
@@ -61,7 +60,7 @@ public class UpdateScheduleAndGameScores
             AddError(ex.Message, ex.StackTrace);
         }
 
-        _ = await _mediator.Send(_logCommand, CancellationToken.None);
+        await _mediator.Send(_logCommand, CancellationToken.None);
         return;
     }
 
