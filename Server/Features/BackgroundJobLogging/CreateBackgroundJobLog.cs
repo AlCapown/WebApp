@@ -15,16 +15,15 @@ public static class CreateBackgroundJobLog
 {
     public sealed record Command : IRequest<Unit>
     {
-        public required string BackgroundJobName { get; set; }
-        public DateTimeOffset? Started { get; set; }
-        public DateTimeOffset? Ended { get; set; }
-        public List<Error> Errors { get; set; } = [];
+        public required string BackgroundJobName { get; init; }
+        public DateTimeOffset? Started { get; init; }
+        public List<Error> Errors { get; init; } = [];
 
         public sealed record Error
         {
-            public string? Message { get; set; }
-            public IDictionary<string, string[]>? ValidationErrors { get; set; }
-            public string? StackTrace { get; set; }
+            public string? Message { get; init; }
+            public IDictionary<string, string[]>? ValidationErrors { get; init; }
+            public string? StackTrace { get; init; }
         }
     }
 
@@ -62,7 +61,7 @@ public static class CreateBackgroundJobLog
                 BackgroundJobName = command.BackgroundJobName,
                 IsSuccess = isSuccess,
                 Started = command.Started,
-                Ended = command.Ended,
+                Ended = DateTimeOffset.Now,
                 ErrorsJson = errorsJson
             };
 

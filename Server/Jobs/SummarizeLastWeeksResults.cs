@@ -62,7 +62,6 @@ public sealed class SummarizeLastWeeksResults
         }
 
         await _mediator.Send(_logCommand, CancellationToken.None);
-        return;
     }
 
     private async Task<bool> ShouldRunJob(int gameId, CancellationToken cancellationToken)
@@ -108,7 +107,12 @@ public sealed class SummarizeLastWeeksResults
 
         var ordered = games.OrderBy(x => x.GameStartsOn).ToArray();
 
-        return (ordered[^1].GameId, ordered[^2].GameId);
+        return ordered.Length switch
+        {
+            > 1 => (ordered[^1].GameId, ordered[^2].GameId),
+            1 => (ordered[0].GameId, null),
+            _ => (null, null)
+        };
     }
 
     private async Task<string> SummarizeResults(int LastGameId, int? SecondToLastGameId, CancellationToken cancellationToken)

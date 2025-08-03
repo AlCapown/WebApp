@@ -5,7 +5,7 @@ public static class SeasonConstants
     /// <summary>
     /// Current Season the WebApp should look at.
     /// </summary>
-    public const int CURRENT_SEASON_ID = 2024;
+    public const int CURRENT_SEASON_ID = 2025;
     
     /// <summary>
     /// Current Team the WebApp should use for predictions.

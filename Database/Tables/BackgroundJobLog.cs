@@ -34,8 +34,6 @@ public class BackgroundJobLogMap : BaseEntityMap<BackgroundJobLog>
 {
     protected override void InternalMap(EntityTypeBuilder<BackgroundJobLog> builder)
     {
-        builder
-            .Property(p => p.Ended)
-            .HasDefaultValueSql(SqlServerFunctions.SYS_DATETIME_OFFSET);
+
     }
 }

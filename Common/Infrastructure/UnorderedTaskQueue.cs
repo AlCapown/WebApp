@@ -36,7 +36,7 @@ public sealed class UnorderedTaskQueue : IDisposable
 
     public void Dispose()
     {
-        if(!_disposed)
+        if (!_disposed)
         {
             _disposed = true;
             _semaphore.Dispose();
