@@ -47,7 +47,7 @@
 
     [Parameter]
     [EditorRequired]
-    public List<TeamRecord> TeamRecords {get; set;}
+    public IReadOnlyList<TeamRecord> TeamRecords { get; set; }
 
     private List<TeamRecord> OrderedTeamRecordsForDivision => TeamRecords
         .Where(x => x.Division == Division)

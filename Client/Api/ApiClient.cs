@@ -151,7 +151,6 @@ public sealed class ApiClient : IApiClient
         };
     }
 
-
     private async Task<ApiResponse<TResponse>> HandleApiFailure<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, HttpResponseMessage response)
         where TResponse : class
     {
@@ -242,6 +241,7 @@ public sealed class ApiClient : IApiClient
     private static ApiError GetApiErrorFromException(Exception exception) => new()
     {
         Title = exception.Message,
+        StackTrace = exception.StackTrace,
         Status = 500,
     };
 

@@ -7,7 +7,7 @@
 @using WebApp.Client.Store.Shared
 @using WebApp.Client.Common.Extensions
 @using WebApp.Client.Components.CurrentWeekPredictions
-
+@using WebApp.Client.Components.GameSummary
 
 @page "/"
 @attribute [Authorize]
@@ -23,6 +23,9 @@
             </MudItem>
             <MudItem xs="12">
                 <CurrentWeekPredictions SeasonId="SeasonConstants.CURRENT_SEASON_ID" TeamId="SeasonConstants.CURRENT_TEAM_ID" />
+            </MudItem>
+            <MudItem xs="12">
+                <GameSummary GameId="6262" />
             </MudItem>
             <MudItem xs="12">
                 <GamePredictionsTable SeasonId="SeasonConstants.CURRENT_SEASON_ID" TeamId="SeasonConstants.CURRENT_TEAM_ID" UserId="@CurrentUserId" />

@@ -10,33 +10,35 @@
 
 <MudGrid Justify="Justify.FlexStart">
     <MudItem xs="12" sm="6" lg="5">
-        <DivisionalTable Division="NFC NORTH" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+        <DivisionalTable Division="NFC NORTH" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
     <MudItem xs="12" sm="6" lg="5">
-        <DivisionalTable Division="NFC EAST" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+        <DivisionalTable Division="NFC EAST" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
     <MudItem xs="12" sm="6" lg="5">
-        <DivisionalTable Division="NFC SOUTH" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+        <DivisionalTable Division="NFC SOUTH" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
     <MudItem xs="12" sm="6" lg="5">
-        <DivisionalTable Division="NFC WEST" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+        <DivisionalTable Division="NFC WEST" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
     <MudItem xs="12" sm="6" lg="5">
-        <DivisionalTable Division="AFC NORTH" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+        <DivisionalTable Division="AFC NORTH" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
     <MudItem xs="12" sm="6" lg="5">
-        <DivisionalTable Division="AFC EAST" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+        <DivisionalTable Division="AFC EAST" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
     <MudItem xs="12" sm="6" lg="5">
-        <DivisionalTable Division="AFC SOUTH" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+        <DivisionalTable Division="AFC SOUTH" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
     <MudItem xs="12" sm="6" lg="5">
-        <DivisionalTable Division="AFC WEST" TeamRecords=@GetTeamRecords() DisplayLoading=@IsLoading() />
+        <DivisionalTable Division="AFC WEST" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
 </MudGrid>
 
 @code 
 {
+    private IReadOnlyList<TeamRecord> TeamRecords { get; set; } = [];
+
     protected override void OnInitialized()
     {
         MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
@@ -46,13 +48,22 @@
 
         MaybeDispatchAndTrack(new TeamActions.LoadTeams());
 
+        ComputeTeamRecords();
+
         base.OnInitialized();
     }
 
-    private List<TeamRecord> GetTeamRecords()
+    protected override void OnAfterRender(bool firstRender)
+    {
+        ComputeTeamRecords();
+
+        base.OnAfterRender(firstRender);
+    }
+
+    private void ComputeTeamRecords()
     {
         // TODO: Track division wins for tie breaking
-        
+
         var games = GameState.Value.Games.Values
             .Where(x => x.SeasonId == SeasonConstants.CURRENT_SEASON_ID)
             .Where(x => x.IsComplete)
@@ -87,19 +98,21 @@
                 Ties = g is null ? 0 : g.HomeTeamScore == g.AwayTeamScore ? 1 : 0,
                 Losses = g is null ? 0 : g.HomeTeamScore > g.AwayTeamScore ? 1 : 0
             };
-             
+
         TeamRecord[] allScores = [..scoresAsHomeTeam, ..scoresAsAwayTeam];
 
-        return (from s in allScores
-                group s by s.TeamId into teamGroup
-                select new TeamRecord
-                {
-                    TeamId = teamGroup.Key,
-                    TeamName = teamGroup.Max(x => x.TeamName),
-                    Division = teamGroup.Max(x => x.Division),
-                    Wins = teamGroup.Sum(x => x.Wins),
-                    Ties = teamGroup.Sum(x => x.Ties),
-                    Losses = teamGroup.Sum(x => x.Losses)
-                }).ToList();
+        var result = from s in allScores
+                     group s by s.TeamId into teamGroup
+                     select new TeamRecord
+                     {
+                         TeamId = teamGroup.Key,
+                         TeamName = teamGroup.Max(x => x.TeamName),
+                         Division = teamGroup.Max(x => x.Division),
+                         Wins = teamGroup.Sum(x => x.Wins),
+                         Ties = teamGroup.Sum(x => x.Ties),
+                         Losses = teamGroup.Sum(x => x.Losses)
+                     };
+
+        TeamRecords = [..result];
     }
 }

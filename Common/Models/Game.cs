@@ -89,6 +89,11 @@ public sealed record Game
     /// Indicates whether the game has been completed.
     /// </summary>
     public bool IsComplete { get; init; }
+
+    /// <summary>
+    /// Indicates whether the game has an summary recap of the user predictions.
+    /// </summary>
+    public bool HasSummary { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]

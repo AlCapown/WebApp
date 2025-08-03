@@ -9,6 +9,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using WebApp.Common.Enums;
 using WebApp.Common.Models;
 using WebApp.Database;
 using WebApp.Server.Infrastructure;
@@ -56,6 +57,11 @@ public static class GameSearch
         /// Optional. If provided, only games matching the specified completion status will be included.
         /// </summary>
         public bool? IsGameComplete { get; init; }
+
+        /// <summary>
+        /// Optional filter for the type of week in which the games were played.
+        /// </summary>
+        public WeekType? WeekType { get; init; }
     }
 
     public sealed class SearchGameValidator : AbstractValidator<Query> 
@@ -77,6 +83,10 @@ public static class GameSearch
             RuleFor(x => x.GameStartsOnMin)
                 .LessThan(x => x.GameStartsOnMax)
                 .When(x => x.GameStartsOnMin.HasValue && x.GameStartsOnMax.HasValue);
+
+            RuleFor(x => x.WeekType)
+                .IsInEnum()
+                .When(x => x.WeekType.HasValue);
         }
     }
 
@@ -120,7 +130,8 @@ public static class GameSearch
                     AwayTeamScore = g.AwayTeamScore,
                     ClockTime = g.ClockTime,
                     Quarter = g.Quarter,
-                    IsComplete = g.IsComplete
+                    IsComplete = g.IsComplete,
+                    HasSummary = g.GameAISummary != null,
                 };
 
             gameQuery = AddFilters(gameQuery, query);
@@ -163,6 +174,11 @@ public static class GameSearch
             if (query.IsGameComplete.HasValue)
             {
                 gameQuery = gameQuery.Where(x => x.IsComplete == query.IsGameComplete.Value);
+            }
+
+            if (query.WeekType.HasValue)
+            {
+                gameQuery = gameQuery.Where(x => x.SeasonWeekTypeName == query.WeekType.Value);
             }
 
             return gameQuery;

@@ -1,28 +1,30 @@
 ﻿@using WebApp.Client.Common.Extensions
 @using WebApp.Client.Components.Common.LoadingWrapper
 @using WebApp.Client.Components.Common.WebAppComponentBase
-@using WebApp.Client.Store.GameStore
+@using WebApp.Client.Store.GameSummaryStore
 @using WebApp.Client.Store.GamePredictionStore
-@using WebApp.Client.Store.SeasonWeekStore
+@using WebApp.Client.Store.GameStore
 @using WebApp.Common.Enums
 @using WebApp.Common.Models
 
 @inherits WebAppComponentBase
 
+@inject IState<GameSummaryState> GameSummaryState
 @inject IState<GameState> GameState
 @inject IState<GamePredictionState> GamePredictionState
-@inject IState<SeasonWeekState> SeasonWeekState
-
 
 <div class="wa_table__container">
     <div class="wa_table__header">
-        <MudText Typo="@Typo.h6">@("This Week's Predictions")</MudText>
+        <MudText Typo="@Typo.h6">@("Prediction Recap")</MudText>
         <MudText Typo="@Typo.subtitle1">@Subtitle()</MudText>
         <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 15px 0px;" />
     </div>
-    <SkeletonLoadingWrapper IsLoading=@IsLoading() Width="100%" Height="20rem">
+    <SkeletonLoadingWrapper IsLoading=@IsLoading() Width="100%" Height="5rem">
+        <MudText Typo="Typo.body1" Style="padding-bottom: 2rem; text-indent: 1.5rem;">
+            @GetGameSummary()
+        </MudText>
         <div class="wa_table__overflowContainer">
-            <MudTable T="CurrentWeekPredictionsTableItem" Items="@GetTableItems()" Hover="true" Breakpoint="Breakpoint.None" Dense="true" Class="wa_table__mudOverrides">
+            <MudTable T="PredictionsTableItem" Items="@GetTableItems()" Hover="true" Breakpoint="Breakpoint.None" Dense="true" Class="wa_table__mudOverrides">
                 <HeaderContent>
                     <MudTh><MudText Typo="Typo.subtitle2">@("User")</MudText></MudTh>
                     <MudTh><MudText Typo="Typo.subtitle2">@("Predict")</MudText></MudTh>
@@ -42,7 +44,7 @@
                     </MudTd>
                     <MudTd DataLabel="@("Actual")">
                         <MudText Typo="Typo.body2">@($"{context.AwayTeamName} - {context.ActualAwayTeamScore}")</MudText>
-                        <MudText Typo="Typo.body2">@("@")</MudText>
+                        <MudText Typo="Typo.body2">@("@")</MudText> 
                         <MudText Typo="Typo.body2">@($"{context.HomeTeamName} - {context.ActualHomeTeamScore}")</MudText>
                     </MudTd>
                     <MudTd DataLabel="@("Score")">
@@ -59,67 +61,52 @@
 
 @code 
 {
-
     [Parameter, EditorRequired]
-    public int SeasonId { get; set; }
+    public int GameId { get; set; }
 
-    [Parameter, EditorRequired]
-    public int TeamId { get; set; }
+    private string GetGameSummary() =>
+        GameSummaryState.Value.GameSummaries.GetValueOrDefault(GameId)?.Summary ?? string.Empty;
+
+    private string Subtitle()
+    {
+        var game = GameState.Value.Games.GetValueOrDefault(GameId);
+
+        if (game is null)
+        {
+            return string.Empty;
+        }
+
+        return $"{game.AwayTeamName} @ {game.HomeTeamName} - {game.GameStartsOn?.ToString("dddd MM/dd")}";
+    }
 
     protected override void OnInitialized()
-    {
-        MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
-        {
-            SeasonId = SeasonId,
-            TeamId = TeamId
-        });
-
+    {    
         MaybeDispatchAndTrack(new GamePredictionActions.GamePredictionSearch
         {
-            SeasonId = SeasonId,
-            TeamId = TeamId,
-        });
-
-        MaybeDispatchAndTrack(new SeasonWeekActions.LoadSeasonWeekList
-        {
-            SeasonId = SeasonId,
+            GameId = GameId,
         });
 
         base.OnInitialized();
     }
 
-    private string Subtitle()
+    protected override void OnAfterRender(bool firstRender)
     {
-        var nextGame = GetNextGame();
-
-        if (nextGame is null)
+        if (GameState.Value.Games.GetValueOrDefault(GameId)?.HasSummary ?? false)
         {
-            return string.Empty;
+            MaybeDispatchAndTrack(new GameSummaryActions.LoadGameSummary
+            {
+                GameId = GameId,
+            });
         }
 
-        return $"{nextGame.AwayTeamName} @ {nextGame.HomeTeamName} - {nextGame.GameStartsOn?.ToString("dddd MM/dd")}";
+        base.OnAfterRender(firstRender);
     }
 
-    private Game GetNextGame()
+    private List<PredictionsTableItem> GetTableItems()
     {
-        var todaysDate = DateOnly.FromDateTime(DateTime.Now);
+        var gameToRecap = GameState.Value.Games.GetValueOrDefault(GameId);
 
-        return
-            (from game in GameState.Value.Games.Values
-             from week in SeasonWeekState.Value.Weeks.Values
-             where game.SeasonWeekId == week.SeasonWeekId
-             where game.SeasonId == SeasonId
-             where game.SeasonWeekTypeName == WeekType.RegularSeason
-             where game.HomeTeamId == TeamId || game.AwayTeamId == TeamId
-             where todaysDate >= week.WeekStart && todaysDate <= week.WeekEnd
-             select game).OrderByDescending(x => x.GameStartsOn).FirstOrDefault();
-    }
-
-    private List<CurrentWeekPredictionsTableItem> GetTableItems()
-    {
-        var nextGame = GetNextGame();
-
-        if (nextGame is null)
+        if (gameToRecap is null)
         {
             return [];
         }
@@ -131,8 +118,8 @@
            (from game in games
             from gamePrediction in gamePredictions
             where game.GameId == gamePrediction.GameId
-            where game.GameId == nextGame.GameId
-            select new CurrentWeekPredictionsTableItem
+            where game.GameId == gameToRecap.GameId
+            select new PredictionsTableItem
             {
                 FirstName = gamePrediction.FirstName,
                 LastName = gamePrediction.LastName,
@@ -158,7 +145,7 @@
             .ToList();
     }
 
-    private record CurrentWeekPredictionsTableItem 
+    private record PredictionsTableItem
     {
         public string FirstName { get; init; }
         public string LastName { get; init; }

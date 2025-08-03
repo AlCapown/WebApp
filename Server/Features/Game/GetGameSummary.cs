@@ -69,7 +69,7 @@ public static class GetGameSummary
                 return problemDetails;
             }
 
-            var gameAISummary = await _dbContext.GameSummaries
+            var gameSummary = await _dbContext.GameSummaries
                 .AsNoTracking()
                 .Where(x => x.GameId == query.GameId)
                 .Select(x => new GameSummary
@@ -80,12 +80,12 @@ public static class GetGameSummary
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 
-            if (gameAISummary is null)
+            if (gameSummary is null)
             {
                 return new NotFoundProblemDetails($"No summary found for game with ID {query.GameId}.");
             }
 
-            return gameAISummary;
+            return gameSummary;
         }
     }
 }

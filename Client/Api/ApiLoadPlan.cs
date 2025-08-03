@@ -1,4 +1,6 @@
-﻿using System.Text.Json.Serialization.Metadata;
+﻿#nullable enable
+
+using System.Text.Json.Serialization.Metadata;
 using WebApp.Client.Store.Shared;
 using WebApp.Common.Models;
 
@@ -11,7 +13,7 @@ public abstract class ApiLoadPlan<TResponse>
 
     public abstract JsonTypeInfo<TResponse> ResponseJsonContext { get; }
 
-    public ApiLoadPlan(FetchStartedAction fetchStartedAction)
+    protected ApiLoadPlan(FetchStartedAction fetchStartedAction)
     {
         FetchStartedAction = fetchStartedAction;
     }
@@ -26,7 +28,6 @@ public abstract class ApiLoadPlanWithBody<TResponse, TBody> : ApiLoadPlan<TRespo
 {
     public abstract JsonTypeInfo<TBody> BodyJsonContext { get; }
 
-    public ApiLoadPlanWithBody(FetchStartedAction fetchStartedAction) 
-        : base(fetchStartedAction) { }
+    protected ApiLoadPlanWithBody(FetchStartedAction fetchStartedAction) : base(fetchStartedAction) { }
 }
 

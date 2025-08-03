@@ -8,6 +8,7 @@
 @using WebApp.Common.Models
 
 @inherits WebAppComponentBase
+
 @inject NavigationManager Navigation
 @inject IState<GameState> GameState
 @inject IState<GamePredictionState> GamePredictionState
@@ -87,6 +88,8 @@
             SeasonId = SeasonId,
             TeamId = TeamId
         });
+
+        ComputeLeaderboardItems();
 
         base.OnInitialized();
     }

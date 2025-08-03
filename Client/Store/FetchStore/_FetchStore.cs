@@ -1,7 +1,6 @@
 ﻿using Fluxor;
 using System;
 using System.Collections.Immutable;
-using System.Diagnostics.CodeAnalysis;
 using WebApp.Common.Models;
 
 namespace WebApp.Client.Store.FetchStore;

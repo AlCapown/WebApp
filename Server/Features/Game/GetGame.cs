@@ -76,7 +76,8 @@ public static class GetGame
                     AwayTeamScore = g.AwayTeamScore,
                     ClockTime = g.ClockTime,
                     Quarter = g.Quarter,
-                    IsComplete = g.IsComplete
+                    IsComplete = g.IsComplete,
+                    HasSummary = g.GameAISummary != null,
                 })
                 .FirstOrDefaultAsync(cancellationToken);
 

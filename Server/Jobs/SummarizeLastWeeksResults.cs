@@ -10,6 +10,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Common.Constants;
+using WebApp.Common.Enums;
 using WebApp.Server.Features.BackgroundJobLogging;
 using WebApp.Server.Features.Game;
 using WebApp.Server.OpenAIPlugins;
@@ -71,18 +72,18 @@ public sealed class SummarizeLastWeeksResults
             GameId = gameId
         }, cancellationToken);
 
-        bool summaryExists = gameSummaryResult.Match
+        bool shouldRunJob = gameSummaryResult.Match
         (
-            success => true,
+            success => false,
             validationProblem =>
             {
                 AddError("Failed to query game summaries.", validationProblem);
-                return true;
+                return false;
             },
-            notFound => false
+            notFound => true
         );
 
-        return !summaryExists;
+        return shouldRunJob;
     }
 
     private async Task<(int? LastGameId, int? SecondToLastGameId)> GetRecentGames(CancellationToken cancellationToken)
@@ -92,6 +93,7 @@ public sealed class SummarizeLastWeeksResults
             SeasonId = SeasonConstants.CURRENT_SEASON_ID,
             TeamId = SeasonConstants.CURRENT_TEAM_ID,
             IsGameComplete = true,
+            WeekType = WeekType.RegularSeason,
         }, cancellationToken);
 
         var games = searchGamesResult.Match
