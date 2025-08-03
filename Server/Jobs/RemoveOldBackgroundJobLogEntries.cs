@@ -21,7 +21,7 @@ public sealed class RemoveOldBackgroundJobLogEntries
         _mediator = mediator;
         _logCommand = new CreateBackgroundJobLog.Command
         {
-            BackgroundJobName = nameof(UpdateScheduleAndGameScores),
+            BackgroundJobName = nameof(RemoveOldBackgroundJobLogEntries),
             Started = DateTimeOffset.Now
         };
     }
