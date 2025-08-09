@@ -9,19 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="C:\Users\kyle6\.nuget\packages\aspnetcore.sasscompiler\1.80.6\build\..\runtimes\linux-arm64\src\dart" />
-    <None Remove="C:\Users\kyle6\.nuget\packages\aspnetcore.sasscompiler\1.80.6\build\..\runtimes\linux-arm64\src\sass.snapshot" />
-    <None Remove="C:\Users\kyle6\.nuget\packages\aspnetcore.sasscompiler\1.80.6\build\..\runtimes\linux-x64\src\dart" />
-    <None Remove="C:\Users\kyle6\.nuget\packages\aspnetcore.sasscompiler\1.80.6\build\..\runtimes\linux-x64\src\sass.snapshot" />
-    <None Remove="C:\Users\kyle6\.nuget\packages\aspnetcore.sasscompiler\1.80.6\build\..\runtimes\osx-arm64\src\dart" />
-    <None Remove="C:\Users\kyle6\.nuget\packages\aspnetcore.sasscompiler\1.80.6\build\..\runtimes\osx-arm64\src\sass.snapshot" />
-    <None Remove="C:\Users\kyle6\.nuget\packages\aspnetcore.sasscompiler\1.80.6\build\..\runtimes\osx-x64\src\dart" />
-    <None Remove="C:\Users\kyle6\.nuget\packages\aspnetcore.sasscompiler\1.80.6\build\..\runtimes\osx-x64\src\sass.snapshot" />
-    <None Remove="C:\Users\kyle6\.nuget\packages\aspnetcore.sasscompiler\1.80.6\build\..\runtimes\win-x64\src\dart.exe" />
-    <None Remove="C:\Users\kyle6\.nuget\packages\aspnetcore.sasscompiler\1.80.6\build\..\runtimes\win-x64\src\sass.snapshot" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
     <PackageReference Include="AspNetCore.SassCompiler" Version="1.89.2" />
     <PackageReference Include="Azure.Identity" Version="1.14.2" />
@@ -31,25 +18,25 @@
     <PackageReference Include="Hangfire.AspNetCore" Version="1.8.20" />
     <PackageReference Include="Hangfire.Core" Version="1.8.20" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.20" />
-    <PackageReference Include="Mediator.Abstractions" Version="3.0.0-preview.65" />
-    <PackageReference Include="Mediator.SourceGenerator" Version="3.0.0-preview.65">
+    <PackageReference Include="Mediator.Abstractions" Version="3.0.1" />
+    <PackageReference Include="Mediator.SourceGenerator" Version="3.0.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="9.0.7" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.7" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.7">
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.DataProtection.StackExchangeRedis" Version="9.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.8">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.7.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.7" />
-    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.7" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.8" />
     <PackageReference Include="Microsoft.Identity.Client" Version="4.74.1" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.61.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
@@ -58,8 +45,8 @@
     <PackageReference Include="Scrutor.AspNetCore" Version="3.3.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.8.58" />
-    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.7" />
-    <PackageReference Include="System.Text.Json" Version="9.0.7" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="9.0.8" />
+    <PackageReference Include="System.Text.Json" Version="9.0.8" />
   </ItemGroup>
 
   <ItemGroup>
