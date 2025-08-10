@@ -83,7 +83,7 @@ public static class CreateGameSummary
             bool conflict = await _dbContext.GameSummaries
                 .AsNoTracking()
                 .Where(x => x.GameId == command.GameId)
-                .FirstOrDefaultAsync(cancellationToken) is not null;
+                .AnyAsync(cancellationToken);
 
             if (conflict)
             {

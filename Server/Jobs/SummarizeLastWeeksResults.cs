@@ -160,7 +160,7 @@ public sealed class SummarizeLastWeeksResults
 
         result.Match
         (
-            success => Unit.Value,
+            success => success,
             validationProblem =>
             {
                 AddError("Failed to create game summary.", validationProblem);

@@ -38,7 +38,7 @@ public static class TeamSearch
 
             RuleFor(x => x.Abbreviation)
                 .MaximumLength(3)
-                .When(x => !x.Abbreviation.IsNullOrWhiteSpace());
+                .When(x => x.Abbreviation is not null);
         }
     }
 
@@ -68,11 +68,7 @@ public static class TeamSearch
                 key: nameof(TeamSearch),
                 state: (_dbContext),
                 factory: static async (dbContext, cancellationToken) => await GetTeamListAsync(dbContext, cancellationToken),
-                options: new HybridCacheEntryOptions
-                {
-                    LocalCacheExpiration = TimeSpan.FromMinutes(20),
-                    Expiration = TimeSpan.FromMinutes(60),
-                },
+                options: CacheOptions.STANDARD_L20_D60,
                 tags: null,
                 cancellationToken: cancellationToken
             );

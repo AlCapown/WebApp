@@ -79,11 +79,7 @@ public static class SeasonWeekSearch
                 key: $"{nameof(SeasonWeekSearch)}_{query.SeasonId}",
                 state: (dbContext: _dbContext, query.SeasonId),
                 factory: static async (state, cancellationToken) => await GetSeasonWeeksAsync(state.dbContext, state.SeasonId, cancellationToken),
-                options: new HybridCacheEntryOptions
-                {
-                    LocalCacheExpiration = TimeSpan.FromMinutes(20),
-                    Expiration = TimeSpan.FromMinutes(60),
-                },
+                options: CacheOptions.STANDARD_L20_D60,
                 tags: null,
                 cancellationToken: cancellationToken
             );
