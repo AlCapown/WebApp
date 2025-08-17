@@ -1,5 +1,6 @@
 ﻿using Fluxor;
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
@@ -34,14 +35,10 @@ public sealed class CreateSeasonEffect : Effect<SeasonActions.CreateSeason>
         }
     }
 
-    private sealed class CreateSeasonPlan 
-        : ApiLoadPlanWithBody<NoContentResponse, CreateSeasonRequest>
+    private sealed class CreateSeasonPlan : ApiLoadPlanWithBodyNoContent<CreateSeasonRequest>
     {
         public CreateSeasonPlan(SeasonActions.CreateSeason action) 
             : base(action) { }
-
-        public override JsonTypeInfo<NoContentResponse> ResponseJsonContext =>
-            throw new NotImplementedException();
 
         public override JsonTypeInfo<CreateSeasonRequest> BodyJsonContext =>
             CreateSeasonRequestJsonContext.Default.CreateSeasonRequest;

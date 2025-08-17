@@ -33,8 +33,7 @@ public sealed class CreateGamePredictionForUserEffect : Effect<GamePredictionAct
         }
     }
 
-    private sealed class CreateGamePredictionForUserPlan 
-        : ApiLoadPlanWithBody<CreateGamePredictionResponse, CreateGamePredictionRequest>
+    private sealed class CreateGamePredictionForUserPlan : ApiLoadPlanWithBody<CreateGamePredictionResponse, CreateGamePredictionRequest>
     {
         public CreateGamePredictionForUserPlan(GamePredictionActions.CreateGamePredictionForUser action) 
             : base(action) { }

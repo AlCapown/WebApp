@@ -33,14 +33,9 @@ public sealed class UpdateSeasonEffect : Effect<SeasonActions.UpdateSeason>
         }
     }
 
-    private sealed class UpdateSeasonPlan 
-        : ApiLoadPlanWithBody<NoContentResponse, UpdateSeasonRequest>
+    private sealed class UpdateSeasonPlan : ApiLoadPlanWithBodyNoContent<UpdateSeasonRequest>
     {
-        public UpdateSeasonPlan(SeasonActions.UpdateSeason action) 
-            : base(action) { }
-
-        public override JsonTypeInfo<NoContentResponse> ResponseJsonContext =>
-            throw new NotImplementedException();
+        public UpdateSeasonPlan(SeasonActions.UpdateSeason action) : base(action) { }
 
         public override JsonTypeInfo<UpdateSeasonRequest> BodyJsonContext =>
             UpdateSeasonRequestJsonContext.Default.UpdateSeasonRequest;

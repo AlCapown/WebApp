@@ -47,13 +47,10 @@ public class Program
                     .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
             );
 
-        // Fluxor for state management
-        // https://github.com/mrpmorris/Fluxor
         builder.Services.AddFluxor(options =>
         {
             options.ScanAssemblies(typeof(FluxorAotHints).Assembly);
             options.AddMiddleware<FetchMiddleware>();
-
 #if DEBUG
             options.UseReduxDevTools();
 #endif
@@ -61,9 +58,8 @@ public class Program
 
         builder.Services.AddSingleton<AuthenticationStateProvider, WebAppAuthenticationStateProvider>();
         builder.Services.AddSingleton(sp => (WebAppAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
-
-        builder.Services.AddScoped<IApiClient, ApiClient>();
-        builder.Services.AddScoped<XSRFHttpMessageHandler>();
+        builder.Services.AddSingleton<IApiClient, ApiClient>();
+        builder.Services.AddSingleton<XSRFHttpMessageHandler>();
 
         builder.Services.AddMudServices();
 

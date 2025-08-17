@@ -35,11 +35,9 @@ public sealed class UpdateSeasonWeekEffect : Effect<SeasonWeekActions.UpdateSeas
         }
     }
 
-    private sealed class UpdateSeasonWeekPlan 
-        : ApiLoadPlanWithBody<NoContentResponse, UpdateSeasonWeekRequest>
+    private sealed class UpdateSeasonWeekPlan : ApiLoadPlanWithBody<NoContentResponse, UpdateSeasonWeekRequest>
     {
-        public UpdateSeasonWeekPlan(SeasonWeekActions.UpdateSeasonWeek action) 
-            : base(action) { }
+        public UpdateSeasonWeekPlan(SeasonWeekActions.UpdateSeasonWeek action) : base(action) { }
 
         public override JsonTypeInfo<NoContentResponse> ResponseJsonContext =>
             throw new NotImplementedException();
