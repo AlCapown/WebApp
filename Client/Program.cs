@@ -47,6 +47,7 @@ public class Program
                     .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
             );
 
+        FluxorAotHints.Initialize();
         builder.Services.AddFluxor(options =>
         {
             options.ScanAssemblies(typeof(FluxorAotHints).Assembly);
@@ -58,8 +59,9 @@ public class Program
 
         builder.Services.AddSingleton<AuthenticationStateProvider, WebAppAuthenticationStateProvider>();
         builder.Services.AddSingleton(sp => (WebAppAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
-        builder.Services.AddSingleton<IApiClient, ApiClient>();
-        builder.Services.AddSingleton<XSRFHttpMessageHandler>();
+        
+        builder.Services.AddScoped<IApiClient, ApiClient>();
+        builder.Services.AddScoped<XSRFHttpMessageHandler>();
 
         builder.Services.AddMudServices();
 

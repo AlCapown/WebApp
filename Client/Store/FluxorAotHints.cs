@@ -2,14 +2,17 @@
 
 namespace WebApp.Client.Store;
 
+/* TODO THIS DOESN'T ACTUALY WORK */
+
 /// <summary>
-/// This doesn't actually work. Trying to get around the issue with AOT trimming in Fluxor.
+/// Ensures Fluxor types are preserved during AOT trimming by marking them with DynamicDependency attributes.
+/// This class must be referenced somewhere in the application to be effective.
 /// </summary>
-public class FluxorAotHints
+public static class FluxorAotHints
 {
     // Middleware
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(Shared.FetchMiddleware))]
-
+    
     // FetchStore
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(FetchStore.FetchFeature))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(FetchStore.FetchActions))]
@@ -69,5 +72,16 @@ public class FluxorAotHints
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(UserStore.UserActions))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(UserStore.GetUserByIdEffect))]
     [DynamicDependency(DynamicallyAccessedMemberTypes.All, typeof(UserStore.GetUserByIdSuccessReducer))]
-    public FluxorAotHints() { }
+
+    // Force instantiation to ensure attributes are processed
+    static FluxorAotHints()
+    {
+        // This static constructor ensures the type is referenced and the attributes are processed
+    }
+
+    // Method to be called from Program.cs to ensure the type is referenced
+    public static void Initialize()
+    {
+        // This method ensures the static constructor runs and the attributes are processed
+    }
 }
