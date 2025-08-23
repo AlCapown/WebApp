@@ -196,9 +196,9 @@ services
         yahooOptions.Scope.Add("email");
         yahooOptions.Scope.Add("profile");
     })
-    .AddIdentityCookies(options =>
+    .AddIdentityCookies(cookieOptions =>
     {
-        options.ApplicationCookie.Configure(options =>
+        cookieOptions.ApplicationCookie.Configure(options =>
         {
             options.LogoutPath = "/Account/Logout";
             options.LoginPath = "/Account/Login";
@@ -238,6 +238,7 @@ services
         options.WorkerCount = 1;
     });
 
+services.AddSingleton<SecurityHeadersMiddleware>();
 
 var app = builder.Build();
 
@@ -251,6 +252,7 @@ app.Logger.LogInformation("Redis Connection String: {RedisConnection}", connecti
 #endif
 
 app.UseForwardedHeaders();
+app.UseMiddleware<SecurityHeadersMiddleware>();
 
 app.UseWhen(x => x.Request.Path.Value.StartsWith("/api", StringComparison.InvariantCultureIgnoreCase), builder =>
 {
@@ -275,16 +277,6 @@ else
 
     app.UseHsts();
 }
-
-
-// Ensure cross origin isolation is enabled. This is required for
-// multithreading support in WASM (when it is finally implemented).
-app.Use((context, next) =>
-{
-    context.Response.Headers["Cross-Origin-Embedder-Policy"] = "require-corp";
-    context.Response.Headers["Cross-Origin-Opener-Policy"] = "same-origin";
-    return next.Invoke();
-});
 
 
 app.UseBlazorFrameworkFiles();
@@ -315,7 +307,7 @@ catch (Exception ex)
     throw;
 }
 
-ReoccurringJobsScheduler.Schedule();
+ReoccurringJobsScheduler.ScheduleJobs();
 
 await app.RunAsync();
 

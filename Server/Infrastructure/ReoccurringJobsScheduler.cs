@@ -6,7 +6,7 @@ namespace WebApp.Server.Infrastructure;
 
 public static class ReoccurringJobsScheduler
 {
-    public static void Schedule()
+    public static void ScheduleJobs()
     {
         BackgroundJob.Enqueue<UpdateScheduleAndGameScores>(job => job.Process(true, CancellationToken.None));
 

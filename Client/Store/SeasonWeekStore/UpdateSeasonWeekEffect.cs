@@ -1,5 +1,4 @@
 ﻿using Fluxor;
-using System;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
@@ -35,12 +34,9 @@ public sealed class UpdateSeasonWeekEffect : Effect<SeasonWeekActions.UpdateSeas
         }
     }
 
-    private sealed class UpdateSeasonWeekPlan : ApiLoadPlanWithBody<NoContentResponse, UpdateSeasonWeekRequest>
+    private sealed class UpdateSeasonWeekPlan : ApiLoadPlanWithBodyNoContent<UpdateSeasonWeekRequest>
     {
         public UpdateSeasonWeekPlan(SeasonWeekActions.UpdateSeasonWeek action) : base(action) { }
-
-        public override JsonTypeInfo<NoContentResponse> ResponseJsonContext =>
-            throw new NotImplementedException();
 
         public override JsonTypeInfo<UpdateSeasonWeekRequest> BodyJsonContext =>
             UpdateSeasonWeekRequestJsonContext.Default.UpdateSeasonWeekRequest;
