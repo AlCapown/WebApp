@@ -274,8 +274,6 @@ else
     {
         builder.UseExceptionHandler("/error");
     });
-
-    app.UseHsts();
 }
 
 
