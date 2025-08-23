@@ -25,4 +25,5 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 ENV DOTNET_GCServer=1
 ENV ASPNETCORE_URLS=http://+:8080
+ENV ASPNETCORE_ENVIRONMENT=Production
 ENTRYPOINT ["dotnet", "WebApp.Server.dll"]
