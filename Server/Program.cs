@@ -204,7 +204,7 @@ services
             options.LoginPath = "/Account/Login";
             options.ExpireTimeSpan = TimeSpan.FromDays(30);
             options.SlidingExpiration = true;
-            options.Cookie.Name = "WebAppCookie";
+            options.Cookie.Name = "MedGamePicks";
             options.Cookie.HttpOnly = true;
             options.Cookie.SameSite = SameSiteMode.Lax;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
