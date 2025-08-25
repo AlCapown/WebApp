@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.IdentityModel.Protocols.Configuration;
+using StackExchange.Redis;
 
 namespace WebApp.Server.Infrastructure;
 
@@ -38,6 +39,12 @@ public static class HealthChecks
                 connectionString: hangfireConnectionString,
                 name: "Hangfire",
                 healthQuery: "SELECT 1;",
+                failureStatus: HealthStatus.Degraded
+            )
+            .AddRedis
+            (
+                connectionMultiplexerFactory: (provider) => provider.GetRequiredService<IConnectionMultiplexer>(),
+                name: "Redis",
                 failureStatus: HealthStatus.Degraded
             );
 
