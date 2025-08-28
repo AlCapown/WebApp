@@ -82,7 +82,7 @@ public sealed class SecurityHeadersMiddleware : IMiddleware
     private static class CspDirectives
     {
         public const string DefaultSrc = "default-src 'self'";
-        public const string ScriptSrc = "script-src 'self' 'wasm-unsafe-eval'";
+        public const string ScriptSrc = "script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval'";
         public const string StyleSrc = "style-src 'self' 'unsafe-inline' fonts.googleapis.com";
         public const string FontSrc = "font-src 'self' fonts.gstatic.com";
         public const string ConnectSrcProduction = "connect-src 'self'";
