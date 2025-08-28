@@ -33,7 +33,7 @@ public sealed class ApiClient : IApiClient
         {
             var httpClient = _httpClientFactory.CreateClient(ServiceConstants.WEBAPP_API_CLIENT);
 
-            var response = await httpClient.GetAsync(uri);
+            using var response = await httpClient.GetAsync(uri);
 
             if (response.IsSuccessStatusCode)
             {
@@ -62,7 +62,7 @@ public sealed class ApiClient : IApiClient
         {
             var httpClient = _httpClientFactory.CreateClient(ServiceConstants.WEBAPP_API_CLIENT);
 
-            var response = await httpClient.PostAsJsonAsync(uri, body, apiLoadPlan.BodyJsonContext);
+            using var response = await httpClient.PostAsJsonAsync(uri, body, apiLoadPlan.BodyJsonContext);
 
             if (response.IsSuccessStatusCode)
             {
@@ -86,7 +86,7 @@ public sealed class ApiClient : IApiClient
         {
             var httpClient = _httpClientFactory.CreateClient(ServiceConstants.WEBAPP_API_CLIENT);
 
-            var response = await httpClient.PutAsJsonAsync(uri, body, apiLoadPlan.BodyJsonContext);
+            using var response = await httpClient.PutAsJsonAsync(uri, body, apiLoadPlan.BodyJsonContext);
 
             if (response.IsSuccessStatusCode)
             {
@@ -109,7 +109,7 @@ public sealed class ApiClient : IApiClient
         {
             var httpClient = _httpClientFactory.CreateClient(ServiceConstants.WEBAPP_API_CLIENT);
 
-            var response = await httpClient.DeleteAsync(uri);
+            using var response = await httpClient.DeleteAsync(uri);
 
             if (response.IsSuccessStatusCode)
             {
