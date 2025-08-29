@@ -25,7 +25,7 @@
                 <CurrentWeekPredictions SeasonId="SeasonConstants.CURRENT_SEASON_ID" TeamId="SeasonConstants.CURRENT_TEAM_ID" />
             </MudItem>
             <MudItem xs="12">
-                <GameSummary GameId="6262" />
+                <LastWeekGameSummary SeasonId="SeasonConstants.CURRENT_SEASON_ID" TeamId="SeasonConstants.CURRENT_TEAM_ID" />
             </MudItem>
             <MudItem xs="12">
                 <GamePredictionsTable SeasonId="SeasonConstants.CURRENT_SEASON_ID" TeamId="SeasonConstants.CURRENT_TEAM_ID" UserId="@CurrentUserId" />
@@ -41,10 +41,6 @@
     /// <summary>
     /// The current logged in UserId.
     /// </summary>
-    /// <remarks>
-    /// This is property is set during OnInitializedAsync therefore it is possible
-    /// to be null during first render.
-    /// </remarks>
     private string? CurrentUserId { get; set; }
 
     protected override async Task OnInitializedAsync()

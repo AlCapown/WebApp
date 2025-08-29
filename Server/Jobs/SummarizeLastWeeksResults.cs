@@ -130,7 +130,7 @@ public sealed class SummarizeLastWeeksResults
         {nameof(UserGamePredictionPlugin.UserPrediction.ScoreDifferential)} property to determine who 
         made the most accurate prediction. Lower values are better, and a value of zero means a perfect 
         prediction. The summary should be a single paragraph of at least five sentences. Congratulate 
-        the winner, referencing their previous week's results if available. Be sure to poke fun at the loser. 
+        the winner, referencing their previous week's results if available. Be sure to poke fun at the losers. 
         It’s all in good fun between friends so tone should be funny, witty, and just a bit mean. Use
         grandiloquent language and only use hyphens only when absolutely necessary.
 

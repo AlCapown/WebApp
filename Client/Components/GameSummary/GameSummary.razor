@@ -21,7 +21,7 @@
     </div>
     <SkeletonLoadingWrapper IsLoading=@IsLoading() Width="100%" Height="5rem">
         <MudText Typo="Typo.body1" Style="padding-bottom: 2rem; text-indent: 1.5rem;">
-            @GetGameSummary()
+            @GameSummaryText()
         </MudText>
         <div class="wa_table__overflowContainer">
             <MudTable T="PredictionsTableItem" Items="@GetTableItems()" Hover="true" Breakpoint="Breakpoint.None" Dense="true" Class="wa_table__mudOverrides">
@@ -59,14 +59,18 @@
     </SkeletonLoadingWrapper>
 </div>
 
+
 @code 
 {
     [Parameter, EditorRequired]
     public int GameId { get; set; }
 
-    private string GetGameSummary() =>
-        GameSummaryState.Value.GameSummaries.GetValueOrDefault(GameId)?.Summary ?? string.Empty;
-
+    private string GameSummaryText()
+        => GameSummaryState.Value.GameSummaries.GetValueOrDefault(GameId)?.Summary ?? string.Empty;
+    
+    private bool HasGameSummary()
+        => GameState.Value.Games.GetValueOrDefault(GameId)?.HasSummary ?? false;
+    
     private string Subtitle()
     {
         var game = GameState.Value.Games.GetValueOrDefault(GameId);
@@ -91,7 +95,7 @@
 
     protected override void OnAfterRender(bool firstRender)
     {
-        if (GameState.Value.Games.GetValueOrDefault(GameId)?.HasSummary ?? false)
+        if (HasGameSummary())
         {
             MaybeDispatchAndTrack(new GameSummaryActions.LoadGameSummary
             {

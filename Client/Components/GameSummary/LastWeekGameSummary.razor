@@ -1,0 +1,58 @@
+﻿@using WebApp.Client.Common.Extensions
+@using WebApp.Client.Components.Common.WebAppComponentBase
+@using WebApp.Client.Store.GameStore
+@using WebApp.Common.Enums
+@using WebApp.Common.Models
+
+@inherits WebAppComponentBase
+
+@inject IState<GameState> GameState
+
+@if (GameId.HasValue)
+{
+    <GameSummary GameId="GameId.Value" />
+}
+
+@code 
+{
+    #nullable enable
+
+    [Parameter, EditorRequired]
+    public int SeasonId { get; set; }
+
+    [Parameter, EditorRequired]
+    public int TeamId { get; set; }
+
+    private string? FetchName { get; set; }
+
+    private int? GameId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        FetchName = MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
+        {
+            SeasonId = SeasonId,
+            TeamId = TeamId
+        });
+
+        base.OnInitialized();
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (FetchName is not null && IsFetchSuccessful(FetchName))
+        {
+            GameId = GameState.Value.Games.Values
+                .Where(x => x.SeasonId == SeasonId)
+                .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
+                .Where(x => x.SeasonWeekTypeName == WeekType.RegularSeason)
+                .Where(x => x.IsComplete)
+                .Where(x => x.HasSummary)
+                .OrderByDescending(x => x.GameStartsOn)
+                .FirstOrDefault()
+                ?.GameId;
+        }
+
+        base.OnAfterRender(firstRender);
+    }
+}

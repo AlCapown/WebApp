@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
@@ -12,10 +14,10 @@ namespace WebApp.Client.Components.Common.WebAppComponentBase;
 public class WebAppComponentBase : FluxorComponent
 {
     [Inject]
-    private IDispatcher Dispatcher { get; set; }
+    private IDispatcher Dispatcher { get; set; } = default!;
 
     [Inject]
-    private IState<FetchState> FetchState { get; set; }
+    private IState<FetchState> FetchState { get; set; } = default!;
 
     private readonly HashSet<string> _fetches;
 
@@ -36,11 +38,13 @@ public class WebAppComponentBase : FluxorComponent
     /// </remarks>
     /// <typeparam name="TAction"></typeparam>
     /// <param name="action">The action to be dispatched</param>
-    public void MaybeDispatchAndTrack<TAction>(TAction action)
+    /// <returns>The unique fetch name that is being tracked</returns>
+    public string MaybeDispatchAndTrack<TAction>(TAction action)
         where TAction : FetchStartedAction
     {
         string fetchName = Dispatcher.DispatchFetch(action);
         _fetches.Add(fetchName);
+        return fetchName;
     }
 
     /// <summary>
@@ -51,13 +55,29 @@ public class WebAppComponentBase : FluxorComponent
     {
         foreach (string fetchName in _fetches)
         {
-            if (FetchState.Value.Fetches.TryGetValue(fetchName, out Fetch fetch) && fetch.IsLoading && !fetch.HideLoading)
+            if (FetchState.Value.Fetches.TryGetValue(fetchName, out var fetch) 
+                && fetch is not null 
+                && fetch.IsLoading 
+                && !fetch.HideLoading)
             {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Determines whether the specified fetch operation has completed successfully.
+    /// </summary>
+    /// <param name="fetchName">Name of the fetch operation to check.</param>
+    /// <returns></returns>
+    public bool IsFetchSuccessful(string fetchName)
+    {
+        return FetchState.Value.Fetches.TryGetValue(fetchName, out var fetch) 
+            && fetch is not null 
+            && !fetch.IsLoading
+            && fetch.ApiError is null;
     }
 
     /// <summary>
@@ -87,8 +107,13 @@ public class WebAppComponentBase : FluxorComponent
     public static T ReadPageLocalState<T>(PageState pageState)
         where T : class, new()
     {
-        return pageState.PageLocalState.TryGetValue(typeof(T).FullName, out var value)
-            ? value as T
-            : new T();
+        var key = typeof(T).FullName;
+
+        if (key is not null && pageState.PageLocalState.TryGetValue(key, out var value) && value is T tValue)
+        {
+            return tValue;
+        }
+
+        return new T();
     }
 }

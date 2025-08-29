@@ -1,6 +1,9 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -131,9 +134,14 @@ public sealed class ApiClient : IApiClient
     private async ValueTask<ApiResponse<TResponse>> HandleSuccess<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, HttpResponseMessage response)
         where TResponse : class
     {
-        TResponse content = typeof(TResponse) == typeof(NoContentResponse)
+        TResponse? content = typeof(TResponse) == typeof(NoContentResponse)
             ? NoContentResponse.Value as TResponse
             : await response.Content.ReadFromJsonAsync(apiLoadPlan.ResponseJsonContext);
+
+        if (content is null)
+        {
+            return HandleException(apiLoadPlan, new InvalidDataException("Failed to read response content."));
+        }
 
         _dispatcher.Dispatch(apiLoadPlan.GetSuccessAction(content));
 
@@ -212,12 +220,14 @@ public sealed class ApiClient : IApiClient
         {
             return response.StatusCode switch
             {
-                HttpStatusCode.BadRequest or 
-                HttpStatusCode.Forbidden or 
-                HttpStatusCode.NotFound or 
+                HttpStatusCode.BadRequest or
+                HttpStatusCode.Forbidden or
+                HttpStatusCode.NotFound or
                 HttpStatusCode.Conflict or
-                HttpStatusCode.InternalServerError or 
-                HttpStatusCode.ServiceUnavailable => await response.Content.ReadFromJsonAsync(ApiErrorJsonContext.Default.ApiError),
+                HttpStatusCode.InternalServerError or
+                HttpStatusCode.ServiceUnavailable =>
+                    await response.Content.ReadFromJsonAsync(ApiErrorJsonContext.Default.ApiError)
+                    ?? UnknownApiErrorOccurred((int)response.StatusCode),
                 HttpStatusCode.Unauthorized => new ApiError
                 {
                     Title = "Unauthorized",

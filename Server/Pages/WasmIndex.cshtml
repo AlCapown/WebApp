@@ -13,7 +13,16 @@
     <script src="Scripts/AntiforgeryToken.js" asp-append-version=true></script>
 }
 
-<div id="app"></div>
+<div id="app">
+    <div style="position:absolute; top:30vh; width:100%; text-align:center">
+        <h1 style="color: rgba(255,255,255,0.698);">Loading...</h1>
+        <div class="mud-progress-circular mud-primary-text mud-progress-medium mud-progress-indeterminate" role="progressbar" style="transform: rotate(-90deg);height:70px;width:70px;" aria-valuenow="0">
+            <svg class="mud-progress-circular-svg --mud-palette-primary" viewBox="22 22 44 44" style="color: rgba(255,255,255,0.698);">
+                <circle class="mud-progress-circular-circle mud-progress-indeterminate" cx="44" cy="44" r="20.2" fill="none" stroke-width="3"></circle>
+            </svg>
+        </div>
+    </div>
+</div>
 
 <div id="blazor-error-ui">
     <environment include="Staging,Production">
