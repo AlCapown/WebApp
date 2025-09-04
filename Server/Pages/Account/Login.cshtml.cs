@@ -10,7 +10,6 @@ using WebApp.Database.Tables;
 namespace WebApp.Server.Pages;
 
 [AllowAnonymous]
-[IgnoreAntiforgeryToken]
 public class LoginModel : PageModel
 {
     private readonly SignInManager<AppUser> _signInManager;

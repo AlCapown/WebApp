@@ -110,7 +110,7 @@ public static partial class CreateOrUpdateGame
                 .WithMessage($"Invalid {nameof(Command.AwayTeamId)}");
 
             RuleFor(x => x.AwayTeamScore)
-                .GreaterThan(0);
+                .GreaterThanOrEqualTo(0);
 
             RuleFor(x => x.ClockTime)
                 .Matches(ClockTimeRegex())

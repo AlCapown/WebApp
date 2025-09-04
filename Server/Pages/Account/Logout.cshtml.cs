@@ -11,7 +11,7 @@ public class LogoutModel : PageModel
     {
         return SignOut(new AuthenticationProperties
         {
-            RedirectUri = "/"
+            RedirectUri = "~/"
         }, IdentityConstants.ApplicationScheme);
     }
 }

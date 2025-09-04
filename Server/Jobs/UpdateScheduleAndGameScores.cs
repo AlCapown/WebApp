@@ -83,7 +83,7 @@ public class UpdateScheduleAndGameScores
 
         return searchResult.Match
         (
-            success => success.Games.Length != 0,
+            success => success.Games.Length > 0,
             validationProblem =>
             {
                 AddError("Failed to query games.", validationProblem);
