@@ -112,6 +112,9 @@ public static partial class CreateOrUpdateGame
             RuleFor(x => x.AwayTeamScore)
                 .GreaterThanOrEqualTo(0);
 
+            RuleFor(x => x.Quarter)
+                .GreaterThan(0);
+
             RuleFor(x => x.ClockTime)
                 .Matches(ClockTimeRegex())
                 .WithMessage($"{nameof(Command.ClockTime)} must be in the format MM:SS.");

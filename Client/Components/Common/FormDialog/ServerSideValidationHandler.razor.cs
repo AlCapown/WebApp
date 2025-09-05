@@ -13,7 +13,7 @@ public class ServerSideValidationHandler : ComponentBase, IDisposable
     private ValidationMessageStore MessageStore { get; set; }
 
     /// <summary>
-    /// Error not bound to any particular field
+    /// Error not bound to any particular field. Used when only the "message" property is set in the API error response.
     /// </summary>
     public string UnboundError { get; set; }
 
