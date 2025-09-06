@@ -10,7 +10,7 @@ public static class CacheOptions
     /// </summary>
     public static HybridCacheEntryOptions STANDARD_L20_D60 { get; } = new HybridCacheEntryOptions
     {
-        LocalCacheExpiration = TimeSpan.FromMinutes(5),
+        LocalCacheExpiration = TimeSpan.FromMinutes(20),
         Expiration = TimeSpan.FromMinutes(60),
     };
 }
