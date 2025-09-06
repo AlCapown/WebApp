@@ -80,7 +80,7 @@
             return string.Empty;
         }
 
-        return $"{game.AwayTeamName} @ {game.HomeTeamName} - {game.GameStartsOn?.ToLocalTime().ToString("dddd MM/dd")}";
+        return $"{game.AwayTeamName} @ {game.HomeTeamName} - {game.GameStartsOn?.ToLocalTime().ToString("dddd MM/dd h:mm tt")}";
     }
 
     protected override void OnInitialized()

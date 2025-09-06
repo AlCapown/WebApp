@@ -97,7 +97,7 @@
             return string.Empty;
         }
 
-        return $"{nextGame.AwayTeamName} @ {nextGame.HomeTeamName} - {nextGame.GameStartsOn?.ToLocalTime().ToString("dddd MM/dd")}";
+        return $"{nextGame.AwayTeamName} @ {nextGame.HomeTeamName} - {nextGame.GameStartsOn?.ToLocalTime().ToString("dddd MM/dd h:mm tt")}";
     }
 
     private Game GetNextGame()

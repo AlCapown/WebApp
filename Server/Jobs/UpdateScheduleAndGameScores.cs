@@ -131,7 +131,7 @@ public class UpdateScheduleAndGameScores
         {
             var weekType = item.Label?.Replace(" ", string.Empty)?.ToWeekTypeEnum();
 
-            if (weekType == null)
+            if (weekType is null)
             {
                 AddError($"Failed to parse WeekType with value: {item.Label}");
                 continue;
@@ -183,7 +183,7 @@ public class UpdateScheduleAndGameScores
             success => success.Teams,
             failure =>
             {
-                AddError("Failed to get Team List");
+                AddError("Failed to get Team List", failure);
                 return [];
             }
         );
@@ -202,17 +202,17 @@ public class UpdateScheduleAndGameScores
 
             var competition = game.Competitions.FirstOrDefault();
 
-            if (competition == null)
+            if (competition is null)
             {
                 AddError($"Failed to find any competitions for this game.");
                 continue;
             }
 
-            var homeTeam = competition.Competitors.FirstOrDefault(x => x.HomeAway == "home");
-            var awayTeam = competition.Competitors.FirstOrDefault(x => x.HomeAway == "away");
+            var homeTeam = competition.Competitors.FirstOrDefault(x => x.HomeAway.Equals("home", StringComparison.InvariantCultureIgnoreCase));
+            var awayTeam = competition.Competitors.FirstOrDefault(x => x.HomeAway.Equals("away", StringComparison.InvariantCultureIgnoreCase));
             var eventStatus = competition.Status;
 
-            if (homeTeam == null || awayTeam == null)
+            if (homeTeam is null || awayTeam is null)
             {
                 AddError($"Failed to find the Home or Away team");
                 continue;
@@ -252,7 +252,7 @@ public class UpdateScheduleAndGameScores
                 continue;
             }
 
-            await _mediator.Send(new CreateOrUpdateGame.Command
+            var updateGameResult = await _mediator.Send(new CreateOrUpdateGame.Command
             {
                 SeasonWeekId = seasonWeek.SeasonWeekId,
                 StartsOn = date,
@@ -264,6 +264,16 @@ public class UpdateScheduleAndGameScores
                 ClockTime = eventStatus.DisplayClock,
                 IsComplete = eventStatus.Type.Completed,
             }, token);
+
+            updateGameResult.Match
+            (
+                success => success,
+                validationProblem =>
+                {
+                    AddError($"Failed to create or update the Game for {awayTeam.Team.DisplayName} at {homeTeam.Team.DisplayName}.", validationProblem);
+                    return Unit.Value;
+                }
+            );
         }
     }
 
