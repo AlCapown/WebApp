@@ -64,7 +64,7 @@ public class UpdateScheduleAndGameScores
         return;
     }
 
-    private async Task<bool> ShouldRunJob(CancellationToken token)
+    private async ValueTask<bool> ShouldRunJob(CancellationToken token)
     {
         var dateTimeNow = DateTime.Now;
 
@@ -92,7 +92,7 @@ public class UpdateScheduleAndGameScores
         );
     }
 
-    private async Task UpdateSeason(ESPNScoreboardModel scoreboard, CancellationToken token)
+    private async ValueTask UpdateSeason(ESPNScoreboardModel scoreboard, CancellationToken token)
     {
         var league = scoreboard.Leagues.First(x => x.Abbreviation.Equals("NFL"));
 
@@ -122,7 +122,7 @@ public class UpdateScheduleAndGameScores
         );
     }
 
-    private async Task UpdateSeasonWeeks(ESPNScoreboardModel scoreboard, CancellationToken token)
+    private async ValueTask UpdateSeasonWeeks(ESPNScoreboardModel scoreboard, CancellationToken token)
     {
         var league = scoreboard.Leagues.FirstOrDefault(x => x.Abbreviation.Equals("NFL"))
             ?? throw new Exception("Failed to find NFL league.");
@@ -174,7 +174,7 @@ public class UpdateScheduleAndGameScores
         }
     }
 
-    private async Task CreateTeamLookupByAbbreviation(CancellationToken token)
+    private async ValueTask CreateTeamLookupByAbbreviation(CancellationToken token)
     {
         var result = await _mediator.Send(new TeamSearch.Query(), token);
 
@@ -191,7 +191,7 @@ public class UpdateScheduleAndGameScores
         TeamLookupByAbbreviation = teamList.ToDictionary(key => key.Abbreviation, value => value.TeamId, StringComparer.OrdinalIgnoreCase);
     }
 
-    private async Task UpdateGames(ESPNScoreboardModel scoreboard, CancellationToken token)
+    private async ValueTask UpdateGames(ESPNScoreboardModel scoreboard, CancellationToken token)
     {
         foreach (var game in scoreboard.Events)
         {

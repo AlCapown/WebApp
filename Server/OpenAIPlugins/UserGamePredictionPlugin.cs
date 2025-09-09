@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using Mediator;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using System;
 using System.Collections.Generic;
@@ -17,10 +18,12 @@ namespace WebApp.Server.OpenAIPlugins;
 public sealed class UserGamePredictionPlugin
 {
     private readonly IMediator _mediator;
+    private readonly ILogger<UserGamePredictionPlugin> _logger;
 
-    public UserGamePredictionPlugin(IMediator mediator)
+    public UserGamePredictionPlugin(IMediator mediator, ILogger<UserGamePredictionPlugin> logger)
     {
         _mediator = mediator;
+        _logger = logger;
     }
 
     [KernelFunction]
@@ -29,19 +32,21 @@ public sealed class UserGamePredictionPlugin
     public async Task<List<UserPredictionItem>> SearchGamePredictionAsync
     (
         [Description("Season unique identifier")]
-        int SeasonId,
+        int seasonId,
         [Description("Searches game and predictions where either the home team or away team match this unique team identifier")]
         int teamId,
         [Description("Optional cancellation token for the operation")]
         CancellationToken cancellationToken = default
     )
     {
-        var gameSearch = await GetGamesAsync(SeasonId, teamId, cancellationToken);
-        var gamePredictionSearch = await GetGamePredictionsAsync(SeasonId, teamId, cancellationToken);
+        _logger.LogInformation("{Plugin} was called with parameters SeasonId: {SeasonId} TeamId: {TeamId}", nameof(SearchGamePredictionAsync), seasonId, teamId);
+
+        var gameSearch = await GetGamesAsync(seasonId, teamId, cancellationToken);
+        var gamePredictionSearch = await GetGamePredictionsAsync(seasonId, teamId, cancellationToken);
         return BuildUserPredictionItems(gameSearch, gamePredictionSearch);
     }
 
-    private async Task<GameSearchResponse> GetGamesAsync(int seasonId, int teamId, CancellationToken cancellationToken)
+    private async ValueTask<GameSearchResponse> GetGamesAsync(int seasonId, int teamId, CancellationToken cancellationToken)
     {
         var gameSearch = await _mediator.Send(new GameSearch.Query
         {
@@ -56,7 +61,7 @@ public sealed class UserGamePredictionPlugin
         );
     }
 
-    private async Task<GamePredictionSearchResponse> GetGamePredictionsAsync(int seasonId, int teamId, CancellationToken cancellationToken)
+    private async ValueTask<GamePredictionSearchResponse> GetGamePredictionsAsync(int seasonId, int teamId, CancellationToken cancellationToken)
     {
         var gamePredictionSearch = await _mediator.Send(new GamePredictionSearch.Query
         {

@@ -64,7 +64,7 @@ public sealed class SummarizeLastWeeksResults
         await _mediator.Send(_logCommand, CancellationToken.None);
     }
 
-    private async Task<bool> ShouldRunJob(int gameId, CancellationToken cancellationToken)
+    private async ValueTask<bool> ShouldRunJob(int gameId, CancellationToken cancellationToken)
     {
         var gameSummaryResult = await _mediator.Send(new GetGameSummary.Query()
         {
@@ -85,7 +85,7 @@ public sealed class SummarizeLastWeeksResults
         return shouldRunJob;
     }
 
-    private async Task<(int? LastGameId, int? SecondToLastGameId)> GetRecentGames(CancellationToken cancellationToken)
+    private async ValueTask<(int? LastGameId, int? SecondToLastGameId)> GetRecentGames(CancellationToken cancellationToken)
     {
         var searchGamesResult = await _mediator.Send(new GameSearch.Query
         {
@@ -124,22 +124,49 @@ public sealed class SummarizeLastWeeksResults
             FunctionChoiceBehavior = FunctionChoiceBehavior.Required()
         };
 
-        string inputPrompt =
-        $"""
-        Summarize the user prediction results for the most recently completed football game. Use the 
-        {nameof(UserGamePredictionPlugin.UserPrediction.ScoreDifferential)} property to determine who 
-        made the most accurate prediction. Lower values are better, and a value of zero means a perfect 
-        prediction. The summary should be a single paragraph of at least five sentences. Congratulate 
-        the winner, referencing their previous week's results if available. Be sure to poke fun at the losers. 
-        It’s all in good fun between friends so tone should be funny, witty, and just a bit mean. Use
-        grandiloquent language and only use hyphens only when absolutely necessary.
+        string inputPrompt;
 
-        Assume the following:
-        - Current TeamId: {SeasonConstants.CURRENT_TEAM_ID}
-        - Current SeasonId: {SeasonConstants.CURRENT_SEASON_ID}
-        - Most recently completed GameId: {LastGameId}
-        - Game before the recently completed GameId: {SecondToLastGameId}
-        """;
+        // Breaking this out into two separate prompts otherwise AI gets confused and makes up previous week prediction from a game that doesn't exist.
+        if (SecondToLastGameId.HasValue)
+        {
+            inputPrompt =
+            $"""
+            Summarize the user prediction results for the most recently completed football game. Use the 
+            {nameof(UserGamePredictionPlugin.UserPrediction.ScoreDifferential)} property to determine who 
+            made the most accurate prediction. Lower values are better, and a value of zero means a perfect 
+            prediction. The summary should be a single paragraph of at least five sentences. Congratulate 
+            the winner referencing their previous week's results if available. Be sure to poke fun at the losers. 
+            It’s all in good fun between friends so tone should be funny, witty, and just a bit mean. Use
+            grandiloquent language and only include hyphens when absolutely necessary.
+
+            Only search games using the following criteria:
+            - TeamId: {SeasonConstants.CURRENT_TEAM_ID}
+            - SeasonId: {SeasonConstants.CURRENT_SEASON_ID}
+
+            Additional information:
+            - Most recently completed GameId: {LastGameId}
+            - Game before the recently completed GameId: {SecondToLastGameId}
+            """;
+        }
+        else
+        {
+            inputPrompt =
+            $"""
+            Summarize the user prediction results for the most recently completed football game. Use the 
+            {nameof(UserGamePredictionPlugin.UserPrediction.ScoreDifferential)} property to determine who 
+            made the most accurate prediction. Lower values are better, and a value of zero means a perfect 
+            prediction. The summary should be a single paragraph of at least five sentences. Congratulate 
+            the winner. Be sure to poke fun at the losers. It’s all in good fun between friends so tone should be funny, 
+            witty, and just a bit mean. Use grandiloquent language and only include hyphens when absolutely necessary.
+
+            Only search games using the following criteria:
+            - TeamId: {SeasonConstants.CURRENT_TEAM_ID}
+            - SeasonId: {SeasonConstants.CURRENT_SEASON_ID}
+
+            Additional information:
+            - Most recently completed GameId: {LastGameId}
+            """;
+        }
 
         history.AddUserMessage(inputPrompt);
 
