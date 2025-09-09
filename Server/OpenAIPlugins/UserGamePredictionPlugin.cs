@@ -121,9 +121,15 @@ public sealed class UserGamePredictionPlugin
                     PredictedHomeTeamScore = gamePrediction?.PredictedHomeTeamScore,
                     PredictedAwayTeamScore = gamePrediction?.PredictedAwayTeamScore,
                     ScoreDifferential = scoreDifferential,
-                    PredictedWinningTeam = predictedWinningTeam
+                    PredictedWinningTeam = predictedWinningTeam,
+                    Place = 0 
                 });
             }
+
+            var orderedPredictions = userPredictions
+                .OrderByDescending(x => x.ScoreDifferential)
+                .ThenBy(x => x.PredictedWinningTeam)
+                .Select((p, i) => p with { Place = i + 1 });
 
             result.Add(new UserPredictionItem
             {
@@ -137,7 +143,7 @@ public sealed class UserGamePredictionPlugin
                 AwayTeamScore = game.AwayTeamScore,
                 GameStartsOn = game.GameStartsOn,
                 IsComplete = game.IsComplete,
-                UserPredictions = userPredictions
+                UserPredictions = [.. orderedPredictions]
             });
         }
 
@@ -176,7 +182,7 @@ public sealed class UserGamePredictionPlugin
         [Description("Indicates if the football game is complete.")]
         public bool IsComplete { get; init; }
 
-        [Description("A list of individual user predictions for this game.")]
+        [Description("An ordered list of individual user predictions for this game, ordered by score differential then by whether the winning team was correctly predicted.")]
         public required List<UserPrediction> UserPredictions { get; init; }
     }
 
@@ -202,5 +208,8 @@ public sealed class UserGamePredictionPlugin
 
         [Description("Indicates if the user correctly predicted the winning team.")]
         public bool PredictedWinningTeam { get; init; }
+
+        [Description("The ranking position of this prediction among all user predictions for the game (1 = first after the applied ordering).")]
+        public int Place { get; init; }
     }
 }
