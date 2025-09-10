@@ -8,9 +8,12 @@
 
 @inject IState<GameState> GameState
 
-@if (GameId.HasValue)
-{
-    <GameSummary GameId="GameId.Value" />
+@{
+    int? gameId = GameId();
+    if (gameId.HasValue)
+    {
+        <GameSummary GameId="gameId.Value" />
+    }
 }
 
 @code 
@@ -23,13 +26,10 @@
     [Parameter, EditorRequired]
     public int TeamId { get; set; }
 
-    private string? FetchName { get; set; }
-
-    private int? GameId { get; set; }
 
     protected override void OnInitialized()
     {
-        FetchName = MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
+        MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
         {
             SeasonId = SeasonId,
             TeamId = TeamId
@@ -38,21 +38,15 @@
         base.OnInitialized();
     }
 
-    protected override void OnAfterRender(bool firstRender)
+    private int? GameId()
     {
-        if (FetchName is not null && IsFetchSuccessful(FetchName))
-        {
-            GameId = GameState.Value.Games.Values
-                .Where(x => x.SeasonId == SeasonId)
-                .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
-                .Where(x => x.SeasonWeekTypeName == WeekType.RegularSeason)
-                .Where(x => x.IsComplete)
-                .Where(x => x.HasSummary)
-                .OrderByDescending(x => x.GameStartsOn)
-                .FirstOrDefault()
-                ?.GameId;
-        }
-
-        base.OnAfterRender(firstRender);
+        return GameState.Value.Games.Values
+            .Where(x => x.SeasonId == SeasonId)
+            .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
+            .Where(x => x.SeasonWeekTypeName == WeekType.RegularSeason)
+            .Where(x => x.IsComplete)
+            .Where(x => x.HasSummary)
+            .OrderByDescending(x => x.GameStartsOn)
+            .FirstOrDefault()?.GameId;
     }
 }
