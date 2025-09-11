@@ -9,7 +9,7 @@
 @inject IDispatcher Dispatcher
 @inject IActionSubscriber ActionSubscriber
 
-<FormDialog @ref="FormDialog" Title="@Title" Model="@Model" OnSubmit="DispatchSubmitAction">
+<FormDialog @ref="FormDialog" Title="@Title" SubTitle="@SubTitle" Model="@Model" OnSubmit="DispatchSubmitAction">
     <MudNumericField @bind-Value="Model.AwayTeamScore" For="@(() => Model.AwayTeamScore)" Label="@AwayTeamLabel" Min="0" Max="999" HideSpinButtons="true" Disabled="FormDialog.IsFormDialogSubmitting" />
     <MudNumericField @bind-Value="Model.HomeTeamScore" For="@(() => Model.HomeTeamScore)" Label="@HomeTeamLabel" Min="0" Max="999" HideSpinButtons="true" Class="mt-6" Disabled="FormDialog.IsFormDialogSubmitting" />
 </FormDialog>
@@ -44,7 +44,9 @@
 
     private CreateGamePredictionRequest Model { get; set; }
 
-    private string Title => $"Enter your prediction for {AwayTeamName} @ {HomeTeamName}";
+    private string Title { get; } = $"Enter your Prediction";
+
+    private string SubTitle => $"{AwayTeamName} @ {HomeTeamName}";
 
     private string HomeTeamLabel => $"{HomeTeamName} Score";
 
