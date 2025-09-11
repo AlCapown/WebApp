@@ -113,7 +113,7 @@ public static partial class CreateOrUpdateGame
                 .GreaterThanOrEqualTo(0);
 
             RuleFor(x => x.Quarter)
-                .GreaterThan(0);
+                .GreaterThanOrEqualTo(0);
 
             RuleFor(x => x.ClockTime)
                 .Matches(ClockTimeRegex())
