@@ -119,6 +119,7 @@
             .Where(x => x.SeasonId == SeasonId)
             .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
             .Where(x => x.SeasonWeekTypeName == WeekType.RegularSeason)
+            .Where(x => x.GameStartsOn < DateTime.UtcNow)
             .OrderBy(x => x.Week)
             .ToArray();
 

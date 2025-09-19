@@ -8,12 +8,9 @@
 
 @inject IState<GameState> GameState
 
-@{
-    int? gameId = GameId();
-    if (gameId.HasValue)
-    {
-        <GameSummary GameId="gameId.Value" />
-    }
+@if (LastCompletedGameId is int gameId)
+{
+    <GameSummary GameId=gameId />
 }
 
 @code 
@@ -26,7 +23,6 @@
     [Parameter, EditorRequired]
     public int TeamId { get; set; }
 
-
     protected override void OnInitialized()
     {
         MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
@@ -38,15 +34,13 @@
         base.OnInitialized();
     }
 
-    private int? GameId()
-    {
-        return GameState.Value.Games.Values
-            .Where(x => x.SeasonId == SeasonId)
-            .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
-            .Where(x => x.SeasonWeekTypeName == WeekType.RegularSeason)
-            .Where(x => x.IsComplete)
-            .Where(x => x.HasSummary)
-            .OrderByDescending(x => x.GameStartsOn)
-            .FirstOrDefault()?.GameId;
-    }
+    private int? LastCompletedGameId => GameState.Value.Games.Values
+        .Where(x => x.SeasonId == SeasonId)
+        .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
+        .Where(x => x.SeasonWeekTypeName == WeekType.RegularSeason)
+        .Where(x => x.IsComplete)
+        .Where(x => x.HasSummary)
+        .MaxBy(x => x.GameStartsOn)
+        ?.GameId;
+
 }
