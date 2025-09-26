@@ -2,41 +2,37 @@
 
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Net.Http.Headers;
+using StackExchange.Redis;
 using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using System.Linq;
-using Microsoft.IdentityModel.Protocols.Configuration;
-using StackExchange.Redis;
+using WebApp.Server.Infrastructure.Options;
 
 namespace WebApp.Server.Infrastructure;
 
 public static class HealthChecks
 {
-    public static IServiceCollection RegisterHealthChecks(this IServiceCollection services, IConfigurationManager configurationManager)
+    public static IServiceCollection RegisterHealthChecks(this IServiceCollection services, ConnectionStrings connectionStrings)
     {
-        string sqlConnectionString = configurationManager.GetConnectionString("Database")
-            ?? throw new InvalidConfigurationException("Database connection string is not configured.");
-
-        string hangfireConnectionString = configurationManager.GetConnectionString("HangfireDatabase")
-            ?? throw new InvalidConfigurationException("Hangfire database connection string is not configured.");
+        ArgumentNullException.ThrowIfNull(connectionStrings.Database);
+        ArgumentNullException.ThrowIfNull(connectionStrings.HangfireDatabase);
 
         services
             .AddHealthChecks()
             .AddSqlServer
             (
-                connectionString: sqlConnectionString,
+                connectionString: connectionStrings.Database,
                 name: "Database",
                 healthQuery: "SELECT 1;",
                 failureStatus: HealthStatus.Degraded
             )
             .AddSqlServer
             (
-                connectionString: hangfireConnectionString,
+                connectionString: connectionStrings.HangfireDatabase,
                 name: "Hangfire",
                 healthQuery: "SELECT 1;",
                 failureStatus: HealthStatus.Degraded

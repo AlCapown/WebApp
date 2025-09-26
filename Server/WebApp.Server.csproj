@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="9.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
-    <PackageReference Include="AspNetCore.SassCompiler" Version="1.92.1" />
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.93.2" />
     <PackageReference Include="Azure.Identity" Version="1.16.0" />
     <PackageReference Include="FluentValidation" Version="12.0.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
@@ -38,14 +38,14 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.9.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.9" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.77.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.77.1" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.65.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="OneOf" Version="3.0.271" />
     <PackageReference Include="Scrutor" Version="6.1.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.9.17" />
+    <PackageReference Include="StackExchange.Redis" Version="2.9.24" />
     <PackageReference Include="System.Text.Encodings.Web" Version="9.0.9" />
     <PackageReference Include="System.Text.Json" Version="9.0.9" />
   </ItemGroup>

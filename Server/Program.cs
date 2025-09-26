@@ -105,7 +105,7 @@ services.AddValidatorsFromAssemblyContaining<Program>();
 services.AddExceptionHandler<ApiExceptionHandler>();
 
 // Register HealthChecks
-services.RegisterHealthChecks(configuration);
+services.RegisterHealthChecks(connectionStrings);
 
 // Register logging provider
 services
@@ -223,7 +223,7 @@ services
         options.SetDataCompatibilityLevel(CompatibilityLevel.Version_180);
         options.UseSimpleAssemblyNameTypeSerializer();
         options.UseRecommendedSerializerSettings();
-        options.UseSqlServerStorage(configuration.GetConnectionString("HangfireDatabase"), new SqlServerStorageOptions
+        options.UseSqlServerStorage(connectionStrings.HangfireDatabase, new SqlServerStorageOptions
         {
             CommandBatchMaxTimeout = TimeSpan.FromMinutes(5),
             SlidingInvisibilityTimeout = TimeSpan.FromMinutes(5),

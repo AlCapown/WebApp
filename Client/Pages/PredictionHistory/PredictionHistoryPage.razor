@@ -1,0 +1,10 @@
+﻿@using WebApp.Client.Components.Common.Page
+@using WebApp.Client.Components.GameSummary
+@using WebApp.Common.Constants
+
+@page "/PredictionHistory"
+@attribute [Authorize]
+
+<PageContainer PageHeading="Prediction History">
+    <GameSummaryList SeasonId="SeasonConstants.CURRENT_SEASON_ID" TeamId="SeasonConstants.CURRENT_TEAM_ID" />
+</PageContainer>

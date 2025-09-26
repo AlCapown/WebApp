@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using WebApp.Client.Common.Extensions
+@using WebApp.Client.Components.Common.WebAppComponentBase
+@using WebApp.Client.Store.GameStore
+@using WebApp.Common.Enums
+@using WebApp.Common.Models
+
+@inherits WebAppComponentBase
+
+@inject IState<GameState> GameState
+
+<Virtualize Items="Games" Context="GameId">
+    <GameSummary GameId="GameId" />
+</Virtualize>
+
+
+@code 
+{
+    #nullable enable
+
+    [Parameter, EditorRequired]
+    public int SeasonId { get; set; }
+
+    [Parameter, EditorRequired]
+    public int TeamId { get; set; }
+
+    protected override void OnInitialized()
+    {
+        MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
+        {
+            SeasonId = SeasonId,
+            TeamId = TeamId
+        });
+
+        base.OnInitialized();
+    }
+
+    private int[] Games => GameState.Value.Games.Values
+        .Where(x => x.SeasonId == SeasonId)
+        .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
+        .Where(x => x.SeasonWeekTypeName == WeekType.RegularSeason)
+        .Where(x => x.IsComplete)
+        .Where(x => x.HasSummary)
+        .OrderByDescending(x => x.GameStartsOn)
+        .Select(x => x.GameId)
+        .ToArray();
+
+}
