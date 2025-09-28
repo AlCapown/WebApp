@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <UserSecretsId>0aa45f7b-021f-4930-8b9c-e2e1a83a86fd</UserSecretsId>
-	<TrimMode>partial</TrimMode>
 	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+	<TrimMode>partial</TrimMode>
 	<PublishTrimmed>false</PublishTrimmed>
   </PropertyGroup>
 

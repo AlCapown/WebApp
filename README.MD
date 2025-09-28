@@ -28,13 +28,14 @@ dotnet dev-certs https --check
 
 1. Save Image
 ```ps
-docker save -o C:\Users\kyle6\Desktop\image.tar webappserver:latest
+$desktopPath = [Environment]::GetFolderPath("Desktop")
+docker save -o "$desktopPath\image.tar" webappserver:latest
 ```
 
 2. Copy Image to server
 3. Load Image on server
 ```bash
-docker load -i /home/kyle-williams/Desktop/image.tar
+docker load -i "$HOME/Desktop/image.tar"
 ```
 
 ## Creating and restoring a MSSQL backup file from inside a container
