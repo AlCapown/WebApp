@@ -1,10 +1,11 @@
-﻿@import './Colors.scss';
+﻿@use "sass:color";
+@use 'Colors.scss';
 
 body {
     margin: 0;
     height: 100vh;
     background: radial-gradient(
-        mix($primaryColor, #0b0c10, 32%) 0%,
+        color.mix(Colors.$primaryColor, #0b0c10, 32%) 0%,
         #0b0c10 100%
     );
     animation: fadeIn 1 1s ease-out;

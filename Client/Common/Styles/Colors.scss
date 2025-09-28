@@ -1,9 +1,11 @@
-﻿$surface-color: rgba(55, 55, 64, 1);
-$surface-color-light: lighten($surface-color, 8%);
-$surface-color-lighter: lighten($surface-color, 16%);
+@use "sass:color";
+
+$surface-color: rgba(55, 55, 64, 1);
+$surface-color-light: color.adjust($surface-color, $lightness: 8%, $space: hsl);
+$surface-color-lighter: color.adjust($surface-color, $lightness: 16%, $space: hsl);
 
 
 $primaryColor: #776be7;
-$primaryColorDark: scale-color($primaryColor, $lightness: -10% );
+$primaryColorDark: color.scale($primaryColor, $lightness: -10% );
 
 $softWhite: rgba(255,255,255,0.698);

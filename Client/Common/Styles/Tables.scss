@@ -1,17 +1,17 @@
-﻿@import 'Breakpoints.scss';
-@import 'Colors.scss';
+﻿@use 'Breakpoints.scss';
+@use 'Colors.scss';
 
 .wa_table__container {
     position: relative;
     display: block;
     padding: 1rem;
     max-width: 50rem;
-    background-color: $surface-color;
+    background-color: Colors.$surface-color;
     border-radius: var(--mud-default-borderradius);
     border: 1px solid var(--mud-palette-lines-default);
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 
-    @media (max-width: $breakpoint-md) {
+    @media (max-width: Breakpoints.$breakpoint-md) {
         width: 100%;
     }
 }
