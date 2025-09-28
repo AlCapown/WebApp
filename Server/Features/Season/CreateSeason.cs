@@ -4,6 +4,7 @@ using FluentValidation;
 using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using OneOf;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Database;
@@ -64,14 +65,18 @@ public static class CreateSeason
                 return problemDetails;
             }
 
+            Debug.Assert(cmd.SeasonId is not null);
+
             var season = new Database.Tables.Season
             {
-                SeasonId = cmd.SeasonId!.Value,
+                SeasonId = cmd.SeasonId.Value,
                 Description = cmd.Description
             };
 
             _dbContext.Seasons.Add(season);
+
             await _dbContext.SaveChangesAsync(cancellationToken);
+
             return Unit.Value;
         }
     }

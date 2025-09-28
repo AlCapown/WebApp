@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -108,7 +109,9 @@ public static class UpsertGamePrediction
 
             var game = await _dbContext.Games.FindAsync([cmd.GameId], cancellationToken);
 
-            if (!cmd.BypassGameStartTimeValidation && game!.StartsOn.HasValue && game.StartsOn.Value < DateTimeOffset.Now)
+            Debug.Assert(game is not null);
+
+            if (!cmd.BypassGameStartTimeValidation && game.StartsOn.HasValue && game.StartsOn.Value < DateTimeOffset.Now)
             {
                 return new ForbiddenProblemDetails("You cannot modify or add a prediction for this game since it has already started.");
             }

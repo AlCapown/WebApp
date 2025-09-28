@@ -9,9 +9,13 @@
 
 @inject IState<GameState> GameState
 
-<Virtualize Items="Games" Context="GameId">
-    <GameSummary GameId="GameId" />
-</Virtualize>
+<MudGrid>
+    <Virtualize Items="Games" Context="GameId">
+        <MudItem xs="12">
+            <GameSummary GameId="GameId" />
+        </MudItem>
+    </Virtualize>
+</MudGrid>
 
 
 @code 
