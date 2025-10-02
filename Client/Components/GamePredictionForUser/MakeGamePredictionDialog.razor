@@ -1,7 +1,9 @@
 ﻿@using WebApp.Common.Models
 @using WebApp.Client.Components.Common.FormDialog
-@using WebApp.Client.Store.GamePredictionStore
 @using WebApp.Client.Common.Extensions
+@using WebApp.Client.Store.Shared
+@using WebApp.Client.Store.GamePredictionStore
+
 
 @inherits FluxorComponent
 @implements IFormDialogContent
@@ -74,8 +76,7 @@
         Dispatcher.DispatchFetch(new GamePredictionActions.CreateGamePrediction
         {
             Request = Model,
-            DispatchErrorToWindow = false,
-            ForceDispatch = true
+            FetchOptions = FetchOptions.FormSubmit
         });
     }
 

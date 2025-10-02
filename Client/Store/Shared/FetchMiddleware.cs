@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System;
 using WebApp.Client.Store.FetchStore;
 using WebApp.Client.Store.PageStore;
@@ -46,7 +48,7 @@ internal sealed class FetchMiddleware : Middleware
         
         bool shouldDispatch = true;
 
-        if (!fetchStartedAction.ForceDispatch && _fetchState.Value.Fetches.TryGetValue(fetchStartedAction.FetchName, out var fetch))
+        if (!fetchStartedAction.FetchOptions.HasFlag(FetchOptions.ForceDispatch) && _fetchState.Value.Fetches.TryGetValue(fetchStartedAction.FetchName, out var fetch))
         {
             shouldDispatch = fetch.IsLoading == false && (fetch.CacheExpires == null || fetch.CacheExpires < DateTimeOffset.Now);
         }
@@ -56,7 +58,7 @@ internal sealed class FetchMiddleware : Middleware
             _dispatcher.Dispatch(new FetchActions.FetchStarted
             {
                 FetchName = fetchStartedAction.FetchName,
-                HideLoading = fetchStartedAction.HideLoading,
+                HideLoading = fetchStartedAction.FetchOptions.HasFlag(FetchOptions.HideLoading)
             });
         }
 

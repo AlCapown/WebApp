@@ -1,12 +1,14 @@
 ﻿@inherits WebAppComponentBase
 
+@using WebApp.Common.Enums
 @using WebApp.Common.Models
 @using WebApp.Client.Common.Extensions
 @using WebApp.Client.Components.Common.LoadingWrapper
 @using WebApp.Client.Components.Common.WebAppComponentBase
 @using WebApp.Client.Store.SeasonWeekStore
 @using WebApp.Client.Store.SeasonStore
-@using WebApp.Common.Enums
+@using WebApp.Client.Store.Shared
+
 
 @inject IState<SeasonWeekState> SeasonWeekState
 @inject IState<SeasonState> SeasonState
@@ -73,12 +75,12 @@
         MaybeDispatchAndTrack(new SeasonWeekActions.LoadSeasonWeekList
         {
             SeasonId = SeasonId,
-            DispatchErrorToWindow = true
+            FetchOptions = FetchOptions.Default
         });
 
         MaybeDispatchAndTrack(new SeasonActions.LoadSeasonList
         {
-            DispatchErrorToWindow = true
+            FetchOptions = FetchOptions.Default
         });
 
         base.OnInitialized();

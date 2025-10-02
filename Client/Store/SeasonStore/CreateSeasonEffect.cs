@@ -1,6 +1,4 @@
 ﻿using Fluxor;
-using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
@@ -28,9 +26,7 @@ public sealed class CreateSeasonEffect : Effect<SeasonActions.CreateSeason>
             dispatcher.DispatchFetch(new SeasonActions.LoadSeason
             {
                 SeasonId = action.Request.SeasonId.Value,
-                HideLoading = true,
-                DispatchErrorToWindow = false,
-                ForceDispatch = true
+                FetchOptions = FetchOptions.SilentRefresh,
             });
         }
     }

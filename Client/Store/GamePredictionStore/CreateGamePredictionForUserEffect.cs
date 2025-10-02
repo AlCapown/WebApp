@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
@@ -21,14 +23,12 @@ public sealed class CreateGamePredictionForUserEffect : Effect<GamePredictionAct
     {
         var result = await _client.PostAsync(new CreateGamePredictionForUserPlan(action), $"api/GamePrediction/{action.UserId}", action.Request);
 
-        if (result.IsSuccess)
+        if (result.IsSuccess && result.Response is not null)
         {
             dispatcher.DispatchFetch(new GamePredictionActions.GetGamePrediction
             {
                 GamePredictionId = result.Response.GamePredictionId,
-                HideLoading = true,
-                DispatchErrorToWindow = false,
-                ForceDispatch = true
+                FetchOptions = FetchOptions.SilentRefresh,
             });
         }
     }

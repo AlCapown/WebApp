@@ -26,9 +26,7 @@ public sealed class UpdateSeasonEffect : Effect<SeasonActions.UpdateSeason>
             dispatcher.DispatchFetch(new SeasonActions.LoadSeason
             {
                 SeasonId = action.SeasonId,
-                HideLoading = true,
-                DispatchErrorToWindow = false,
-                ForceDispatch = true
+                FetchOptions = FetchOptions.SilentRefresh,
             });
         }
     }

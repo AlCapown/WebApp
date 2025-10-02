@@ -1,7 +1,9 @@
 ﻿@using WebApp.Common.Models
 @using WebApp.Client.Components.Common.FormDialog
-@using WebApp.Client.Store.SeasonStore
 @using WebApp.Client.Common.Extensions
+@using WebApp.Client.Store.Shared
+@using WebApp.Client.Store.SeasonStore
+
 
 @inherits FluxorComponent
 @implements IFormDialogContent
@@ -52,8 +54,7 @@
         {
             SeasonId = SeasonId,
             Request = Model,
-            DispatchErrorToWindow = false,
-            ForceDispatch = true
+            FetchOptions = FetchOptions.FormSubmit
         });
     }
 

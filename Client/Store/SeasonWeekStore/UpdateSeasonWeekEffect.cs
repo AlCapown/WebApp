@@ -27,9 +27,7 @@ public sealed class UpdateSeasonWeekEffect : Effect<SeasonWeekActions.UpdateSeas
             {
                 SeasonId = action.SeasonId,
                 SeasonWeekId = action.SeasonWeekId,
-                HideLoading = true,
-                DispatchErrorToWindow = false,
-                ForceDispatch = true
+                FetchOptions = FetchOptions.SilentRefresh
             });
         }
     }

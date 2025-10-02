@@ -2,9 +2,11 @@
 
 @using WebApp.Client.Common.Extensions
 @using WebApp.Client.Components.Common.LoadingWrapper
-@using WebApp.Common.Models
-@using WebApp.Client.Store.SeasonStore
 @using WebApp.Client.Components.Common.WebAppComponentBase
+@using WebApp.Client.Store.SeasonStore
+@using WebApp.Client.Store.Shared
+@using WebApp.Common.Models
+
 
 @inject IState<SeasonState> SeasonState
 @inject IDialogService DialogService
@@ -48,12 +50,12 @@
 
 @code 
 {
-    
+
     protected override void OnInitialized()
     {
-        MaybeDispatchAndTrack(new SeasonActions.LoadSeasonList
+        MaybeDispatchAndTrack(new SeasonActions.LoadSeasonList()
         {
-            DispatchErrorToWindow = true
+            FetchOptions = FetchOptions.Default
         });
 
         base.OnInitialized();

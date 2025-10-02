@@ -1,31 +1,33 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace WebApp.Common.Extensions;
 
 public static class StringExtensions
 {
-    public static string ToTitleCase(this string value)
+    public static string? ToTitleCase(this string? value)
     {
-        return value.IsNullOrWhiteSpace()
+        return value.IsNullOrWhiteSpace() 
             ? value
             : CultureInfo.CurrentCulture.TextInfo.ToTitleCase(value);
     }
 
-    public static bool IsNullOrWhiteSpace(this string value)
+    public static bool IsNullOrWhiteSpace([NotNullWhen(false)] this string? value)
     {
         return string.IsNullOrWhiteSpace(value);
     }
 
-    public static bool IsNullOrEmpty(this string value)
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this string? value)
     {
         return string.IsNullOrEmpty(value);
     }
 
     public static DayOfWeek DayAbbreviationToDayOfWeek(this string value)
     {
-        if (value == null)
-            throw new ArgumentException("Value for the day abbreviation cannot be null.");
+        ArgumentNullException.ThrowIfNull(value);
 
         return value.ToUpper() switch
         {

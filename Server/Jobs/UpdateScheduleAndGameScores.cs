@@ -66,6 +66,8 @@ public class UpdateScheduleAndGameScores
 
     private async ValueTask<bool> ShouldRunJob(CancellationToken token)
     {
+        return true;
+        
         var dateTimeNow = DateTime.Now;
 
         // If 12:00 PM - 12:09 PM always run.

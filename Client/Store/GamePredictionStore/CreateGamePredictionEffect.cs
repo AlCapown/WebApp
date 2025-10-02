@@ -28,9 +28,7 @@ public sealed class CreateGamePredictionEffect : Effect<GamePredictionActions.Cr
             dispatcher.DispatchFetch(new GamePredictionActions.GetGamePrediction
             {
                 GamePredictionId = result.Response.GamePredictionId,
-                HideLoading = true,
-                DispatchErrorToWindow = false,
-                ForceDispatch = true
+                FetchOptions = FetchOptions.SilentRefresh
             });
         }
     }

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using WebApp.Client.Common.Constants;
 using WebApp.Client.Store.FetchStore;
 using WebApp.Client.Store.PageStore;
+using WebApp.Client.Store.Shared;
 using WebApp.Common.Infrastructure;
 using WebApp.Common.Models;
 
@@ -189,7 +190,7 @@ public sealed class ApiClient : IApiClient
             ApiError = apiError
         });
 
-        if (apiLoadPlan.FetchStartedAction.DispatchErrorToWindow)
+        if (apiLoadPlan.FetchStartedAction.FetchOptions.HasFlag(FetchOptions.DispatchErrorToWindow))
         {
             _dispatcher.Dispatch(new PageActions.EnqueuePageError
             {
