@@ -7,11 +7,11 @@ public class WasmModel : PageModel
 {
     public IActionResult OnGet()
     { 
-        if (!HttpContext.User.Identity.IsAuthenticated)
+        if (HttpContext.User.Identity.IsAuthenticated)
         {
-            return RedirectToPage("Account/Login");
+            return Page();
         }
 
-        return Page();
+        return RedirectToPage("Account/Login");
     }
 }
