@@ -48,7 +48,8 @@ internal sealed class FetchMiddleware : Middleware
         
         bool shouldDispatch = true;
 
-        if (!fetchStartedAction.FetchOptions.HasFlag(FetchOptions.ForceDispatch) && _fetchState.Value.Fetches.TryGetValue(fetchStartedAction.FetchName, out var fetch))
+        if (!fetchStartedAction.FetchOptions.HasFlag(FetchOptions.ForceDispatch) 
+            && _fetchState.Value.Fetches.TryGetValue(fetchStartedAction.FetchName, out var fetch))
         {
             shouldDispatch = fetch.IsLoading == false && (fetch.CacheExpires == null || fetch.CacheExpires < DateTimeOffset.Now);
         }

@@ -6,7 +6,7 @@
         <Nullable>disable</Nullable>
         <InvariantGlobalization>true</InvariantGlobalization>
         <PublishTrimmed>true</PublishTrimmed>
-        <TrimMode>partial</TrimMode>
+        <TrimMode>parial</TrimMode>
         <RunAOTCompilation>false</RunAOTCompilation>
     </PropertyGroup>
 

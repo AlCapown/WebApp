@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using WebApp.Client.Api;
 using WebApp.Client.Common.Constants;
 using WebApp.Client.Infrastructure;
-using WebApp.Client.Store;
 using WebApp.Client.Store.Shared;
 
 
@@ -47,10 +46,9 @@ public class Program
                     .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
             );
 
-        FluxorAotHints.Initialize();
         builder.Services.AddFluxor(options =>
         {
-            options.ScanAssemblies(typeof(FluxorAotHints).Assembly);
+            options.ScanAssemblies(typeof(Program).Assembly);
             options.AddMiddleware<FetchMiddleware>();
 #if DEBUG
             options.UseReduxDevTools();

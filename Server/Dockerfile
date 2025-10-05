@@ -27,4 +27,6 @@ COPY --from=publish /app/publish .
 ENV DOTNET_GCServer=1
 ENV ASPNETCORE_URLS=https://+:8081;http://+:8080
 ENV ASPNETCORE_ENVIRONMENT=Production
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+  CMD curl --fail http://localhost:8080/api/healthchecks || exit 1
 ENTRYPOINT ["dotnet", "WebApp.Server.dll"]
