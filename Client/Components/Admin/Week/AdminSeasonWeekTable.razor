@@ -75,13 +75,9 @@
         MaybeDispatchAndTrack(new SeasonWeekActions.LoadSeasonWeekList
         {
             SeasonId = SeasonId,
-            FetchOptions = FetchOptions.Default
         });
 
-        MaybeDispatchAndTrack(new SeasonActions.LoadSeasonList
-        {
-            FetchOptions = FetchOptions.Default
-        });
+        MaybeDispatchAndTrack(new SeasonActions.LoadSeasonList());
 
         base.OnInitialized();
     }

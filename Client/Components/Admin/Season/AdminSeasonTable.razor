@@ -53,11 +53,7 @@
 
     protected override void OnInitialized()
     {
-        MaybeDispatchAndTrack(new SeasonActions.LoadSeasonList()
-        {
-            FetchOptions = FetchOptions.Default
-        });
-
+        MaybeDispatchAndTrack(new SeasonActions.LoadSeasonList());
         base.OnInitialized();
     }
 

@@ -18,19 +18,19 @@ public enum FetchOptions
     /// <summary>
     /// Suppresses loading indicators in the UI during the fetch operation.
     /// </summary>
-    HideLoading = 1 << 0,
+    HideLoading = 1,
 
     /// <summary>
     /// Routes fetch errors to the global error display system.
     /// When enabled, errors appear as user visible notifications.
     /// When disabled, errors errors will not be shown to the user.
     /// </summary>
-    DispatchErrorToWindow = 1 << 1,
+    DispatchErrorToWindow = 2,
     
     /// <summary>
     /// Bypasses cache checks and executes the fetch immediately.
     /// </summary>
-    ForceDispatch = 1 << 2,
+    ForceDispatch = 4,
 
     #region Convenient Combinations
     
