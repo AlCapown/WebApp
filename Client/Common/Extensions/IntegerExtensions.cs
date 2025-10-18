@@ -1,4 +1,6 @@
-﻿namespace WebApp.Client.Common.Extensions;
+﻿#nullable enable
+
+namespace WebApp.Client.Common.Extensions;
 
 public static class IntegerExtensions
 {
@@ -6,14 +8,15 @@ public static class IntegerExtensions
     {
         string num = number.ToString();
 
-        if (number <= 0)        return num;
-        if (num.EndsWith("11")) return num + "th";
-        if (num.EndsWith("12")) return num + "th";
-        if (num.EndsWith("13")) return num + "th";
-        if (num.EndsWith('1'))  return num + "st";
-        if (num.EndsWith('2'))  return num + "nd";
-        if (num.EndsWith('3'))  return num + "rd";
-
-        return num + "th";
+        return number <= 0 ? num : num + GetOrdinalSuffix(num);
+        
+        static string GetOrdinalSuffix(string numStr) => numStr switch
+        {
+            var s when s.EndsWith("11") || s.EndsWith("12") || s.EndsWith("13") => "th",
+            var s when s.EndsWith('1') => "st",
+            var s when s.EndsWith('2') => "nd", 
+            var s when s.EndsWith('3') => "rd",
+            _ => "th"
+        };
     }
 }

@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using WebApp.Client.Store.Shared;
 
 namespace WebApp.Client.Common.Extensions;

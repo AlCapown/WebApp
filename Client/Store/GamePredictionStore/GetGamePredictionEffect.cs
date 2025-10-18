@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
@@ -49,7 +51,7 @@ public static partial class GamePredictionActions
 
     public sealed record GetGamePredictionSuccess : FetchSuccessAction
     {
-        public GamePrediction GamePrediction { get; init; }
+        public required GamePrediction GamePrediction { get; init; }
     }
 
     public sealed record GetGamePredictionFailure : FetchFailureAction { }

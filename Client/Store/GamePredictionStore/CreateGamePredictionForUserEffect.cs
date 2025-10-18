@@ -23,7 +23,7 @@ public sealed class CreateGamePredictionForUserEffect : Effect<GamePredictionAct
     {
         var result = await _client.PostAsync(new CreateGamePredictionForUserPlan(action), $"api/GamePrediction/{action.UserId}", action.Request);
 
-        if (result.IsSuccess && result.Response is not null)
+        if (result.IsSuccess)
         {
             dispatcher.DispatchFetch(new GamePredictionActions.GetGamePrediction
             {

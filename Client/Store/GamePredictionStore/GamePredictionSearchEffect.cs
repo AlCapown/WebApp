@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization.Metadata;
@@ -20,7 +22,7 @@ public sealed class GamePredictionSearchEffect : Effect<GamePredictionActions.Ga
 
     public override async Task HandleAsync(GamePredictionActions.GamePredictionSearch action, IDispatcher dispatcher)
     {
-        await _client.GetAsync(new GamePredictionSearchPlan(action), "api/GamePrediction/Search", new Dictionary<string, string>
+        await _client.GetAsync(new GamePredictionSearchPlan(action), "api/GamePrediction/Search", new Dictionary<string, string?>
         {
             { nameof(action.SeasonId), action.SeasonId?.ToString() },
             { nameof(action.GameId), action.GameId?.ToString() },
@@ -56,14 +58,14 @@ public static partial class GamePredictionActions
     {
         public int? SeasonId { get; init; }
         public int? GameId { get; init; }
-        public string UserId { get; init; }
+        public string? UserId { get; init; }
         public bool? LimitToCurrentUser { get; init; }
         public int? TeamId { get; init; }
     }
 
     public sealed record GamePredictionSearchSuccess : FetchSuccessAction
     {
-        public GamePrediction[] GamePredictions { get; init; }
+        public GamePrediction[] GamePredictions { get; init; } = [];
     }
 
     public sealed record GamePredictionSearchFailure : FetchFailureAction { }

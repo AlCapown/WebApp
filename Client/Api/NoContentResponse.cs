@@ -1,4 +1,6 @@
-﻿namespace WebApp.Client.Api;
+﻿#nullable enable
+
+namespace WebApp.Client.Api;
 
 public sealed class NoContentResponse
 {

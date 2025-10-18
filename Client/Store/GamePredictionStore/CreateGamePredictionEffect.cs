@@ -1,4 +1,4 @@
-﻿
+﻿#nullable enable
 
 using Fluxor;
 using System.Text.Json.Serialization.Metadata;
@@ -59,7 +59,7 @@ public static partial class GamePredictionActions
 {
     public sealed record CreateGamePrediction : FetchStartedAction
     {
-        public CreateGamePredictionRequest Request { get; init; }
+        public required CreateGamePredictionRequest Request { get; init; }
     }
 
     public sealed record CreateGamePredictionSuccess : FetchSuccessAction 

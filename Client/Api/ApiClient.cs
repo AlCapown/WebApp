@@ -53,7 +53,7 @@ public sealed class ApiClient : IApiClient
     }
 
 
-    public async Task<ApiResponse<TResponse>> GetAsync<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, string uri, Dictionary<string, string> queryPrams)
+    public async Task<ApiResponse<TResponse>> GetAsync<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, string uri, Dictionary<string, string?> queryPrams)
         where TResponse : class
         => await GetAsync(apiLoadPlan, QueryHelpers.AddQueryString(uri, queryPrams));
 
@@ -152,12 +152,7 @@ public sealed class ApiClient : IApiClient
             CacheExpires = DateTimeOffset.Now.AddMinutes(apiLoadPlan.FetchStartedAction.CacheDurationInMinutes)
         });
 
-        return new ApiResponse<TResponse>
-        {
-            IsSuccess = true,
-            StatusCode = (int)response.StatusCode,
-            Response = content,
-        };
+        return ApiResponse<TResponse>.Success((int)response.StatusCode, content);
     }
 
     private async Task<ApiResponse<TResponse>> HandleApiFailure<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, HttpResponseMessage response)
@@ -207,12 +202,7 @@ public sealed class ApiClient : IApiClient
             });
         }
 
-        return new ApiResponse<TResponse>
-        {
-            IsSuccess = false,
-            StatusCode = apiError.Status,
-            Response = null
-        };
+        return ApiResponse<TResponse>.Failure(apiError.Status);
     }
 
     private static async ValueTask<ApiError> GetApiErrorFromResponse(HttpResponseMessage response)

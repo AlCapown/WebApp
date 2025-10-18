@@ -1,4 +1,6 @@
-﻿namespace WebApp.Client.Common.Constants;
+﻿#nullable enable 
+
+namespace WebApp.Client.Common.Constants;
 
 public static class ServiceConstants
 {

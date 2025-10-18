@@ -28,8 +28,7 @@ dotnet dev-certs https --check
 
 1. Save Image
 ```ps
-$desktopPath = [Environment]::GetFolderPath("Desktop")
-docker save -o "$desktopPath\image.tar" webappserver:latest
+docker save -o "$([Environment]::GetFolderPath('Desktop'))\image.tar" webappserver:latest
 ```
 
 2. Copy Image to server

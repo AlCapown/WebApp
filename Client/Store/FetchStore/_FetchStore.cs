@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System;
 using System.Collections.Immutable;
 using WebApp.Common.Models;
@@ -10,16 +12,16 @@ public sealed record FetchState
     /// <summary>
     /// Fetch dictionary to track loading and failure state where the FetchName is the key
     /// </summary>
-    public ImmutableDictionary<string, Fetch> Fetches { get; init; }
+    public required ImmutableDictionary<string, Fetch> Fetches { get; init; }
 }
 
 public sealed record Fetch
 {
-    public string FetchName { get; init; }
+    public required string FetchName { get; init; }
     public bool IsLoading { get; init; }
     public bool HideLoading { get; init; }
     public DateTimeOffset? CacheExpires { get; init; }
-    public ApiError ApiError { get; init; }
+    public ApiError? ApiError { get; init; }
 }
 
 public sealed class FetchFeature : Feature<FetchState>
@@ -39,20 +41,20 @@ public static partial class FetchActions
 {
     public sealed record FetchStarted
     {
-        public string FetchName { get; init; }
+        public required string FetchName { get; init; }
         public bool HideLoading { get; init; }
     }
 
     public sealed record FetchSuccess
     {
-        public string FetchName { get; init; }
+        public required string FetchName { get; init; }
         public DateTimeOffset? CacheExpires { get; init; }
     }
 
     public sealed record FetchFailure
     {
-        public string FetchName { get; init; }
-        public ApiError ApiError { get; init; }
+        public required string FetchName { get; init; }
+        public required ApiError ApiError { get; init; }
     }
 }
 

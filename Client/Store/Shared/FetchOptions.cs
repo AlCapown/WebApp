@@ -35,17 +35,17 @@ public enum FetchOptions
     #region Convenient Combinations
     
     /// <summary>
-    /// Standard fetch behavior: respects cache, no loading indicators, displays errors globally.
+    /// Standard fetch behavior. Respects cache, no loading indicators, and displays errors globally.
     /// </summary>
     Default = DispatchErrorToWindow,
 
     /// <summary>
-    /// Background data refresh: bypasses cache, hidden loading, silent error handling.
+    /// Background data refresh. Bypasses cache, hidden loading, and silent error handling.
     /// </summary>
     SilentRefresh = HideLoading | ForceDispatch,
     
     /// <summary>
-    /// Form submission behavior: bypasses cache to ensure execution and shows loading.
+    /// Form submission behavior. Bypasses cache to ensure execution and shows loading.
     /// </summary>
     FormSubmit = ForceDispatch,
 
