@@ -144,6 +144,8 @@ services
     {
         options.HeaderName = "X-XSRF-TOKEN";
         options.Cookie.Name = "X-XSRF-TOKEN";
+        options.Cookie.IsEssential = true;
+        options.Cookie.HttpOnly = true;
         options.Cookie.SameSite = SameSiteMode.Strict;
         options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     });
@@ -200,11 +202,12 @@ services
     {
         cookieOptions.ApplicationCookie.Configure(options =>
         {
-            options.LogoutPath = "/Account/Logout";
-            options.LoginPath = "/Account/Login";
             options.ExpireTimeSpan = TimeSpan.FromDays(30);
             options.SlidingExpiration = true;
+            options.LogoutPath = "/Account/Logout";
+            options.LoginPath = "/Account/Login";
             options.Cookie.Name = "MedGamePicks";
+            options.Cookie.IsEssential = true;
             options.Cookie.HttpOnly = true;
             options.Cookie.SameSite = SameSiteMode.Lax;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
