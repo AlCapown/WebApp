@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿#nullable enable
+
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System;
 using System.Linq;
@@ -13,13 +15,13 @@ namespace WebApp.Client.Infrastructure;
 
 public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvider
 {
-    private static readonly TimeSpan _userCacheRefreshInterval = TimeSpan.FromSeconds(60);
+    private static readonly TimeSpan _userCacheExpiryInterval = TimeSpan.FromSeconds(60);
 
     private readonly NavigationManager _navigation;
     private readonly IHttpClientFactory _httpClientFactory;
 
-    private ClaimsPrincipal CachedUser { get; set; } = null;
-    private DateTimeOffset UserLastFetched { get; set; } = DateTimeOffset.Now;
+    private ClaimsPrincipal? CachedUser { get; set; }
+    private DateTimeOffset UserExpiry { get; set; } = DateTimeOffset.MinValue;
 
     public WebAppAuthenticationStateProvider(NavigationManager navigation, IHttpClientFactory httpClientFactory)
     {
@@ -40,15 +42,15 @@ public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvi
 
     private async ValueTask<ClaimsPrincipal> GetUserCachedAsync()
     {
-        var now = DateTimeOffset.Now;
-
-        if (CachedUser is not null && now < UserLastFetched.Add(_userCacheRefreshInterval))
+        // Check if we have a valid cached user
+        if (CachedUser is not null && DateTimeOffset.UtcNow < UserExpiry)
         {
             return CachedUser;
         }
 
+        // Fetch new user and cache it. Multiple threads may reach here simultaneously, but it's acceptable.
         CachedUser = await GetUserAsync();
-        UserLastFetched = now;
+        UserExpiry = DateTimeOffset.UtcNow.Add(_userCacheExpiryInterval);
 
         return CachedUser;
     }
@@ -57,15 +59,16 @@ public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvi
     {
         var client = _httpClientFactory.CreateClient(ServiceConstants.WEBAPP_API_CLIENT);
         
-        CurrentUserInfoResponse user = null;
+        CurrentUserInfoResponse? user = null;
 
         try
         {
             user = await client.GetFromJsonAsync("api/User", CurrentUserInfoResponseJsonContext.Default.CurrentUserInfoResponse);
         }
-        catch (Exception) { }
+        catch (Exception) 
+        { }
 
-        if (user == null || !user.IsAuthenticated)
+        if (user is null || !user.IsAuthenticated)
         {
             return new ClaimsPrincipal(new ClaimsIdentity());
         }

@@ -30,15 +30,23 @@ public class Program
 
         builder.Logging.SetMinimumLevel(builder.HostEnvironment.IsDevelopment() ? LogLevel.Information : LogLevel.Warning);
 
+        // Authorization
         builder.Services.AddAuthorizationCore();
 
+        // Authentication
+        builder.Services.AddSingleton<AuthenticationStateProvider, WebAppAuthenticationStateProvider>();
+        builder.Services.AddSingleton(sp => (WebAppAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
+
+        // API Http Client
+        builder.Services.AddScoped<IApiClient, ApiClient>();
+        builder.Services.AddScoped<WebAppHttpMessageHandler>();
         builder.Services
             .AddHttpClient(ServiceConstants.WEBAPP_API_CLIENT, client =>
             {
                 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
                 client.DefaultRequestHeaders.Add("Accept", "application/json; charset=utf-8");
             })
-            .AddHttpMessageHandler<XSRFHttpMessageHandler>()
+            .AddHttpMessageHandler<WebAppHttpMessageHandler>()
             .AddPolicyHandler
             (
                 HttpPolicyExtensions
@@ -55,11 +63,6 @@ public class Program
 #endif
         });
 
-        builder.Services.AddSingleton<AuthenticationStateProvider, WebAppAuthenticationStateProvider>();
-        builder.Services.AddSingleton(sp => (WebAppAuthenticationStateProvider)sp.GetRequiredService<AuthenticationStateProvider>());
-        
-        builder.Services.AddScoped<IApiClient, ApiClient>();
-        builder.Services.AddScoped<XSRFHttpMessageHandler>();
 
         builder.Services.AddMudServices();
 
