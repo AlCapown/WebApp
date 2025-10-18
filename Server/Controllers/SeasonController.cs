@@ -181,7 +181,7 @@ public sealed class SeasonController : ControllerBase
             {
                 if(success is null)
                 {
-                    return NotFound(new NotFoundProblemDetails(""));
+                    return NotFound(new NotFoundProblemDetails($"The season with the ID {seasonId} does not have a week with the ID {seasonWeekId}."));
                 }
 
                 return Ok(success);
