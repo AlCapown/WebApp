@@ -1,3 +1,5 @@
-﻿namespace WebApp.Client.Store.Shared;
+﻿#nullable enable
+
+namespace WebApp.Client.Store.Shared;
 
 public record FetchSuccessAction { }

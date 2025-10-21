@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 using WebApp.Common.Models;
 using WebApp.Server.Features.Account;
 using WebApp.Server.Infrastructure.ProblemDetailsModels;
-  
+
 namespace WebApp.Server.Controllers;
 
 [Route("api/[controller]")]
@@ -62,7 +62,10 @@ public sealed class UserController : ControllerBase
             IsAuthenticated = true,
             NameClaimType = nameClaimType,
             RoleClaimType = roleClaimType,
-            Claims = User?.Claims.Select(x => new ClaimValue(x.Type, x.Value)).ToArray()
+            Claims = User?.Claims
+                .Where(x => x.Type != "AspNet.Identity.SecurityStamp") // Filter out security stamp  
+                .Select(x => new ClaimValue(x.Type, x.Value))
+                .ToArray()
         });
     }
 

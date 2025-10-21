@@ -48,7 +48,7 @@ public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvi
             return CachedUser;
         }
 
-        // Fetch new user and cache it. Multiple threads may reach here simultaneously, but it's acceptable.
+        // Fetch new user and cache it. Multiple threads may reach here simultaneously but this is fine.
         CachedUser = await GetUserAsync();
         UserExpiry = DateTimeOffset.UtcNow.Add(_userCacheExpiryInterval);
 

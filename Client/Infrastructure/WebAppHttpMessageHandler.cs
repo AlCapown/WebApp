@@ -37,7 +37,7 @@ public sealed class WebAppHttpMessageHandler : DelegatingHandler
             return CachedToken;
         }
 
-        // Fetch new token and cache it. Multiple threads may reach here simultaneously, but it's acceptable.
+        // Fetch new token and cache it. Multiple threads may reach here simultaneously but this is fine.
         var token = await _jsRuntime.InvokeAsync<string>("getAntiforgeryToken", cancellationToken);
 
         CachedToken = token;
