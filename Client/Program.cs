@@ -12,6 +12,8 @@ using WebApp.Client.Api;
 using WebApp.Client.Common.Constants;
 using WebApp.Client.Infrastructure;
 using WebApp.Client.Store.Shared;
+using System.Net.Http;
+
 
 
 #if DEBUG
@@ -44,6 +46,7 @@ public class Program
             .AddHttpClient(ServiceConstants.WEBAPP_API_CLIENT, client =>
             {
                 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
+                client.Timeout = TimeSpan.FromSeconds(30);
                 client.DefaultRequestHeaders.Add("Accept", "application/json; charset=utf-8");
             })
             .AddHttpMessageHandler<WebAppHttpMessageHandler>()
