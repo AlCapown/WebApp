@@ -33,14 +33,16 @@
     private readonly Channel<Func<Task>> _errorQueue = Channel.CreateUnbounded<Func<Task>>(new UnboundedChannelOptions
     {
         SingleReader = true,
-        SingleWriter = true,
+        SingleWriter = false,
         AllowSynchronousContinuations = false
     });
+
+    private Task? _processingTask;
 
     protected override void OnInitialized() 
     {
         ActionSubscriber.SubscribeToAction<PageActions.EnqueuePageError>(this, action => EnqueueErrorAction(action));
-        _ = Task.Run(() => ProcessErrorQueue(_cancellationTokenSource.Token));
+        _processingTask = ProcessErrorQueue(_cancellationTokenSource.Token);
         base.OnInitialized();
     }
 
@@ -50,7 +52,27 @@
         {
             ActionSubscriber.UnsubscribeFromAllActions(this);
             _errorQueue.Writer.Complete();
-            _cancellationTokenSource.Cancel();
+        
+            await _cancellationTokenSource.CancelAsync();
+        
+            // Wait for background task to complete gracefully
+            if (_processingTask is not null)
+            {
+                try
+                {
+                    await _processingTask;
+                }
+                catch (OperationCanceledException)
+                {
+                    // Expected
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogWarning(ex, "Unexpected error while disposing GlobalErrorHandler");
+                }
+            }
+        
+            _cancellationTokenSource.Dispose();
         }
 
         await base.DisposeAsyncCore(disposing);
@@ -70,7 +92,6 @@
 
     private void EnqueueErrorAction(PageActions.EnqueuePageError errorAction)
     {
-        // Unbounded channel so no need to check for success
         _errorQueue.Writer.TryWrite(() =>
         {
             if (errorAction.Error is ApiError apiError)
@@ -90,23 +111,16 @@
 
     private async Task ProcessErrorQueue(CancellationToken cancellationToken)
     {
-        try
+        await foreach(var errorTask in _errorQueue.Reader.ReadAllAsync(cancellationToken))
         {
-            await foreach(var errorTask in _errorQueue.Reader.ReadAllAsync(cancellationToken))
+            try
             {
-                try
-                {
-                    await errorTask();
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogError(ex, "Error processing error action in GlobalErrorHandler.");
-                }
+                await errorTask();
             }
-        }
-        catch (OperationCanceledException)
-        {
-            // Expected when cancellation is requested. This is a background task so don't do anything meantingful here.
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error processing error action in GlobalErrorHandler.");
+            }
         }
     }
 
