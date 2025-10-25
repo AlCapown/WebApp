@@ -102,7 +102,7 @@
 
     protected async Task ValidSubmitCallbackErrorHandlerAsync(ApiError error)
     {
-        await MudDialog.SetOptionsAsync(MudDialog.Options with { BackdropClick = false });
+        await MudDialog.SetOptionsAsync(MudDialog.Options with { BackdropClick = true });
         IsFormDialogSubmitting = false;
         Validator.DisplayApiErrors(error);
         StateHasChanged();
