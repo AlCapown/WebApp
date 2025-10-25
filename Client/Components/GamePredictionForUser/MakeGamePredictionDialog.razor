@@ -4,8 +4,7 @@
 @using WebApp.Client.Store.Shared
 @using WebApp.Client.Store.GamePredictionStore
 
-
-@inherits FluxorComponent
+@implements IDisposable
 @implements IFormDialogContent
 
 @inject IDispatcher Dispatcher
@@ -80,14 +79,9 @@
         });
     }
 
-    protected override async ValueTask DisposeAsyncCore(bool disposing)
+    public void Dispose()
     {
-        if (disposing)
-        {
-            ActionSubscriber.UnsubscribeFromAllActions(this);
-        }
-
-        await base.DisposeAsyncCore(disposing);
+        ActionSubscriber.UnsubscribeFromAllActions(this);
     }
 
     private CreateGamePredictionRequest GetDefaultModelState()

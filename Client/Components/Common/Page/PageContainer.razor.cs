@@ -1,11 +1,10 @@
 ﻿using Fluxor;
-using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using WebApp.Client.Store.PageStore;
 
 namespace WebApp.Client.Components.Common.Page;
 
-public partial class PageContainer : FluxorComponent
+public partial class PageContainer
 {
     /// <summary>
     /// Page heading to display

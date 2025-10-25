@@ -6,7 +6,7 @@
 @using System.Threading.Tasks
 @using WebApp.Common.Models
 
-@inherits FluxorComponent
+@implements IDisposable
 
 <EditForm Model="@Model" OnValidSubmit="@OnValidSubmitAsync">
     <MudDialog Class="wa_formDialog">
@@ -113,14 +113,12 @@
         MudDialog.Cancel();
     }
 
-    protected override async ValueTask DisposeAsyncCore(bool disposing)
+    public void Dispose()
     {
-        if (disposing && ChildContent?.Target is IFormDialogContent formDialogContent)
+        if (ChildContent?.Target is IFormDialogContent formDialogContent)
         {
             formDialogContent.OnValidSubmitCallbackSuccess -= ValidSubmitCallbackSuccessHandler;
             formDialogContent.OnValidSubmitCallbackErrorAsync -= ValidSubmitCallbackErrorHandlerAsync;
         }
-
-        await base.DisposeAsyncCore(disposing);
     }
 }
