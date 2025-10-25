@@ -25,7 +25,7 @@ public abstract class ApiLoadPlan<TResponse>
     /// Gets the action that initiated this fetch operation, containing metadata about the request
     /// such as caching duration, loading states, and error handling preferences.
     /// </summary>
-    public FetchStartedAction FetchStartedAction { get; }
+    public required FetchStartedAction FetchStartedAction { get; init; }
 
     /// <summary>
     /// Gets the JSON type information required for deserializing the API response.

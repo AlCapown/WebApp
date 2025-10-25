@@ -3,6 +3,7 @@
 using Fluxor;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -144,6 +145,8 @@ public sealed class ApiClient : IApiClient
             return HandleException(apiLoadPlan, new InvalidDataException("Failed to read response content."));
         }
 
+        Debug.Assert(apiLoadPlan.FetchStartedAction.FetchName is not null);
+
         _dispatcher.Dispatch(apiLoadPlan.GetSuccessAction(content));
 
         _dispatcher.Dispatch(new FetchActions.FetchSuccess
@@ -173,6 +176,8 @@ public sealed class ApiClient : IApiClient
     private ApiResponse<TResponse> DispatchFailureAndReturnResponse<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, ApiError apiError)
         where TResponse : class
     {
+        Debug.Assert(apiLoadPlan.FetchStartedAction.FetchName is not null);
+        
         _dispatcher.Dispatch(apiLoadPlan.GetFailureAction(apiError) with
         {
             FetchName = apiLoadPlan.FetchStartedAction.FetchName,
@@ -189,13 +194,8 @@ public sealed class ApiClient : IApiClient
         {
             _dispatcher.Dispatch(new PageActions.EnqueuePageError
             {
-                Error = new ApiError
+                Error = apiError with
                 {
-                    Title = apiError.Title,
-                    Detail = apiError.Detail,
-                    Status = apiError.Status,
-                    StackTrace = apiError.StackTrace,
-                    TraceId = apiError.TraceId,
                     FetchName = apiLoadPlan.FetchStartedAction.FetchName,
                     RetryAction = apiLoadPlan.FetchStartedAction
                 }
