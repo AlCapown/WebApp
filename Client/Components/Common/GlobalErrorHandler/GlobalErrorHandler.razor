@@ -6,7 +6,7 @@
 @using WebApp.Common.Infrastructure
 @using WebApp.Client.Store.PageStore
 
-@inherits FluxorComponent
+@implements IAsyncDisposable
 
 @inject IDispatcher Dispatcher
 @inject IActionSubscriber ActionSubscriber
@@ -24,10 +24,12 @@
 </ErrorBoundary>
 
 
-@code {
+@code 
+{
+#nullable enable
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public required RenderFragment ChildContent { get; set; }
 
     private readonly CancellationTokenSource _cancellationTokenSource = new();
     private readonly Channel<Func<Task>> _errorQueue = Channel.CreateUnbounded<Func<Task>>(new UnboundedChannelOptions
@@ -41,41 +43,36 @@
 
     protected override void OnInitialized() 
     {
-        ActionSubscriber.SubscribeToAction<PageActions.EnqueuePageError>(this, action => EnqueueErrorAction(action));
+        ActionSubscriber.SubscribeToAction<PageActions.EnqueuePageError>(this, action => EnqueueError(action));
         _processingTask = ProcessErrorQueue(_cancellationTokenSource.Token);
         base.OnInitialized();
     }
 
-    protected override async ValueTask DisposeAsyncCore(bool disposing)
+    public async ValueTask DisposeAsync()
     {
-        if (disposing)
+        ActionSubscriber.UnsubscribeFromAllActions(this);
+        _errorQueue.Writer.Complete();
+    
+        await _cancellationTokenSource.CancelAsync();
+    
+        // Wait for background task to complete gracefully
+        if (_processingTask is not null)
         {
-            ActionSubscriber.UnsubscribeFromAllActions(this);
-            _errorQueue.Writer.Complete();
-        
-            await _cancellationTokenSource.CancelAsync();
-        
-            // Wait for background task to complete gracefully
-            if (_processingTask is not null)
+            try
             {
-                try
-                {
-                    await _processingTask;
-                }
-                catch (OperationCanceledException)
-                {
-                    // Expected
-                }
-                catch (Exception ex)
-                {
-                    Logger.LogWarning(ex, "Unexpected error while disposing GlobalErrorHandler");
-                }
+                await _processingTask;
             }
-        
-            _cancellationTokenSource.Dispose();
+            catch (OperationCanceledException)
+            {
+                // Expected
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning(ex, "Unexpected error while disposing GlobalErrorHandler");
+            }
         }
-
-        await base.DisposeAsyncCore(disposing);
+    
+        _cancellationTokenSource.Dispose();
     }
 
     private void OnException(Exception ex)
@@ -90,22 +87,13 @@
         });
     }
 
-    private void EnqueueErrorAction(PageActions.EnqueuePageError errorAction)
+    private void EnqueueError(PageActions.EnqueuePageError errorAction)
     {
-        _errorQueue.Writer.TryWrite(() =>
+        _errorQueue.Writer.TryWrite(() => errorAction.Error switch
         {
-            if (errorAction.Error is ApiError apiError)
-            {
-                return ShowApiErrorDialog(apiError);
-            }
-            else if (errorAction.Error is LocalError localError)
-            {
-                return ShowLocalErrorDialog(localError);
-            }
-            else
-            {
-                return ShowUnsupportedErrorTypeDialog();
-            }
+            ApiError apiError => ShowApiErrorDialog(apiError),
+            LocalError localError => ShowLocalErrorDialog(localError),
+            _ => ShowUnsupportedErrorTypeDialog()
         });
     }
 
