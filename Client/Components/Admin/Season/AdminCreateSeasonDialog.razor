@@ -4,7 +4,7 @@
 @using WebApp.Client.Store.Shared
 @using WebApp.Client.Common.Extensions
 
-@inherits FluxorComponent
+@implements IDisposable
 @implements IFormDialogContent
 
 @inject IDispatcher Dispatcher
@@ -50,13 +50,8 @@
         });
     }
 
-    protected override async ValueTask DisposeAsyncCore(bool disposing)
+    public void Dispose()
     {
-        if (disposing)
-        {
-            ActionSubscriber.UnsubscribeFromAllActions(this);
-        }
-
-        await base.DisposeAsyncCore(disposing);
+        ActionSubscriber.UnsubscribeFromAllActions(this);
     }
 }

@@ -4,7 +4,7 @@ using WebApp.Client.Store.PageStore;
 
 namespace WebApp.Client.Components.Common.Page;
 
-public partial class PageContainer
+public partial class PageContainer : ComponentBase
 {
     /// <summary>
     /// Page heading to display

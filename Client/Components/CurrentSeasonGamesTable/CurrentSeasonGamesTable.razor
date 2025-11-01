@@ -136,12 +136,12 @@
 
         if (!GameStartsOn.HasValue || GameStartsOn.Value > DateTimeOffset.Now)
         {
-            return "";
+            return string.Empty;
         }
 
         var quarterString = quarter switch
         {
-            0 => "",
+            0 => null,
             1 => "Q1",
             2 => "Q2",
             3 => "Q3",
@@ -149,7 +149,9 @@
             _ => "OT"
         };
 
-        return string.IsNullOrEmpty(quarterString) ? "" : string.Format("{0} - {1}", clockTime, quarterString);
+        return quarterString is null
+            ? string.Empty 
+            : string.Format("{0} - {1}", clockTime, quarterString);
     }
 
     private string GameStartsOnDateString(DateTimeOffset? gameStartsOn)
