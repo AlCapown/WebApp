@@ -1,13 +1,10 @@
 ﻿@page
-@model WebApp.Server.Pages.LoginModel
-@{
-    ViewData["Title"] = "Login";
-}
+@model WebApp.Server.Pages.Account.LoginModel
 
 <form id="login" method="post">
     <div class="wa_card">
         <div class="wa_card__content">
-            <h1>@ViewData["Title"]</h1>
+            <h1>Login</h1>
             <hr/>
             @foreach (var provider in Model.ExternalLogins.OrderBy(x => x.DisplayName))
             {

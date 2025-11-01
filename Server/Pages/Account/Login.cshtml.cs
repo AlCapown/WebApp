@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using WebApp.Database.Tables;
 
-namespace WebApp.Server.Pages;
+namespace WebApp.Server.Pages.Account;
 
 [AllowAnonymous]
 public class LoginModel : PageModel
