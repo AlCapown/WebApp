@@ -1,5 +1,6 @@
-﻿using Fluxor;
-using System;
+﻿#nullable enable
+
+using Fluxor;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
@@ -51,7 +52,7 @@ public static partial class SeasonActions
     public sealed record UpdateSeason : FetchStartedAction
     {
         public int SeasonId { get; init; }
-        public UpdateSeasonRequest Request { get; init; }
+        public required UpdateSeasonRequest Request { get; init; }
     }
 
     public sealed record UpdateSeasonSuccess : FetchSuccessAction { }

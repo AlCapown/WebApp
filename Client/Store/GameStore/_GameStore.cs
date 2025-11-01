@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Collections.Immutable;
 using WebApp.Common.Models;
 
@@ -9,7 +11,7 @@ public sealed record GameState
     /// <summary>
     /// Games dictionary where the GameId is the key
     /// </summary>
-    public ImmutableDictionary<int, Game> Games { get; init; }
+    public required ImmutableDictionary<int, Game> Games { get; init; }
 }
 
 public sealed class GameFeature : Feature<GameState>

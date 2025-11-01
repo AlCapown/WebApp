@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Collections.Immutable;
 using WebApp.Common.Models;
 
@@ -9,7 +11,7 @@ public sealed record UserState
     /// <summary>
     /// User dictionary where the UserId is the key
     /// </summary>
-    public ImmutableDictionary<string, User> Users { get; init; }
+    public required ImmutableDictionary<string, User> Users { get; init; }
 }
 
 public sealed class UserFeature : Feature<UserState>

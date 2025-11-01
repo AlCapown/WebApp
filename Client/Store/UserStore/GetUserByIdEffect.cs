@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
@@ -44,12 +46,12 @@ public static partial class UserActions
 {
     public sealed record GetUserById : FetchStartedAction
     {
-        public string UserId { get; init; }
+        public required string UserId { get; init; }
     }
 
     public sealed record GetUserByIdSuccess : FetchSuccessAction
     {
-        public User User { get; init; }
+        public required User User { get; init; }
     }
 
     public sealed record GetUserByIdFailure : FetchFailureAction { }

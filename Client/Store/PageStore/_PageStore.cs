@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Collections.Immutable;
 using WebApp.Common.Models;
 
@@ -6,8 +8,8 @@ namespace WebApp.Client.Store.PageStore;
 
 public sealed record PageState
 {
-    public string PageHeading { get; init; }
-    public ImmutableDictionary<string, object> PageLocalState { get; init; }
+    public required string PageHeading { get; init; }
+    public required ImmutableDictionary<string, object> PageLocalState { get; init; }
 }
 
 public sealed class PageFeature : Feature<PageState>
@@ -25,18 +27,18 @@ public static partial class PageActions
 {
     public sealed record SetPageHeading
     {
-        public string PageHeading { get; init; }
+        public required string PageHeading { get; init; }
     }
 
     public sealed record EnqueuePageError
     {
-        public ErrorBase Error { get; init; }
+        public required ErrorBase Error { get; init; }
     }
 
     public sealed record UpdatePageLocalState
     {
-        public string Name { get; init; }
-        public object LocalState { get; init; }
+        public required string Name { get; init; }
+        public object? LocalState { get; init; }
     }
 }
 

@@ -91,7 +91,7 @@ public abstract class ApiLoadPlanWithBody<TResponse, TBody> : ApiLoadPlan<TRespo
 
 /// <summary>
 /// Abstract base class for API request plans that send a request body but expect no meaningful response content,
-/// typically used for operations that return HTTP 201 Created or 204 No Content status codes.
+/// typically used for operations that return HTTP 204 No Content status codes.
 /// </summary>
 /// <typeparam name="TBody">The type of the request body to be serialized and sent with the API call. Must be a reference type.</typeparam>
 /// <remarks>

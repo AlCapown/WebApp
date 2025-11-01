@@ -1,4 +1,7 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
+using System;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
@@ -41,7 +44,10 @@ public sealed class UpdateSeasonWeekEffect : Effect<SeasonWeekActions.UpdateSeas
 
         public override FetchSuccessAction GetSuccessAction(NoContentResponse response)
         {
-            var action = (SeasonWeekActions.UpdateSeasonWeek)FetchStartedAction;
+            if (FetchStartedAction is not SeasonWeekActions.UpdateSeasonWeek action)
+            {
+                throw new InvalidCastException("FetchStartedAction is not of type UpdateSeasonWeek.");
+            }
 
             return new SeasonWeekActions.UpdateSeasonWeekSuccess
             {
@@ -52,7 +58,10 @@ public sealed class UpdateSeasonWeekEffect : Effect<SeasonWeekActions.UpdateSeas
 
         public override FetchFailureAction GetFailureAction(ApiError apiError)
         {
-            var action = (SeasonWeekActions.UpdateSeasonWeek)FetchStartedAction;
+            if (FetchStartedAction is not SeasonWeekActions.UpdateSeasonWeek action)
+            {
+                throw new InvalidCastException("FetchStartedAction is not of type UpdateSeasonWeek.");
+            }
 
             return new SeasonWeekActions.UpdateSeasonWeekFailure
             {
@@ -69,7 +78,7 @@ public static partial class SeasonWeekActions
     {
         public int SeasonId { get; init; }
         public int SeasonWeekId { get; init; }
-        public UpdateSeasonWeekRequest Request { get; init; }
+        public required UpdateSeasonWeekRequest Request { get; init; }
     }
 
     public sealed record UpdateSeasonWeekSuccess : FetchSuccessAction

@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
@@ -65,7 +67,7 @@ public static partial class SeasonWeekActions
     {
         public int SeasonId { get; init; }
         public int SeasonWeekId { get; init; }
-        public SeasonWeek SeasonWeek { get; init; }
+        public required SeasonWeek SeasonWeek { get; init; }
     }
 
     public sealed record LoadSeasonWeekFailure : FetchFailureAction

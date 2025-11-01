@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Collections.Immutable;
 using WebApp.Common.Models;
 
@@ -9,7 +11,7 @@ public sealed record TeamState
     /// <summary>
     /// Team dictionary where the team identifier is the key.
     /// </summary>
-    public ImmutableDictionary<int, Team> Teams { get; init; }
+    public required ImmutableDictionary<int, Team> Teams { get; init; }
 }
 
 public sealed class TeamFeature : Feature<TeamState>

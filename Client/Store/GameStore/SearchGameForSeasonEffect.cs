@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +24,7 @@ public sealed class SearchGamesForSeasonEffect : Effect<GameActions.SearchGamesF
 
     public override async Task HandleAsync(GameActions.SearchGamesForSeason action, IDispatcher dispatcher)
     {
-        await _client.GetAsync(new SearchGamesForSeasonPlan(action), "/Api/Game/Search", new Dictionary<string, string>
+        await _client.GetAsync(new SearchGamesForSeasonPlan(action), "/Api/Game/Search", new Dictionary<string, string?>
         {
             { nameof(action.SeasonWeekId), action.SeasonWeekId?.ToString() },
             { nameof(action.SeasonId), action.SeasonId?.ToString() },
@@ -67,7 +69,7 @@ public static partial class GameActions
 
     public sealed record SearchGamesForSeasonSuccess : FetchSuccessAction
     {
-        public Game[] Games { get; init; }
+        public required Game[] Games { get; init; }
     }
 
     public sealed record SearchGamesForSeasonFailure : FetchFailureAction { }

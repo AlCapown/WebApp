@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Collections.Immutable;
 using WebApp.Common.Models;
 
@@ -6,7 +8,7 @@ namespace WebApp.Client.Store.SeasonWeekStore;
 
 public sealed record SeasonWeekState
 {
-    public ImmutableDictionary<int, SeasonWeek> Weeks { get; init; }
+    public required ImmutableDictionary<int, SeasonWeek> Weeks { get; init; }
 }
 
 public sealed class SeasonWeekFeature : Feature<SeasonWeekState>

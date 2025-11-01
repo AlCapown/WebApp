@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Linq;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
@@ -47,7 +49,7 @@ public static partial class TeamActions
 
     public sealed record LoadTeamsSuccess : FetchSuccessAction
     {
-        public Team[] Teams { get; init; }
+        public required Team[] Teams { get; init; }
     }
 
     public sealed record LoadTeamsFailure : FetchFailureAction { }

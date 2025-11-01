@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
@@ -21,7 +23,7 @@ public sealed class CreateSeasonEffect : Effect<SeasonActions.CreateSeason>
     {
         var result = await _apiClient.PostAsync(new CreateSeasonPlan(action), "api/Season", action.Request);
 
-        if (result.IsSuccess)
+        if (result.IsSuccess && action.Request.SeasonId.HasValue)
         {
             dispatcher.DispatchFetch(new SeasonActions.LoadSeason
             {
@@ -51,7 +53,7 @@ public static partial class SeasonActions
 {
     public sealed record CreateSeason : FetchStartedAction
     {
-        public CreateSeasonRequest Request { get; init; }
+        public required CreateSeasonRequest Request { get; init; }
     }
 
     public sealed record CreateSeasonSuccess : FetchSuccessAction { }

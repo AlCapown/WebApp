@@ -1,4 +1,7 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
+using System;
 using System.Linq;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
@@ -33,7 +36,10 @@ public sealed class LoadSeasonWeekListEffect : Effect<SeasonWeekActions.LoadSeas
 
         public override FetchSuccessAction GetSuccessAction(SeasonWeekSearchResponse response)
         {
-            var action = FetchStartedAction as SeasonWeekActions.LoadSeasonWeekList;
+            if (FetchStartedAction is not SeasonWeekActions.LoadSeasonWeekList action)
+            {
+                throw new InvalidCastException("FetchStartedAction is not of type LoadSeasonWeekList.");
+            }
 
             return new SeasonWeekActions.LoadSeasonWeekListSuccess
             {
@@ -44,7 +50,10 @@ public sealed class LoadSeasonWeekListEffect : Effect<SeasonWeekActions.LoadSeas
 
         public override FetchFailureAction GetFailureAction(ApiError apiError)
         {
-            var action = FetchStartedAction as SeasonWeekActions.LoadSeasonWeekList;
+            if (FetchStartedAction is not SeasonWeekActions.LoadSeasonWeekList action)
+            {
+                throw new InvalidCastException("FetchStartedAction is not of type LoadSeasonWeekList.");
+            }
 
             return new SeasonWeekActions.LoadSeasonWeekListFailure
             {
@@ -65,7 +74,7 @@ public static partial class SeasonWeekActions
     public sealed record LoadSeasonWeekListSuccess : FetchSuccessAction
     {
         public int SeasonId { get; init; }
-        public SeasonWeek[] Weeks { get; init; }
+        public required SeasonWeek[] Weeks { get; init; }
     }
 
     public sealed record LoadSeasonWeekListFailure : FetchFailureAction

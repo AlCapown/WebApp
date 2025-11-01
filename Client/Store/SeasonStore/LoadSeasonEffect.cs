@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
@@ -49,7 +51,7 @@ public static partial class SeasonActions
 
     public sealed record LoadSeasonSuccess : FetchSuccessAction
     {
-        public Season Season { get; init; }
+        public required Season Season { get; init; }
     }
 
     public sealed record LoadSeasonFailure : FetchFailureAction { }
