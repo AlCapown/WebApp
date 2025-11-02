@@ -112,29 +112,22 @@ services
     .AddSerilog(configureLogger =>
     {
         configureLogger
-            .ReadFrom.Configuration(configuration)
+       .ReadFrom.Configuration(configuration)
             .WriteTo.Console();
     });
-
-// Register Database Entity Maps
-services
-    .Scan(scan => scan.FromAssemblyOf<IEntityTypeMap>()
-    .AddClasses(classes => classes.AssignableTo<IEntityTypeMap>())
-    .AsImplementedInterfaces()
-    .WithTransientLifetime());
 
 // Register Entity Framework Database Context with MsSql
 services
     .AddDbContext<WebAppDbContext>(options =>
-    {
-        options.UseSqlServer(connectionStrings.Database, ServerOptions =>
+  {
+ options.UseSqlServer(connectionStrings.Database, ServerOptions =>
         {
-            ServerOptions.MigrationsAssembly("WebApp.Database");
-        });
+     ServerOptions.MigrationsAssembly("WebApp.Database");
+     });
 
         if (environment.IsDevelopment())
         {
-            options.EnableSensitiveDataLogging();
+          options.EnableSensitiveDataLogging();
         }
     });
 

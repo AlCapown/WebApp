@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -27,12 +28,11 @@ public class Season
     #endregion
 }
 
-public class SeasonMap : BaseEntityMap<Season>
+internal sealed class SeasonConfiguration : IEntityTypeConfiguration<Season>
 {
-    protected override void InternalMap(EntityTypeBuilder<Season> builder)
-    {
-        builder
-            .HasData(SeasonSeeds);
+    public void Configure(EntityTypeBuilder<Season> builder)
+    {   
+        builder.HasData(SeasonSeeds);
     }
 
     private static readonly Season[] SeasonSeeds =

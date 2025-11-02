@@ -6,8 +6,6 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WebApp.Common.Enums;
 
-// https://github.com/dotnet/efcore/issues/24507
-
 namespace WebApp.Database.Tables;
 
 [Table(nameof(SeasonWeek))]
@@ -44,9 +42,9 @@ public class SeasonWeek
     #endregion
 }
 
-public class SeasonWeekMap : BaseEntityMap<SeasonWeek>
+internal sealed class SeasonWeekConfiguration : IEntityTypeConfiguration<SeasonWeek>
 {
-    protected override void InternalMap(EntityTypeBuilder<SeasonWeek> builder)
+    public void Configure(EntityTypeBuilder<SeasonWeek> builder)
     {
         builder
             .Property(x => x.SeasonWeekTypeName)

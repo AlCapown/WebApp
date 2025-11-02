@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿#nullable enable
+
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WebApp.Common.Constants;
 
@@ -10,12 +13,11 @@ public class AppIdentityRole : IdentityRole
     #endregion
 }
 
-public class AppIdentityRoleMap : BaseEntityMap<AppIdentityRole>
+internal sealed class AppIdentityRoleConfiguration : IEntityTypeConfiguration<AppIdentityRole>
 {
-    protected override void InternalMap(EntityTypeBuilder<AppIdentityRole> builder)
+    public void Configure(EntityTypeBuilder<AppIdentityRole> builder)
     {
-        builder
-            .HasData(IdentityRoleSeeds);
+        builder.HasData(IdentityRoleSeeds);
     }
 
     private static readonly AppIdentityRole[] IdentityRoleSeeds =

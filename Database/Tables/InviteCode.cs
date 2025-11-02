@@ -27,9 +27,9 @@ public class InviteCode
     public DateTimeOffset? Expires { get; set; }
 }
 
-public class InviteCodeMap : BaseEntityMap<InviteCode>
+internal sealed class InviteCodeConfiguration : IEntityTypeConfiguration<InviteCode>
 {
-    protected override void InternalMap(EntityTypeBuilder<InviteCode> builder)
+    public void Configure(EntityTypeBuilder<InviteCode> builder)
     {
         builder
             .Property(p => p.Created)

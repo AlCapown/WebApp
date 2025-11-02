@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -17,4 +19,11 @@ public class AppUser : IdentityUser
     #region Navigation Props
     public virtual ICollection<GamePrediction> GamePredictions { get; set; }
     #endregion
+}
+
+internal sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
+{
+    public void Configure(EntityTypeBuilder<AppUser> builder)
+    {
+    }
 }

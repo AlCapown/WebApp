@@ -1,29 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using WebApp.Database.Tables;
 
 namespace WebApp.Database;
 
 public sealed class WebAppDbContext : IdentityDbContext<AppUser>
 {
-    private readonly IEnumerable<IEntityTypeMap> _mappings;
-
-    public WebAppDbContext(DbContextOptions<WebAppDbContext> options, IEnumerable<IEntityTypeMap> mappings) 
-        : base(options)
-    {
-        _mappings = mappings;
-    }
+    public WebAppDbContext(DbContextOptions<WebAppDbContext> options) : base(options)
+    { }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // Apply database mappings for each table that implements BaseEntityMap
-        foreach (var mapping in _mappings)
-        {
-            mapping.Map(modelBuilder);
-        }
-
         base.OnModelCreating(modelBuilder);
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(WebAppDbContext).Assembly);
     }
 
     #region Tables

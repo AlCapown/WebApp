@@ -36,9 +36,9 @@ public class GamePrediction
     #endregion
 }
 
-public class GamePredictionMap : BaseEntityMap<GamePrediction>
+internal sealed class GamePredictionConfiguration : IEntityTypeConfiguration<GamePrediction>
 {
-    protected override void InternalMap(EntityTypeBuilder<GamePrediction> builder)
+    public void Configure(EntityTypeBuilder<GamePrediction> builder)
     {
         builder
             .HasOne(p => p.Game)

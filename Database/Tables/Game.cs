@@ -51,9 +51,9 @@ public class Game
     #endregion
 }
 
-public class GameMap : BaseEntityMap<Game>
+internal sealed class GameConfiguration : IEntityTypeConfiguration<Game>
 {
-    protected override void InternalMap(EntityTypeBuilder<Game> builder)
+    public void Configure(EntityTypeBuilder<Game> builder)
     {
         builder
             .HasOne(p => p.SeasonWeek)

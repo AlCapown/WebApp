@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -12,11 +13,11 @@ public class Conference
     [Key]
     [Required]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int ConferenceId { get; set; }
+  public int ConferenceId { get; set; }
 
     [Required]
     [MaxLength(30)]
-    public string ConferenceName { get; set; }
+ public string ConferenceName { get; set; }
 
     [Required]
     [MaxLength(3)]
@@ -27,27 +28,16 @@ public class Conference
     #endregion
 }
 
-public class FootballConferenceMap : BaseEntityMap<Conference>
+internal sealed class ConferenceConfiguration : IEntityTypeConfiguration<Conference>
 {
-    protected override void InternalMap(EntityTypeBuilder<Conference> builder)
+    public void Configure(EntityTypeBuilder<Conference> builder)
     {
-        builder
-            .HasData(ConferenceSeeds);
+        builder.HasData(ConferenceSeeds);
     }
 
     private static readonly Conference[] ConferenceSeeds =
     [
-        new Conference
-        {
-            ConferenceId = 1,
-            ConferenceName = "National Football Conference",
-            ConferenceShortName = "NFC"
-        },
-        new Conference
-        {
-            ConferenceId = 2,
-            ConferenceName = "American Football Conference",
-            ConferenceShortName = "AFC"
-        }
+        new Conference { ConferenceId = 1, ConferenceName = "National Football Conference", ConferenceShortName = "NFC" },
+        new Conference { ConferenceId = 2, ConferenceName = "American Football Conference", ConferenceShortName = "AFC" }
     ];
 }

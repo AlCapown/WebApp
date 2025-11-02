@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -18,9 +19,9 @@ public class SeasonWeekType
     #endregion
 }
 
-public class SeasonWeekTypeMap : BaseEntityMap<SeasonWeekType>
+internal sealed class SeasonWeekTypeConfiguration : IEntityTypeConfiguration<SeasonWeekType>
 {
-    protected override void InternalMap(EntityTypeBuilder<SeasonWeekType> builder)
+    public void Configure(EntityTypeBuilder<SeasonWeekType> builder)
     {
         builder
             .Property(e => e.SeasonWeekTypeName)
@@ -31,7 +32,7 @@ public class SeasonWeekTypeMap : BaseEntityMap<SeasonWeekType>
             .HasData(SeasonWeekTypeSeeds);
     }
 
-    private readonly SeasonWeekType[] SeasonWeekTypeSeeds =
+    private static readonly SeasonWeekType[] SeasonWeekTypeSeeds =
     [
         new SeasonWeekType
         {

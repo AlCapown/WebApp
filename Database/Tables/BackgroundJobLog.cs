@@ -19,7 +19,7 @@ public class BackgroundJobLog
     public string BackgroundJobName { get; set; }
 
     public bool IsSuccess { get; set; }
-    
+  
     [Column(TypeName = SQLServerTypes.DATETIME_OFFSET_ZERO)]
     public DateTimeOffset? Started { get; set; }
 
@@ -30,10 +30,9 @@ public class BackgroundJobLog
     public string ErrorsJson { get; set; }
 }
 
-public class BackgroundJobLogMap : BaseEntityMap<BackgroundJobLog>
+internal sealed class BackgroundJobLogConfiguration : IEntityTypeConfiguration<BackgroundJobLog>
 {
-    protected override void InternalMap(EntityTypeBuilder<BackgroundJobLog> builder)
+    public void Configure(EntityTypeBuilder<BackgroundJobLog> builder)
     {
-
     }
 }

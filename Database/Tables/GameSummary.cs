@@ -30,9 +30,9 @@ public class GameSummary
     #endregion
 }
 
-public class GameAISummaryMap : BaseEntityMap<GameSummary>
+internal sealed class GameSummaryConfiguration : IEntityTypeConfiguration<GameSummary>
 {
-    protected override void InternalMap(EntityTypeBuilder<GameSummary> builder)
+    public void Configure(EntityTypeBuilder<GameSummary> builder)
     {
         builder
             .HasIndex(p => p.GameId)

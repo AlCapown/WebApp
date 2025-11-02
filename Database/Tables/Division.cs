@@ -27,9 +27,9 @@ public class Division
     #endregion
 }
 
-public class FootballDivisionMap : BaseEntityMap<Division>
+internal sealed class DivisionConfiguration : IEntityTypeConfiguration<Division>
 {
-    protected override void InternalMap(EntityTypeBuilder<Division> builder)
+    public void Configure(EntityTypeBuilder<Division> builder)
     {
         builder
             .HasOne(p => p.Conference)
@@ -38,59 +38,18 @@ public class FootballDivisionMap : BaseEntityMap<Division>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder
-            .HasData(DivisionSeeds);
+             .HasData(DivisionSeeds);
     }
 
     private static readonly Division[] DivisionSeeds =
     [
-        new Division
-        {
-            DivisionId = 1,
-            DivisionName = "NFC NORTH",
-            ConferenceId = 1
-        },
-        new Division
-        {
-            DivisionId = 2,
-            DivisionName = "NFC EAST",
-            ConferenceId = 1
-        },
-        new Division
-        {
-            DivisionId = 3,
-            DivisionName = "NFC SOUTH",
-            ConferenceId = 1
-        },
-        new Division
-        {
-            DivisionId = 4,
-            DivisionName = "NFC WEST",
-            ConferenceId = 1
-        },
-        new Division
-        {
-            DivisionId = 5,
-            DivisionName = "AFC NORTH",
-            ConferenceId = 2
-        },
-        new Division
-        {
-            DivisionId = 6,
-            DivisionName = "AFC EAST",
-            ConferenceId = 2
-        },
-        new Division
-        {
-            DivisionId = 7,
-            DivisionName = "AFC SOUTH",
-            ConferenceId = 2
-        },
-        new Division
-        {
-            DivisionId = 8,
-            DivisionName = "AFC WEST",
-            ConferenceId = 2
-        },
-
+        new Division { DivisionId = 1, DivisionName = "NFC NORTH", ConferenceId = 1 },
+        new Division { DivisionId = 2, DivisionName = "NFC EAST", ConferenceId = 1 },
+        new Division { DivisionId = 3, DivisionName = "NFC SOUTH", ConferenceId = 1 },
+        new Division { DivisionId = 4, DivisionName = "NFC WEST", ConferenceId = 1 },
+        new Division { DivisionId = 5, DivisionName = "AFC NORTH", ConferenceId = 2 },
+        new Division { DivisionId = 6, DivisionName = "AFC EAST", ConferenceId = 2 },
+        new Division { DivisionId = 7, DivisionName = "AFC SOUTH", ConferenceId = 2 },
+        new Division { DivisionId = 8, DivisionName = "AFC WEST", ConferenceId = 2 },
     ];
 }
