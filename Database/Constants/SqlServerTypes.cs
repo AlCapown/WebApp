@@ -1,6 +1,6 @@
-﻿namespace WebApp.Database;
+﻿namespace WebApp.Database.Constants;
 
-public static class SQLServerTypes
+internal static class SQLServerTypes
 {
     public const string DATETIME_OFFSET_ZERO = "DATETIMEOFFSET(0)";
     public const string DATE = "DATE";

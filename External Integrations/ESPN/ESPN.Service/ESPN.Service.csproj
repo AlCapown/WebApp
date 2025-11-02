@@ -6,7 +6,7 @@
     <Nullable>disable</Nullable>
     <RootNamespace>WebApp.ExternalIntegrations.ESPN.Service</RootNamespace>
 	<TrimMode>partial</TrimMode>
-	<PublishTrimmed>false</PublishTrimmed>
+	<PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>

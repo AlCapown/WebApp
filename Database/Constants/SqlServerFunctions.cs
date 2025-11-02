@@ -1,6 +1,6 @@
-﻿namespace WebApp.Database;
+﻿namespace WebApp.Database.Constants;
 
-public static class SqlServerFunctions
+internal static class SqlServerFunctions
 {
     public const string SYS_DATETIME_OFFSET = "SYSDATETIMEOFFSET()";
 }

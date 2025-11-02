@@ -112,23 +112,23 @@ services
     .AddSerilog(configureLogger =>
     {
         configureLogger
-       .ReadFrom.Configuration(configuration)
+            .ReadFrom.Configuration(configuration)
             .WriteTo.Console();
     });
 
 // Register Entity Framework Database Context with MsSql
 services
     .AddDbContext<WebAppDbContext>(options =>
-  {
- options.UseSqlServer(connectionStrings.Database, ServerOptions =>
-        {
-     ServerOptions.MigrationsAssembly("WebApp.Database");
-     });
+    {
+         options.UseSqlServer(connectionStrings.Database, ServerOptions =>
+         {
+            ServerOptions.MigrationsAssembly("WebApp.Database");
+         });
 
-        if (environment.IsDevelopment())
-        {
-          options.EnableSensitiveDataLogging();
-        }
+         if (environment.IsDevelopment())
+         {
+            options.EnableSensitiveDataLogging();
+         }
     });
 
 // Register Anti-forgery token to protect against XSRF vulnerabilities
