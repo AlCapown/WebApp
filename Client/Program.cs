@@ -12,6 +12,8 @@ using WebApp.Client.Api;
 using WebApp.Client.Common.Constants;
 using WebApp.Client.Infrastructure;
 using WebApp.Client.Store.Shared;
+using System.Net;
+
 
 #if DEBUG
 using Fluxor.Blazor.Web.ReduxDevTools;
@@ -43,7 +45,7 @@ public class Program
             .AddHttpClient(ServiceConstants.WEBAPP_API_CLIENT, client =>
             {
                 client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress);
-                client.Timeout = TimeSpan.FromSeconds(30);
+                client.Timeout = TimeSpan.FromSeconds(10);
                 client.DefaultRequestHeaders.Add("Accept", "application/json; charset=utf-8");
             })
             .AddHttpMessageHandler<WebAppHttpMessageHandler>()
@@ -51,6 +53,7 @@ public class Program
             (
                 HttpPolicyExtensions
                     .HandleTransientHttpError()
+                    .OrResult(x => x.StatusCode == HttpStatusCode.TooManyRequests)
                     .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
             );
 
