@@ -5,6 +5,7 @@
 @using System
 @using System.Threading.Tasks
 @using WebApp.Common.Models
+@using WebApp.Common.Extensions
 
 @implements IDisposable
 
@@ -25,7 +26,10 @@
         <DialogContent>
             <DataAnnotationsValidator  />
             <ServerSideValidationHandler @ref="@Validator" />
-            <MudText Color="Color.Error" Class="wa_formDialog__error">@Validator?.UnboundError</MudText>
+            @if (!(@Validator?.UnboundError.IsNullOrWhiteSpace() ?? true))
+            {
+                <MudText Color="Color.Error" Class="wa_formDialog__error">@Validator.UnboundError</MudText>
+            }
             @ChildContent
             @if (IsFormDialogSubmitting)
             {
