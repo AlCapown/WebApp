@@ -4,6 +4,7 @@ using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
 using System.Collections.Generic;
+using System.Diagnostics;
 using WebApp.Client.Common.Extensions;
 using WebApp.Client.Store.FetchStore;
 using WebApp.Client.Store.PageStore;
@@ -91,9 +92,13 @@ public class WebAppComponentBase : FluxorComponent
     public void UpdatePageLocalState<T>(T newLocalState)
         where T : class
     {
+        var typeName = typeof(T).FullName;
+
+        Debug.Assert(typeName is not null, "Type full name cannot be null");
+
         Dispatcher.Dispatch(new PageActions.UpdatePageLocalState
         {
-            Name = typeof(T).FullName,
+            Name = typeName,
             LocalState = newLocalState
         });
     }

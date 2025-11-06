@@ -9,7 +9,7 @@ namespace WebApp.Client.Store.PageStore;
 public sealed record PageState
 {
     public required string PageHeading { get; init; }
-    public required ImmutableDictionary<string, object> PageLocalState { get; init; }
+    public required ImmutableDictionary<string, object?> PageLocalState { get; init; }
 }
 
 public sealed class PageFeature : Feature<PageState>
@@ -19,7 +19,7 @@ public sealed class PageFeature : Feature<PageState>
     protected override PageState GetInitialState() => new()
     {
         PageHeading = string.Empty,
-        PageLocalState = ImmutableDictionary.Create<string, object>()
+        PageLocalState = ImmutableDictionary.Create<string, object?>()
     };
 }
 
