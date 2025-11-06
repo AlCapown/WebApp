@@ -70,7 +70,7 @@ public static class GetUserById
                 FirstName = appUser.FirstName,
                 LastName = appUser.LastName,
                 Email = appUser.Email,
-                IsAdmin = isAdmin
+                IsAdmin = isAdmin,
             };
         }
     }

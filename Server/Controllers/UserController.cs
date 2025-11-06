@@ -40,7 +40,7 @@ public sealed class UserController : ControllerBase
     [ProducesResponseType(typeof(CurrentUserInfoResponse), StatusCodes.Status200OK)]
     public IActionResult GetCurrentUserInfo()
     {
-        if (User?.Identity?.IsAuthenticated is null || !User.Identity.IsAuthenticated)
+        if (User?.Identity is not ClaimsIdentity { IsAuthenticated: true } claimsIdentity)
         {
             return Ok(new CurrentUserInfoResponse
             {
@@ -48,22 +48,13 @@ public sealed class UserController : ControllerBase
             });
         }
 
-        string nameClaimType = ClaimTypes.Name;
-        string roleClaimType = ClaimTypes.Role;
-
-        if (User?.Identity is ClaimsIdentity claimsIdentity)
-        {
-            nameClaimType = claimsIdentity.NameClaimType;
-            roleClaimType = claimsIdentity.RoleClaimType;
-        }
-
         return Ok(new CurrentUserInfoResponse
         {
             IsAuthenticated = true,
-            NameClaimType = nameClaimType,
-            RoleClaimType = roleClaimType,
-            Claims = User?.Claims
-                .Where(x => x.Type != "AspNet.Identity.SecurityStamp") // Filter out security stamp  
+            NameClaimType = claimsIdentity.NameClaimType,
+            RoleClaimType = claimsIdentity.RoleClaimType,
+            Claims = claimsIdentity.Claims
+                .Where(x => x.Type != "AspNet.Identity.SecurityStamp")
                 .Select(x => new ClaimValue(x.Type, x.Value))
                 .ToArray()
         });
