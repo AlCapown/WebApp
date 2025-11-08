@@ -68,7 +68,7 @@
 
     public bool IsFormDialogSubmitting { get; private set; }
 
-    protected ServerSideValidationHandler Validator { get; set; }
+    protected ServerSideValidationHandler Validator { get; private set; }
 
     protected override void OnAfterRender(bool firstRender)
     {
