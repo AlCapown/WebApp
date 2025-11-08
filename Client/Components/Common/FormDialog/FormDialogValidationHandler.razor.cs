@@ -1,19 +1,23 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.Extensions.Logging;
 using System;
 using WebApp.Common.Models;
 
 namespace WebApp.Client.Components.Common.FormDialog;
 
-public class ServerSideValidationHandler : ComponentBase, IDisposable
+public class FormDialogValidationHandler : ComponentBase, IDisposable
 {
+    [Inject]
+    private ILogger<FormDialogValidationHandler> Logger { get; set; }
+
     [CascadingParameter]
     private EditContext CurrentEditContext { get; set; }
 
     private ValidationMessageStore MessageStore { get; set; }
 
     /// <summary>
-    /// Error not bound to any particular field. Used when only the "message" property is set in the API error response.
+    /// Error not bound to any particular field.
     /// </summary>
     public string UnboundError { get; set; }
 
@@ -21,7 +25,7 @@ public class ServerSideValidationHandler : ComponentBase, IDisposable
     {
         if (CurrentEditContext == null)
         {
-            throw new InvalidOperationException($"{nameof(ServerSideValidationHandler)} must be placed inside of an {nameof(EditForm)}");
+            throw new InvalidOperationException($"{nameof(FormDialogValidationHandler)} must be placed inside of an {nameof(EditForm)}");
         }
 
         MessageStore = new ValidationMessageStore(CurrentEditContext);
@@ -47,6 +51,14 @@ public class ServerSideValidationHandler : ComponentBase, IDisposable
         }
 
         CurrentEditContext.NotifyValidationStateChanged();
+    }
+
+    public void DisplayException(Exception exception)
+    {
+        UnboundError = exception.Message;
+#if DEBUG
+        Logger.LogError(exception, "Error occurred");
+#endif
     }
 
     public void ClearErrors()
