@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿#nullable enable
+
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,17 +11,17 @@ namespace WebApp.Client.Components.Common.FormDialog;
 public class FormDialogValidationHandler : ComponentBase, IDisposable
 {
     [Inject]
-    private ILogger<FormDialogValidationHandler> Logger { get; set; }
+    private ILogger<FormDialogValidationHandler> Logger { get; set; } = default!;
 
     [CascadingParameter]
-    private EditContext CurrentEditContext { get; set; }
+    private EditContext? CurrentEditContext { get; set; }
 
-    private ValidationMessageStore MessageStore { get; set; }
+    private ValidationMessageStore? MessageStore { get; set; }
 
     /// <summary>
     /// Error not bound to any particular field.
     /// </summary>
-    public string UnboundError { get; set; }
+    public string? UnboundError { get; set; }
 
     protected override void OnInitialized()
     {
@@ -38,6 +40,11 @@ public class FormDialogValidationHandler : ComponentBase, IDisposable
 
     public void DisplayApiErrors(ApiError error)
     {
+        if (MessageStore is null || CurrentEditContext is null)
+        {
+            return;
+        }
+
         if (error.Errors is not null)
         {
             foreach (var err in error.Errors)
@@ -56,26 +63,29 @@ public class FormDialogValidationHandler : ComponentBase, IDisposable
     public void DisplayException(Exception exception)
     {
         UnboundError = exception.Message;
-#if DEBUG
         Logger.LogError(exception, "Error occurred");
-#endif
     }
 
     public void ClearErrors()
     {
+        if (MessageStore is null || CurrentEditContext is null)
+        {
+            return;
+        }
+
         MessageStore.Clear();
         UnboundError = string.Empty;
         CurrentEditContext.NotifyValidationStateChanged();
     }
 
-    private void OnValidationRequested(object s, ValidationRequestedEventArgs e)
+    private void OnValidationRequested(object? s, ValidationRequestedEventArgs e)
     {
-        MessageStore.Clear();
+        MessageStore?.Clear();
     }
 
-    private void OnFieldChanged(object s, FieldChangedEventArgs e)
+    private void OnFieldChanged(object? s, FieldChangedEventArgs e)
     {
-        MessageStore.Clear(e.FieldIdentifier);
+        MessageStore?.Clear(e.FieldIdentifier);
     }
 
     public void Dispose()
@@ -86,7 +96,7 @@ public class FormDialogValidationHandler : ComponentBase, IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (disposing)
+        if (disposing && CurrentEditContext is not null)
         {
             CurrentEditContext.OnValidationRequested -= OnValidationRequested;
             CurrentEditContext.OnFieldChanged -= OnFieldChanged;

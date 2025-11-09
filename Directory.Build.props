@@ -1,8 +1,8 @@
 <Project>
   <PropertyGroup>
-    <BuildTimestamp>$([System.DateTime]::UtcNow.ToString("yyyyMMddHH"))</BuildTimestamp>
-    <AssemblyVersion>$([System.DateTime]::UtcNow.ToString("yy.MM.dd.HH"))</AssemblyVersion>
-    <FileVersion>$(AssemblyVersion)</FileVersion>
-    <InformationalVersion>$(BuildTimestamp)</InformationalVersion>
+	  <AssemblyVersion Condition="'$(Configuration)' == 'Debug'">1.0.0.0</AssemblyVersion>
+	  <AssemblyVersion Condition="'$(Configuration)' != 'Debug'">$([System.DateTime]::UtcNow.ToString("yy.MM.dd.HH"))</AssemblyVersion>
+	  <FileVersion>$(AssemblyVersion)</FileVersion>
+	  <InformationalVersion>$(AssemblyVersion)</InformationalVersion>
   </PropertyGroup>
 </Project>

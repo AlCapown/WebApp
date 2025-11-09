@@ -1,4 +1,6 @@
-﻿using Fluxor;
+﻿#nullable enable
+
+using Fluxor;
 using Microsoft.AspNetCore.Components;
 using WebApp.Client.Store.PageStore;
 
@@ -16,10 +18,10 @@ public partial class PageContainer : ComponentBase
     /// Contents of the page.
     /// </summary>
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     [Inject]
-    private IDispatcher Dispatcher { get; set; }
+    private IDispatcher Dispatcher { get; set; } = default!;
 
     protected override void OnInitialized()
     {
