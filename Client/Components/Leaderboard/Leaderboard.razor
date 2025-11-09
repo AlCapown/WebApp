@@ -77,13 +77,13 @@
 
     protected override void OnInitialized()
     {
-        MaybeDispatchAndTrack(new GamePredictionActions.GamePredictionSearch
+        MaybeDispatch(new GamePredictionActions.GamePredictionSearch
         {
             SeasonId = SeasonId,
             TeamId = TeamId
         });
 
-        MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
+        MaybeDispatch(new GameActions.SearchGamesForSeason
         {
             SeasonId = SeasonId,
             TeamId = TeamId

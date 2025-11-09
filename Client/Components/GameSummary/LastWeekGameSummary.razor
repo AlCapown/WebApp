@@ -25,7 +25,7 @@
 
     protected override void OnInitialized()
     {
-        MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
+        MaybeDispatch(new GameActions.SearchGamesForSeason
         {
             SeasonId = SeasonId,
             TeamId = TeamId

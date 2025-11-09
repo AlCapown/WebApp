@@ -7,8 +7,7 @@ namespace WebApp.Client.Common.Extensions;
 
 public static class DispatcherExtensions
 {
-    public static string DispatchFetch<TAction>(this IDispatcher dispatcher, TAction action)
-        where TAction : FetchStartedAction
+    public static string DispatchFetch(this IDispatcher dispatcher, FetchStartedAction action)
     {
         string fetchName = $"{action.GetType().Name}_{action.GetHashCode()}";
 

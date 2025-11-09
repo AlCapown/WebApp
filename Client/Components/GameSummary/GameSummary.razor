@@ -84,26 +84,14 @@
     }
 
     protected override void OnInitialized()
-    {    
-        MaybeDispatchAndTrack(new GamePredictionActions.GamePredictionSearch
-        {
-            GameId = GameId,
-        });
+    {
+        MaybeDispatch
+        (
+            new GamePredictionActions.GamePredictionSearch { GameId = GameId },
+            () => HasGameSummary ? new GameSummaryActions.LoadGameSummary { GameId = GameId } : null
+        );
 
         base.OnInitialized();
-    }
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        if (HasGameSummary)
-        {
-            MaybeDispatchAndTrack(new GameSummaryActions.LoadGameSummary
-            {
-                GameId = GameId,
-            });
-        }
-
-        base.OnAfterRender(firstRender);
     }
 
     private List<PredictionsTableItem> GetTableItems()

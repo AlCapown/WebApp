@@ -41,12 +41,12 @@
 
     protected override void OnInitialized()
     {
-        MaybeDispatchAndTrack(new GameActions.SearchGamesForSeason
+        MaybeDispatch(new GameActions.SearchGamesForSeason
         {
             SeasonId = SeasonConstants.CURRENT_SEASON_ID
         });
 
-        MaybeDispatchAndTrack(new TeamActions.LoadTeams());
+        MaybeDispatch(new TeamActions.LoadTeams());
 
         ComputeTeamRecords();
 

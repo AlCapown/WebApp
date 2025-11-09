@@ -8,10 +8,5 @@ body {
         color.mix(Colors.$primaryColor, #0b0c10, 32%) 0%,
         #0b0c10 100%
     );
-    animation: fadeIn 1 1s ease-out;
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-}

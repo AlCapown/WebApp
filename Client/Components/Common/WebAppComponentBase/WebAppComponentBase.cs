@@ -3,8 +3,10 @@
 using Fluxor;
 using Fluxor.Blazor.Web.Components;
 using Microsoft.AspNetCore.Components;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using WebApp.Client.Common.Extensions;
 using WebApp.Client.Store.FetchStore;
 using WebApp.Client.Store.PageStore;
@@ -21,31 +23,53 @@ public class WebAppComponentBase : FluxorComponent
     private IState<FetchState> FetchState { get; set; } = default!;
 
     private readonly HashSet<string> _fetches;
+    private readonly List<EventHandler> _chainedEventHandlers;
 
     public WebAppComponentBase() : base() 
     {
         _fetches = [];
+        _chainedEventHandlers = [];
     }
 
     /// <summary>
-    /// Dispatches a <typeparamref name="TAction"/> action. Custom middleware will dispatch the action only if 
-    /// it the action as never been dispatched before or if the store cache has expired for this <typeparamref name="TAction"/>. 
-    /// All <typeparamref name="TAction"/> are individually tracked so their loading state can be read easily 
-    /// using <see cref="IsLoading"/>.
+    /// Dispatches a <see cref="FetchStartedAction"/>. Custom middleware will dispatch the action only if 
+    /// it the action as never been dispatched before or if the store cache has expired for this action.
+    /// All actions are individually tracked so their loading state can be read easily using <see cref="IsLoading"/>.
+    /// Actions can be chained together so that when one action completes, the next action is dispatched automatically.
     /// </summary>
-    /// <remarks>
-    /// This can be only used when <typeparamref name="TAction"/> inherits from <typeparamref name="FetchStartedAction"/> since
-    /// these actions have async logic with a loading state.
-    /// </remarks>
-    /// <typeparam name="TAction"></typeparam>
-    /// <param name="action">The action to be dispatched</param>
-    /// <returns>The unique fetch name that is being tracked</returns>
-    public string MaybeDispatchAndTrack<TAction>(TAction action)
-        where TAction : FetchStartedAction
+    /// <param name="action">The initial fetch action to dispatch.</param>
+    /// <param name="nextActions">
+    /// Optional factory functions that return the subsequent actions to dispatch in sequence. Actions are 
+    /// executed in order, and each factory function is invoked only after the previous action completes.
+    /// If any action factory returns null, the sequence terminates at that point.
+    /// </param>
+    public void MaybeDispatch(FetchStartedAction action, params Func<FetchStartedAction?>[] nextActions)
     {
         string fetchName = Dispatcher.DispatchFetch(action);
         _fetches.Add(fetchName);
-        return fetchName;
+        StateHasChanged();
+
+        FetchState.StateChanged += OnStateChangedForChainedAction;
+        _chainedEventHandlers.Add(OnStateChangedForChainedAction);
+
+        void OnStateChangedForChainedAction(object? sender, EventArgs e)
+        {
+            if (FetchState.Value.Fetches.TryGetValue(fetchName, out var fetch)
+                && fetch is not null
+                && fetch.IsComplete)
+            {
+                FetchState.StateChanged -= OnStateChangedForChainedAction;
+                _chainedEventHandlers.Remove(OnStateChangedForChainedAction);
+
+                if (nextActions.Length > 0 && nextActions[0]() is { } action)
+                {
+                    MaybeDispatch(action, nextActions[1..]);
+                }
+
+                _fetches.Remove(fetchName);
+                StateHasChanged();
+            }
+        }
     }
 
     /// <summary>
@@ -120,5 +144,21 @@ public class WebAppComponentBase : FluxorComponent
         }
 
         return new T();
+    }
+
+    protected override ValueTask DisposeAsyncCore(bool disposing)
+    {
+        if (disposing)
+        {
+            foreach (var handler in _chainedEventHandlers)
+            {
+                FetchState.StateChanged -= handler;
+            }
+
+            _fetches.Clear();
+            _chainedEventHandlers.Clear();
+        }
+
+        return base.DisposeAsyncCore(disposing);
     }
 }

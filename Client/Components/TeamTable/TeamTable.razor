@@ -47,7 +47,7 @@
 {
     protected override void OnInitialized()
     {
-        MaybeDispatchAndTrack(new TeamActions.LoadTeams());
+        MaybeDispatch(new TeamActions.LoadTeams());
         base.OnInitialized();
     }
 }
