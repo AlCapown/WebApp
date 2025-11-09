@@ -84,7 +84,7 @@ public class WebAppComponentBase : FluxorComponent
                 {
                     if (nextActions[i]() is { } action)
                     {
-                        MaybeDispatch(action, nextActions[i..]);
+                        MaybeDispatch(action, nextActions[(i+1)..]);
                         return;
                     }
                 }
