@@ -67,10 +67,10 @@
 
     private string GameSummaryText
         => GameSummaryState.Value.GameSummaries.GetValueOrDefault(GameId)?.Summary ?? string.Empty;
-    
+
     private bool HasGameSummary
         => GameState.Value.Games.GetValueOrDefault(GameId)?.HasSummary ?? false;
-    
+
     private string Subtitle()
     {
         var game = GameState.Value.Games.GetValueOrDefault(GameId);
@@ -85,11 +85,18 @@
 
     protected override void OnInitialized()
     {
-        MaybeDispatch
-        (
-            new GamePredictionActions.GamePredictionSearch { GameId = GameId },
-            () => HasGameSummary ? new GameSummaryActions.LoadGameSummary { GameId = GameId } : null
-        );
+        MaybeDispatch(new GamePredictionActions.GamePredictionSearch 
+        { 
+            GameId = GameId 
+        });
+
+        if (HasGameSummary)
+        {
+            MaybeDispatch(new GameSummaryActions.LoadGameSummary 
+            { 
+                GameId = GameId 
+            });
+        }
 
         base.OnInitialized();
     }

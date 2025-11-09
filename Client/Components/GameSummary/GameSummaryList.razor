@@ -10,7 +10,7 @@
 @inject IState<GameState> GameState
 
 <MudGrid>
-    <Virtualize Items="Games" Context="GameId" OverscanCount="2" ItemSize="500">
+    <Virtualize Items="Games" Context="GameId" ItemSize="500">
         <MudItem xs="12">
             <GameSummary GameId="GameId" />
         </MudItem>

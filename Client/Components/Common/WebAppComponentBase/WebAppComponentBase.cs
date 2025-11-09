@@ -35,13 +35,26 @@ public class WebAppComponentBase : FluxorComponent
     /// Dispatches a <see cref="FetchStartedAction"/>. Custom middleware will dispatch the action only if 
     /// it the action as never been dispatched before or if the store cache has expired for this action.
     /// All actions are individually tracked so their loading state can be read easily using <see cref="IsLoading"/>.
+    /// </summary>
+    /// <param name="action">The fetch action to dispatch</param>
+    public void MaybeDispatch(FetchStartedAction action)
+    {
+        string fetchName = Dispatcher.DispatchFetch(action);
+        _fetches.Add(fetchName);
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Dispatches a <see cref="FetchStartedAction"/>. Custom middleware will dispatch the action only if 
+    /// it the action as never been dispatched before or if the store cache has expired for this action.
+    /// All actions are individually tracked so their loading state can be read easily using <see cref="IsLoading"/>.
     /// Actions can be chained together so that when one action completes, the next action is dispatched automatically.
     /// </summary>
     /// <param name="action">The initial fetch action to dispatch.</param>
     /// <param name="nextActions">
     /// Optional factory functions that return the subsequent actions to dispatch in sequence. Actions are 
     /// executed in order, and each factory function is invoked only after the previous action completes.
-    /// If any action factory returns null, the sequence terminates at that point.
+    /// If any action factory returns null, the sequence moves to the next factory without dispatching an action.
     /// </param>
     public void MaybeDispatch(FetchStartedAction action, params Func<FetchStartedAction?>[] nextActions)
     {
@@ -49,25 +62,31 @@ public class WebAppComponentBase : FluxorComponent
         _fetches.Add(fetchName);
         StateHasChanged();
 
-        FetchState.StateChanged += OnStateChangedForChainedAction;
+        if (nextActions.Length == 0)
+        {
+            return;
+        }
+
         _chainedEventHandlers.Add(OnStateChangedForChainedAction);
+        FetchState.StateChanged += OnStateChangedForChainedAction;
+
+        // Trigger the check in case the fetch is already complete
+        OnStateChangedForChainedAction(this, EventArgs.Empty);
 
         void OnStateChangedForChainedAction(object? sender, EventArgs e)
         {
-            if (FetchState.Value.Fetches.TryGetValue(fetchName, out var fetch)
-                && fetch is not null
-                && fetch.IsComplete)
+            if (FetchState.Value.Fetches.GetValueOrDefault(fetchName) is { IsComplete: true })
             {
                 FetchState.StateChanged -= OnStateChangedForChainedAction;
                 _chainedEventHandlers.Remove(OnStateChangedForChainedAction);
 
-                if (nextActions.Length > 0 && nextActions[0]() is { } action)
+                for (int i = 0; i < nextActions.Length; i++)
                 {
-                    MaybeDispatch(action, nextActions[1..]);
+                    if (nextActions[i]() is { } action)
+                    {
+                        MaybeDispatch(action, nextActions[i..]);
+                    }
                 }
-
-                _fetches.Remove(fetchName);
-                StateHasChanged();
             }
         }
     }
@@ -75,15 +94,11 @@ public class WebAppComponentBase : FluxorComponent
     /// <summary>
     /// Returns true when there is a tracked <typeparamref name="FetchStartedAction"/> that is currently in a loading state.
     /// </summary>
-    /// <returns></returns>
     public bool IsLoading()
     {
         foreach (string fetchName in _fetches)
         {
-            if (FetchState.Value.Fetches.TryGetValue(fetchName, out var fetch) 
-                && fetch is not null 
-                && fetch.IsLoading 
-                && !fetch.HideLoading)
+            if (FetchState.Value.Fetches.GetValueOrDefault(fetchName) is { IsLoading: true, HideLoading: false })
             {
                 return true;
             }
@@ -99,10 +114,7 @@ public class WebAppComponentBase : FluxorComponent
     /// <returns></returns>
     public bool IsFetchSuccessful(string fetchName)
     {
-        return FetchState.Value.Fetches.TryGetValue(fetchName, out var fetch) 
-            && fetch is not null 
-            && !fetch.IsLoading
-            && fetch.ApiError is null;
+        return FetchState.Value.Fetches.GetValueOrDefault(fetchName) is { IsLoading: false, ApiError: null };
     }
 
     /// <summary>
@@ -138,7 +150,7 @@ public class WebAppComponentBase : FluxorComponent
     {
         var key = typeof(T).FullName;
 
-        if (key is not null && pageState.PageLocalState.TryGetValue(key, out var value) && value is T tValue)
+        if (key is not null && pageState.PageLocalState.GetValueOrDefault(key) is T tValue)
         {
             return tValue;
         }
