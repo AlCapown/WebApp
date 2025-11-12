@@ -1,0 +1,26 @@
+<Solution>
+  <Folder Name="/Client/">
+    <Project Path="Client/WebApp.Client.csproj" />
+  </Folder>
+  <Folder Name="/Common/">
+    <Project Path="Common/WebApp.Common.csproj" />
+  </Folder>
+  <Folder Name="/Database/">
+    <Project Path="Database/WebApp.Database.csproj" />
+  </Folder>
+  <Folder Name="/External Integrations/" />
+  <Folder Name="/External Integrations/ESPN/">
+    <Project Path="External Integrations/ESPN/ESPN.Service/ESPN.Service.csproj" />
+  </Folder>
+  <Folder Name="/Server/">
+    <Project Path="Server/WebApp.Server.csproj" />
+  </Folder>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="RandomQueries.txt" />
+    <File Path="README.md" />
+    <File Path="RemoveAllTablesFromDb.txt" />
+  </Folder>
+</Solution>
