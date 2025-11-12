@@ -27,12 +27,14 @@ internal sealed class AppIdentityRoleConfiguration : IEntityTypeConfiguration<Ap
             Id = AppRole.USER,
             Name = AppRole.USER,
             NormalizedName = AppRole.USER,
+            ConcurrencyStamp = "32AE3B78-8A7A-4093-9423-B5F1B253F311"
         },
         new AppIdentityRole
         {
             Id = AppRole.ADMIN,
             Name = AppRole.ADMIN,
-            NormalizedName = AppRole.ADMIN
+            NormalizedName = AppRole.ADMIN,
+            ConcurrencyStamp = "ADB1B49F-9F45-4849-B7E0-020DFA85DCFA"
         }
     ];
 }

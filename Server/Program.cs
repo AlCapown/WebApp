@@ -51,7 +51,7 @@ services
     {
         options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
         // Private LAN IP Range: 172.16.0.0 - 172.16.255.255
-        options.KnownNetworks.Add(IPNetwork.Parse("172.16.0.0/12"));
+        options.KnownIPNetworks.Add(System.Net.IPNetwork.Parse("172.16.0.0/12"));
     });
 
 // Configure Redis as distributed cache
