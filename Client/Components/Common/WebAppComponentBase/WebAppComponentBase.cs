@@ -14,7 +14,7 @@ using WebApp.Common.Models;
 
 namespace WebApp.Client.Components.Common.WebAppComponentBase;
 
-public class WebAppComponentBase : FluxorComponent
+public abstract class WebAppComponentBase : FluxorComponent
 {
     [Inject]
     private IDispatcher Dispatcher { get; set; } = default!;
@@ -25,7 +25,7 @@ public class WebAppComponentBase : FluxorComponent
     private readonly HashSet<string> _fetches;
     private readonly List<EventHandler> _chainedEventHandlers;
 
-    public WebAppComponentBase() : base() 
+    protected WebAppComponentBase() : base() 
     {
         _fetches = [];
         _chainedEventHandlers = [];
