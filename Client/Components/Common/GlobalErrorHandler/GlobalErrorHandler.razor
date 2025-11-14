@@ -81,6 +81,7 @@
         {
             Error = new LocalError
             {
+                TypeOfException = ex.GetType(),
                 Message = ex.Message,
                 StackTrace = ex.StackTrace
             }

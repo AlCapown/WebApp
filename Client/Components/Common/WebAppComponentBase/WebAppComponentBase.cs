@@ -7,10 +7,10 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using WebApp.Client.Common.Extensions;
 using WebApp.Client.Store.FetchStore;
 using WebApp.Client.Store.PageStore;
 using WebApp.Client.Store.Shared;
+using WebApp.Common.Models;
 
 namespace WebApp.Client.Components.Common.WebAppComponentBase;
 
@@ -37,11 +37,17 @@ public class WebAppComponentBase : FluxorComponent
     /// All actions are individually tracked so their loading state can be read easily using <see cref="IsLoading"/>.
     /// </summary>
     /// <param name="action">The fetch action to dispatch</param>
-    public void MaybeDispatch(FetchStartedAction action)
+    /// <returns>The unique name assigned to the dispatched fetch action.</returns>
+    public string MaybeDispatch(FetchStartedAction action)
     {
-        string fetchName = Dispatcher.DispatchFetch(action);
+        string fetchName = $"{action.GetType().Name}_{action.GetHashCode()}";
         _fetches.Add(fetchName);
-        StateHasChanged();
+        Dispatcher.Dispatch(action with 
+        { 
+            FetchName = fetchName 
+        });
+
+        return fetchName;
     }
 
     /// <summary>
@@ -52,15 +58,13 @@ public class WebAppComponentBase : FluxorComponent
     /// </summary>
     /// <param name="action">The initial fetch action to dispatch.</param>
     /// <param name="nextActions">
-    /// Optional factory functions that return the subsequent actions to dispatch in sequence. Actions are 
+    /// Collection of factory functions that return the subsequent actions to dispatch in sequence. Actions are 
     /// executed in order, and each factory function is invoked only after the previous action completes.
     /// If any action factory returns null, the sequence moves to the next factory without dispatching an action.
     /// </param>
     public void MaybeDispatch(FetchStartedAction action, params Func<FetchStartedAction?>[] nextActions)
     {
-        string fetchName = Dispatcher.DispatchFetch(action);
-        _fetches.Add(fetchName);
-        StateHasChanged();
+        string fetchName = MaybeDispatch(action);
 
         if (nextActions.Length == 0)
         {
@@ -75,19 +79,34 @@ public class WebAppComponentBase : FluxorComponent
 
         void OnStateChangedForChainedAction(object? sender, EventArgs e)
         {
-            if (FetchState.Value.Fetches.GetValueOrDefault(fetchName) is { IsComplete: true })
+            try
             {
-                FetchState.StateChanged -= OnStateChangedForChainedAction;
-                _chainedEventHandlers.Remove(OnStateChangedForChainedAction);
-
-                for (int i = 0; i < nextActions.Length; i++)
+                if (FetchState.Value.Fetches.GetValueOrDefault(fetchName) is { IsComplete: true })
                 {
-                    if (nextActions[i]() is { } action)
+                    FetchState.StateChanged -= OnStateChangedForChainedAction;
+                    _chainedEventHandlers.Remove(OnStateChangedForChainedAction);
+
+                    for (int i = 0; i < nextActions.Length; i++)
                     {
-                        MaybeDispatch(action, nextActions[(i+1)..]);
-                        return;
+                        if (nextActions[i]() is { } action)
+                        {
+                            MaybeDispatch(action, nextActions[(i + 1)..]);
+                            return;
+                        }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                Dispatcher.Dispatch(new PageActions.EnqueuePageError
+                {
+                    Error = new LocalError
+                    {
+                        TypeOfException = ex.GetType(),
+                        Message = ex.Message,
+                        StackTrace = ex.StackTrace
+                    }
+                });
             }
         }
     }

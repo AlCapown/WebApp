@@ -58,16 +58,13 @@
 
     private IReadOnlyList<LeaderboardItem> LeaderboardItems { get; set; } = [];
 
-    private int _internalTabIndex;
-
     private int InternalTabIndex 
     {
-        get => _internalTabIndex;
-
+        get;
         set
         {
-            _internalTabIndex = value;
-            Navigation.NavigateTo(Navigation.GetUriWithQueryParameter(nameof(TabIndex), value));
+            field = value;
+            Navigation.NavigateTo(Navigation.GetUriWithQueryParameter(nameof(TabIndex), value), forceLoad: false);
             UpdatePageLocalState(ReadPageLocalState<LeaderboardPageLocalState>(PageState.Value) with 
             {
                 TabIndex = value
@@ -98,14 +95,9 @@
     {
         if (firstRender)
         {
-            if (TabIndex.HasValue)
-            {
-                InternalTabIndex = TabIndex.Value;
-            }
-            else
-            {
-                InternalTabIndex = ReadPageLocalState<LeaderboardPageLocalState>(PageState.Value).TabIndex;
-            }
+            InternalTabIndex = TabIndex is not null
+                ? TabIndex.Value
+                : ReadPageLocalState<LeaderboardPageLocalState>(PageState.Value).TabIndex;
         }
 
         ComputeLeaderboardItems();

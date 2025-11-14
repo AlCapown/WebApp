@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.Redis" Version="9.0.0" />
     <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
-    <PackageReference Include="AspNetCore.SassCompiler" Version="1.93.3" />
+    <PackageReference Include="AspNetCore.SassCompiler" Version="1.94.0" />
     <PackageReference Include="Azure.Identity" Version="1.17.0" />
     <PackageReference Include="FluentValidation" Version="12.1.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
@@ -36,7 +36,7 @@
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="10.0.0" />
-    <PackageReference Include="Microsoft.Identity.Client" Version="4.79.0" />
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.79.1" />
     <PackageReference Include="Microsoft.SemanticKernel" Version="1.67.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
     <PackageReference Include="OneOf" Version="3.0.271" />
