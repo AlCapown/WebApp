@@ -81,7 +81,7 @@ public class WebAppComponentBase : FluxorComponent
         {
             try
             {
-                if (FetchState.Value.Fetches.GetValueOrDefault(fetchName) is { IsComplete: true })
+                if (FetchState.Value.Fetches.GetValueOrDefault(fetchName) is { IsLoading: false })
                 {
                     FetchState.StateChanged -= OnStateChangedForChainedAction;
                     _chainedEventHandlers.Remove(OnStateChangedForChainedAction);

@@ -20,7 +20,6 @@ public sealed record Fetch
     public required string FetchName { get; init; }
     public bool IsLoading { get; init; }
     public bool HideLoading { get; init; }
-    public bool IsComplete { get; init; }
     public DateTimeOffset? CacheExpires { get; init; }
     public ApiError? ApiError { get; init; }
 }
@@ -68,7 +67,6 @@ public sealed class FetchStartedReducer : Reducer<FetchState, FetchActions.Fetch
             FetchName = action.FetchName,
             IsLoading = true,
             HideLoading = action.HideLoading,
-            IsComplete = false,
             CacheExpires = null,
             ApiError = null
         })
@@ -84,7 +82,6 @@ public sealed class FetchSuccessReducer : Reducer<FetchState, FetchActions.Fetch
             FetchName = action.FetchName,
             IsLoading = false,
             HideLoading = false,
-            IsComplete = true,
             CacheExpires = action.CacheExpires,
             ApiError = null
         })
@@ -100,7 +97,6 @@ public sealed class FetchFailureReducer : Reducer<FetchState, FetchActions.Fetch
             FetchName = action.FetchName,
             IsLoading = false,
             HideLoading = false,
-            IsComplete = true,
             CacheExpires = null,
             ApiError = action.ApiError
         })
