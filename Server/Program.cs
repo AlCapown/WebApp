@@ -93,7 +93,7 @@ services.AddMediator(options =>
 });
 
 // AI Services
-services.AddAIServices();
+services.AddOpenAIServices();
 
 services.RegisterESPNServices();
 

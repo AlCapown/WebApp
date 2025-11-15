@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Client.Store.FetchStore;
 using WebApp.Client.Store.PageStore;
@@ -23,11 +24,13 @@ public abstract class WebAppComponentBase : FluxorComponent
     private IState<FetchState> FetchState { get; set; } = default!;
 
     private readonly HashSet<string> _fetches;
+    private readonly HashSet<string> _chainedFetches;
     private readonly List<EventHandler> _chainedEventHandlers;
 
     protected WebAppComponentBase() : base() 
     {
         _fetches = [];
+        _chainedFetches = [];
         _chainedEventHandlers = [];
     }
 
@@ -71,6 +74,11 @@ public abstract class WebAppComponentBase : FluxorComponent
             return;
         }
 
+        if (!action.FetchOptions.HasFlag(FetchOptions.HideLoading))
+        {
+            _chainedFetches.Add(fetchName);
+        }
+
         _chainedEventHandlers.Add(OnStateChangedForChainedAction);
         FetchState.StateChanged += OnStateChangedForChainedAction;
 
@@ -85,6 +93,7 @@ public abstract class WebAppComponentBase : FluxorComponent
                 {
                     FetchState.StateChanged -= OnStateChangedForChainedAction;
                     _chainedEventHandlers.Remove(OnStateChangedForChainedAction);
+                    _chainedFetches.Remove(fetchName);
 
                     for (int i = 0; i < nextActions.Length; i++)
                     {
@@ -98,6 +107,7 @@ public abstract class WebAppComponentBase : FluxorComponent
             }
             catch (Exception ex)
             {
+                _chainedFetches.Remove(fetchName);
                 Dispatcher.Dispatch(new PageActions.EnqueuePageError
                 {
                     Error = new LocalError
@@ -116,6 +126,11 @@ public abstract class WebAppComponentBase : FluxorComponent
     /// </summary>
     public bool IsLoading()
     {
+        if (_chainedFetches.Count > 0)
+        {
+            return true;
+        }
+        
         foreach (string fetchName in _fetches)
         {
             if (FetchState.Value.Fetches.GetValueOrDefault(fetchName) is { IsLoading: true, HideLoading: false })
@@ -188,6 +203,7 @@ public abstract class WebAppComponentBase : FluxorComponent
             }
 
             _fetches.Clear();
+            _chainedFetches.Clear();
             _chainedEventHandlers.Clear();
         }
 

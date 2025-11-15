@@ -7,9 +7,9 @@ using WebApp.Server.OpenAIPlugins;
 
 namespace WebApp.Server.Infrastructure;
 
-public static class ConfigureAIServices
+public static class ConfigureOpenAIServices
 {
-    public static IServiceCollection AddAIServices(this IServiceCollection services)
+    public static IServiceCollection AddOpenAIServices(this IServiceCollection services)
     {
         services.AddScoped<UserGamePredictionPlugin>();
 
