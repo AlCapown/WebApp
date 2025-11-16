@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Client.Store.FetchStore;
 using WebApp.Client.Store.PageStore;
@@ -43,13 +42,11 @@ public abstract class WebAppComponentBase : FluxorComponent
     /// <returns>The unique name assigned to the dispatched fetch action.</returns>
     public string MaybeDispatch(FetchStartedAction action)
     {
-        string fetchName = $"{action.GetType().Name}_{action.GetHashCode()}";
-        _fetches.Add(fetchName);
-        Dispatcher.Dispatch(action with 
-        { 
-            FetchName = fetchName 
+        var fetchName = action.GenerateFetchName();
+        Dispatcher.Dispatch(action with
+        {
+            FetchName = fetchName,
         });
-
         return fetchName;
     }
 
@@ -93,13 +90,14 @@ public abstract class WebAppComponentBase : FluxorComponent
                 {
                     FetchState.StateChanged -= OnStateChangedForChainedAction;
                     _chainedEventHandlers.Remove(OnStateChangedForChainedAction);
-                    _chainedFetches.Remove(fetchName);
 
                     for (int i = 0; i < nextActions.Length; i++)
                     {
                         if (nextActions[i]() is { } action)
                         {
                             MaybeDispatch(action, nextActions[(i + 1)..]);
+                            _chainedFetches.Remove(fetchName);
+                            StateHasChanged();
                             return;
                         }
                     }
