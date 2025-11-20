@@ -35,6 +35,12 @@ public static class GameSearch
         public int? SeasonId { get; init; }
 
         /// <summary>
+        /// The unique identifier of the game.
+        /// Optional. If provided, only the game with the specified ID will be included.
+        /// </summary>
+        public int? GameId { get; init; }
+
+        /// <summary>
         /// The identifier for the team to filter games.
         /// Optional. If provided, only games involving the specified team (as home or away) will be included.
         /// </summary>
@@ -62,6 +68,11 @@ public static class GameSearch
         /// Optional filter for the type of week in which the games were played.
         /// </summary>
         public WeekType? WeekType { get; init; }
+
+        /// <summary>
+        /// If provided, only games with (or without) a summary will be included.
+        /// </summary>
+        public bool? HasSummary { get; init; }
     }
 
     public sealed class SearchGameValidator : AbstractValidator<Query> 
@@ -75,6 +86,10 @@ public static class GameSearch
             RuleFor(x => x.SeasonId)
                 .GreaterThan(0)
                 .When(x => x.SeasonId.HasValue);
+
+            RuleFor(x => x.GameId)
+                .GreaterThan(0)
+                .When(x => x.GameId.HasValue);
 
             RuleFor(x => x.TeamId)
                 .GreaterThan(0)
@@ -156,6 +171,11 @@ public static class GameSearch
                 gameQuery = gameQuery.Where(x => x.SeasonId == query.SeasonId.Value);
             }
 
+            if(query.GameId.HasValue)
+            {
+                gameQuery = gameQuery.Where(x => x.GameId == query.GameId.Value);
+            }
+
             if (query.TeamId.HasValue)
             {
                 gameQuery = gameQuery.Where(x => x.HomeTeamId == query.TeamId.Value || x.AwayTeamId == query.TeamId.Value);
@@ -179,6 +199,11 @@ public static class GameSearch
             if (query.WeekType.HasValue)
             {
                 gameQuery = gameQuery.Where(x => x.SeasonWeekTypeName == query.WeekType.Value);
+            }
+
+            if (query.HasSummary.HasValue)
+            {
+                gameQuery = gameQuery.Where(x => x.HasSummary == query.HasSummary.Value);
             }
 
             return gameQuery;

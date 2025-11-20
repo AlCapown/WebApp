@@ -28,11 +28,13 @@ public sealed class SearchGamesForSeasonEffect : Effect<GameActions.SearchGamesF
         {
             { nameof(action.SeasonWeekId), action.SeasonWeekId?.ToString() },
             { nameof(action.SeasonId), action.SeasonId?.ToString() },
+            { nameof(action.GameId), action.GameId?.ToString() },
             { nameof(action.TeamId), action.TeamId?.ToString() },
             { nameof(action.GameStartsOnMin), action.GameStartsOnMin?.ToString() },
             { nameof(action.GameStartsOnMax), action.GameStartsOnMax?.ToString() },
             { nameof(action.IsGameComplete), action.IsGameComplete?.ToString() },
             { nameof(action.WeekType), action.WeekType?.ToString() },
+            { nameof(action.HasSummary), action.HasSummary?.ToString() }
         });
     }
 
@@ -60,11 +62,13 @@ public static partial class GameActions
     {
         public int? SeasonId { get; init; }
         public int? SeasonWeekId { get; init; }
+        public int? GameId { get; init; }
         public int? TeamId { get; init; }
         public DateTimeOffset? GameStartsOnMin { get; init; }
         public DateTimeOffset? GameStartsOnMax { get; init; }
         public bool? IsGameComplete { get; init; }
         public WeekType? WeekType { get; init; }
+        public bool? HasSummary { get; init; }
     }
 
     public sealed record SearchGamesForSeasonSuccess : FetchSuccessAction
