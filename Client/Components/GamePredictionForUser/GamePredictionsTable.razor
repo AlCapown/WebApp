@@ -77,7 +77,7 @@
     [Parameter, EditorRequired]
     public string UserId { get; set; }
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         MaybeDispatch(new GameActions.SearchGamesForSeason
         {
@@ -97,7 +97,7 @@
             UserId = UserId
         });
 
-        base.OnInitialized();
+        base.OnParametersSet();
     }
 
     private List<GamePredictionTableItem> GetTableItems()

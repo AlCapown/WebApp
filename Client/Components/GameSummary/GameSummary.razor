@@ -83,22 +83,23 @@
         return $"{game.AwayTeamName} @ {game.HomeTeamName} - {game.GameStartsOn?.ToLocalTime().ToString("dddd MM/dd h:mm tt")}";
     }
 
-    protected override void OnInitialized()
+
+    protected override void OnParametersSet() 
     {
-        MaybeDispatch(new GamePredictionActions.GamePredictionSearch 
-        { 
-            GameId = GameId 
+        MaybeDispatch(new GamePredictionActions.GamePredictionSearch
+        {
+            GameId = GameId
         });
 
         if (HasGameSummary)
         {
-            MaybeDispatch(new GameSummaryActions.LoadGameSummary 
-            { 
-                GameId = GameId 
+            MaybeDispatch(new GameSummaryActions.LoadGameSummary
+            {
+                GameId = GameId
             });
         }
 
-        base.OnInitialized();
+        base.OnParametersSet();
     }
 
     private List<PredictionsTableItem> GetTableItems()

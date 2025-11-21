@@ -23,13 +23,13 @@ public partial class PageContainer : ComponentBase
     [Inject]
     private IDispatcher Dispatcher { get; set; } = default!;
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         Dispatcher.Dispatch(new PageActions.SetPageHeading
         {
             PageHeading = PageHeading
         });
 
-        base.OnInitialized();
+        base.OnParametersSet();
     }
 }

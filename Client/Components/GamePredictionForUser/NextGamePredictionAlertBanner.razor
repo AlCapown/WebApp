@@ -87,7 +87,7 @@ else
         CountdownTimer?.RemainingTime.Minutes ?? 0,
         CountdownTimer?.RemainingTime.Seconds ?? 0);
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         MaybeDispatch(new GameActions.SearchGamesForSeason
         {
@@ -107,7 +107,7 @@ else
             SeasonId = SeasonId,
         });
 
-        base.OnInitialized();
+        base.OnParametersSet();
     }
 
     protected override void OnAfterRender(bool firstRender)

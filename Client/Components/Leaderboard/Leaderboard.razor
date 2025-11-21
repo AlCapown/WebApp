@@ -72,7 +72,7 @@
         } 
     } 
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         MaybeDispatch(new GamePredictionActions.GamePredictionSearch
         {
@@ -88,7 +88,7 @@
 
         ComputeLeaderboardItems();
 
-        base.OnInitialized();
+        base.OnParametersSet();
     }
 
     protected override void OnAfterRender(bool firstRender)

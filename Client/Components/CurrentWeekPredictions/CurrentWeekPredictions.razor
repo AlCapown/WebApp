@@ -66,7 +66,7 @@
     [Parameter, EditorRequired]
     public int TeamId { get; set; }
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         MaybeDispatch(new GameActions.SearchGamesForSeason
         {
@@ -85,7 +85,7 @@
             SeasonId = SeasonId,
         });
 
-        base.OnInitialized();
+        base.OnParametersSet();
     }
 
     private string Subtitle()

@@ -92,7 +92,7 @@
         .Where(x => x.SeasonId == SeasonConstants.CURRENT_SEASON_ID)
         .ToList();
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         MaybeDispatch(new GameActions.SearchGamesForSeason
         {
@@ -101,7 +101,7 @@
 
         MaybeDispatch(new TeamActions.LoadTeams());
 
-        base.OnInitialized();
+        base.OnParametersSet();
     }
 
     private Func<Game, bool> Filter => game =>

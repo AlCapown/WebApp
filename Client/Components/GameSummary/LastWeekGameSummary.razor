@@ -23,7 +23,7 @@
     [Parameter, EditorRequired]
     public int TeamId { get; set; }
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         MaybeDispatch(new GameActions.SearchGamesForSeason
         {
@@ -31,7 +31,7 @@
             TeamId = TeamId
         });
 
-        base.OnInitialized();
+        base.OnParametersSet();
     }
 
     private int? LastCompletedGameId => GameState.Value.Games.Values
