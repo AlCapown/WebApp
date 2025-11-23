@@ -1,4 +1,4 @@
-select sw.SeasonId, sw.[Week], sw.WeekStart, sw.WeekEnd, 
+select sw.SeasonId, sw.[Week], g.GameId, sw.WeekStart, sw.WeekEnd, 
 FORMAT( g.StartsOn AT TIME ZONE 'Central Standard Time', 'dd/MM/yyyy hh:mm tt') AS 'StartsOn', 
 Datepart(WEEKDAY, g.StartsOn AT TIME ZONE 'Central Standard Time') as [DayOfWeek],
 ht.TeamFullName as 'HomeTeam',
@@ -8,6 +8,11 @@ inner join dbo.SeasonWeek sw on g.SeasonWeekId = sw.SeasonWeekId
 inner join dbo.Team ht on ht.TeamId = g.HomeTeamId
 inner join dbo.Team wt on wt.TeamId = g.AwayTeamId
 order by g.StartsOn
+
+insert into dbo.GamePrediction
+(GameId, UserId, HomeTeamScore, AwayTeamScore, DateCreated)
+values
+(5742, '85453b09-3fc7-4c46-8eb8-afb17ce94689', 16, 23, sysdatetime())
 
 
 select * from AspNetRoles
