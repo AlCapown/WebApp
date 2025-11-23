@@ -9,12 +9,14 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Common.Models;
 using WebApp.Server.Features.Account;
+using WebApp.Server.Infrastructure;
 using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Policy = Policy.User)]
 [ValidateAntiForgeryToken]
 public sealed class UserController : ControllerBase
 {
@@ -70,7 +72,6 @@ public sealed class UserController : ControllerBase
     /// Returns <see cref="NotFoundProblemDetails"/> if the user does not exist.
     /// </returns>
     [HttpGet("{userId}")]
-    [Authorize]
     [ProducesResponseType(typeof(User), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]

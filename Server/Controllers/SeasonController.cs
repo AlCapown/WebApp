@@ -9,12 +9,14 @@ using WebApp.Common.Constants;
 using WebApp.Common.Enums;
 using WebApp.Common.Models;
 using WebApp.Server.Features.Season;
+using WebApp.Server.Infrastructure;
 using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Policy = Policy.User)]
 [ValidateAntiForgeryToken]
 public sealed class SeasonController : ControllerBase
 {
@@ -32,7 +34,6 @@ public sealed class SeasonController : ControllerBase
     /// Returns a 200 OK response with a <see cref="GetSeasonListResponse"/> containing the list of seasons.
     /// </returns>
     [HttpGet("")]
-    [Authorize]
     [ProducesResponseType(typeof(GetSeasonListResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetSeasonList()
     {
@@ -49,7 +50,7 @@ public sealed class SeasonController : ControllerBase
     /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the request is invalid.
     /// </returns>
     [HttpPost("")]
-    [Authorize(Roles = AppRole.ADMIN)]
+    [Authorize(Policy = Policy.Admin)]
     [ProducesResponseType(typeof(void), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateSeason([FromBody] CreateSeasonRequest body)
@@ -76,7 +77,6 @@ public sealed class SeasonController : ControllerBase
     /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the season does not exist.
     /// </returns>
     [HttpGet("{seasonId:int}")]
-    [Authorize]
     [ProducesResponseType(typeof(Season), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetSeason([FromRoute] int seasonId)
@@ -104,7 +104,7 @@ public sealed class SeasonController : ControllerBase
     /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the season does not exist.
     /// </returns>
     [HttpPut("{seasonId:int}")]
-    [Authorize(Roles = AppRole.ADMIN)]
+    [Authorize(Policy = Policy.Admin)]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
@@ -134,7 +134,6 @@ public sealed class SeasonController : ControllerBase
     /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the query is invalid.
     /// </returns>
     [HttpGet("{seasonId:int}/week")]
-    [Authorize]
     [ProducesResponseType(typeof(SeasonWeekSearchResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetWeekList([FromRoute] int seasonId, [FromQuery] WeekType? weekType)
@@ -163,7 +162,6 @@ public sealed class SeasonController : ControllerBase
     /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the week does not exist.
     /// </returns>
     [HttpGet("{seasonId:int}/week/{SeasonWeekId:int}")]
-    [Authorize]
     [ProducesResponseType(typeof(SeasonWeek), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(BadRequestResult), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
@@ -202,7 +200,7 @@ public sealed class SeasonController : ControllerBase
     /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the week does not exist.
     /// </returns>
     [HttpPut("{seasonId:int}/week/{SeasonWeekId:int}")]
-    [Authorize(Roles = AppRole.ADMIN)]
+    [Authorize(Policy = Policy.Admin)]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]

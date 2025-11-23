@@ -45,6 +45,15 @@ ConnectionStrings connectionStrings = configuration.GetSection("ConnectionString
 
 services.Configure<AzureOpenAI>(builder.Configuration.GetSection("AzureOpenAI"));
 
+// Register logging provider
+services
+    .AddSerilog(configureLogger =>
+    {
+        configureLogger
+            .ReadFrom.Configuration(configuration)
+            .WriteTo.Console();
+    });
+
 // Configure x-forwarded headers
 services
     .Configure<ForwardedHeadersOptions>(options =>
@@ -106,15 +115,6 @@ services.AddExceptionHandler<ApiExceptionHandler>();
 
 // Register HealthChecks
 services.RegisterHealthChecks(connectionStrings);
-
-// Register logging provider
-services
-    .AddSerilog(configureLogger =>
-    {
-        configureLogger
-            .ReadFrom.Configuration(configuration)
-            .WriteTo.Console();
-    });
 
 // Register Entity Framework Database Context with MsSql
 services

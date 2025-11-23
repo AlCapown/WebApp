@@ -7,13 +7,14 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using WebApp.Common.Models;
 using WebApp.Server.Features.Game;
+using WebApp.Server.Infrastructure;
 using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+[Authorize(Policy = Policy.User)]
 [ValidateAntiForgeryToken]
 public sealed class GameController : ControllerBase
 {

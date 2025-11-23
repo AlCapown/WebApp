@@ -6,12 +6,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Common.Models;
 using WebApp.Server.Features.Team;
+using WebApp.Server.Infrastructure;
 using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize(Policy = Policy.User)]
 [ValidateAntiForgeryToken]
 public sealed class TeamController : ControllerBase
 {
@@ -30,7 +32,6 @@ public sealed class TeamController : ControllerBase
     /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the request is invalid.
     /// </returns>
     [HttpGet("")]
-    [Authorize]
     [ProducesResponseType(typeof(TeamSearchResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetTeamList()
@@ -54,7 +55,6 @@ public sealed class TeamController : ControllerBase
     /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the team does not exist.
     /// </returns>
     [HttpGet("{teamId:int}")]
-    [Authorize]
     [ProducesResponseType(typeof(Team), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]

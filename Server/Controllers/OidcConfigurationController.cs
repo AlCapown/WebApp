@@ -6,12 +6,12 @@ namespace WebApp.Server.Controllers;
 
 
 [IgnoreAntiforgeryToken]
+[AllowAnonymous]
 public sealed class OidcConfigurationController : ControllerBase
 {
 
     [HttpGet(".well-known/microsoft-identity-association.json")]
     [Produces("application/json")]
-    [AllowAnonymous]
     public IActionResult GetMicrosoftPublisherDomain()
     {
         return Ok(MicrosoftPublisherDomainModel.Value);

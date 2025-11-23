@@ -9,13 +9,14 @@ using WebApp.Client.Common.Extensions;
 using WebApp.Common.Constants;
 using WebApp.Common.Models;
 using WebApp.Server.Features.GamePrediction;
+using WebApp.Server.Infrastructure;
 using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+[Authorize(Policy = Policy.User)]
 [ValidateAntiForgeryToken]
 public sealed class GamePredictionController : ControllerBase
 {
@@ -122,7 +123,7 @@ public sealed class GamePredictionController : ControllerBase
     /// 403 Forbidden if the operation is not allowed.
     /// </returns>
     [HttpPost("{userId}")]
-    [Authorize(Roles = AppRole.ADMIN)]
+    [Authorize(Policy = Policy.Admin)]
     [ProducesResponseType(typeof(CreateGamePredictionResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ForbiddenProblemDetails), StatusCodes.Status403Forbidden)]
