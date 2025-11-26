@@ -96,11 +96,12 @@ public abstract class WebAppComponentBase : FluxorComponent
                         if (nextActions[i]() is { } action)
                         {
                             MaybeDispatch(action, nextActions[(i + 1)..]);
-                            _chainedFetches.Remove(fetchName);
-                            StateHasChanged();
-                            return;
+                            break;
                         }
                     }
+
+                    _chainedFetches.Remove(fetchName);
+                    StateHasChanged();
                 }
             }
             catch (Exception ex)
