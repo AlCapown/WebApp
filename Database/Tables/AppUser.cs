@@ -14,6 +14,7 @@ public class AppUser : IdentityUser
 
     [Required]
     [MaxLength(50)]
+
     public string LastName { get; set; }
 
     #region Navigation Props

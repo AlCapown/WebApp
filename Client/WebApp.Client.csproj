@@ -8,6 +8,7 @@
         <PublishTrimmed>true</PublishTrimmed>
         <TrimMode>partial</TrimMode>
         <RunAOTCompilation>false</RunAOTCompilation>
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
 
 	<ItemGroup>

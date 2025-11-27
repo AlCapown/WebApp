@@ -4,6 +4,7 @@
     <TargetFramework>net10.0</TargetFramework>
 	<TrimMode>partial</TrimMode>
 	<PublishTrimmed>false</PublishTrimmed>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
 

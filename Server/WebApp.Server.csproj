@@ -6,6 +6,7 @@
 	<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	<TrimMode>partial</TrimMode>
 	<PublishTrimmed>false</PublishTrimmed>
+	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
   <ItemGroup>

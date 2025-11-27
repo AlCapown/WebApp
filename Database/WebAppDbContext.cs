@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿#nullable enable
+
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using WebApp.Database.Tables;
 
@@ -16,18 +18,18 @@ public sealed class WebAppDbContext : IdentityDbContext<AppUser>
     }
 
     #region Tables
-    public DbSet<AppUser> AppUsers { get; set; }
     public DbSet<AppIdentityRole> AppIdentityRoles { get; set; }
+    public DbSet<AppUser> AppUsers { get; set; }
+    public DbSet<BackgroundJobLog> BackgroundJobLogs { get; set; }
+    public DbSet<Conference> Conferences { get; set; }
+    public DbSet<Division> Divisions { get; set; }
+    public DbSet<Game> Games { get; set; }
+    public DbSet<GamePrediction> GamePredictions { get; set; }
+    public DbSet<GameSummary> GameSummaries { get; set; }
+    public DbSet<InviteCode> InviteCodes { get; set; }
     public DbSet<Season> Seasons { get; set; }
     public DbSet<SeasonWeek> SeasonWeeks { get; set; }
-    public DbSet<SeasonWeekType> SeasonWeekTypes {get; set;}
-    public DbSet<Game> Games { get; set; }
-    public DbSet<GameSummary> GameSummaries { get; set; }
-    public DbSet<GamePrediction> GamePredictions { get; set; }
+    public DbSet<SeasonWeekType> SeasonWeekTypes { get; set; }
     public DbSet<Team> Teams { get; set; }
-    public DbSet<Division> Divisions { get; set; }
-    public DbSet<Conference> Conferences { get; set; }
-    public DbSet<BackgroundJobLog> BackgroundJobLogs { get; set; }
-    public DbSet<InviteCode> InviteCodes { get; set; }
     #endregion
 }

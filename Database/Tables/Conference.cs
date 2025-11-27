@@ -13,11 +13,11 @@ public class Conference
     [Key]
     [Required]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-  public int ConferenceId { get; set; }
+    public int ConferenceId { get; set; }
 
     [Required]
     [MaxLength(30)]
- public string ConferenceName { get; set; }
+    public string ConferenceName { get; set; }
 
     [Required]
     [MaxLength(3)]
