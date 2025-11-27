@@ -1,15 +1,18 @@
-﻿using System.Text.Json;
+﻿#nullable enable
+
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace WebApp.Common.Models;
 
-public record User
+public sealed record User
 {
-    public string UserId { get; init; }
-    public string UserName { get; init; }
-    public string FirstName { get; init; }
-    public string LastName { get; init; }
-    public string Email { get; init; }
+    public required string UserId { get; init; }
+    public required string UserName { get; init; }
+    public required string FirstName { get; init; }
+    public required string LastName { get; init; }
+    public required string Email { get; init; }
     public bool IsAdmin { get; init; }
 }
 
@@ -18,12 +21,23 @@ public record User
 public partial class UserJsonContext : JsonSerializerContext { }
 
 
-public record CurrentUserInfoResponse
+public sealed record SearchUsersResponse
 {
+    public required User[] Users { get; init; }
+}
+
+
+[JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
+[JsonSerializable(typeof(SearchUsersResponse))]
+public partial class SearchUsersJsonContext : JsonSerializerContext { }
+
+public sealed record CurrentUserInfoResponse
+{
+    [MemberNotNullWhen(true, nameof(NameClaimType), nameof(RoleClaimType))]
     public bool IsAuthenticated { get; init; }
-    public string NameClaimType { get; init; }
-    public string RoleClaimType { get; init; }
-    public ClaimValue[] Claims { get; init; }
+    public string? NameClaimType { get; init; }
+    public string? RoleClaimType { get; init; }
+    public ClaimValue[] Claims { get; init; } = [];
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
@@ -31,19 +45,10 @@ public record CurrentUserInfoResponse
 public partial class CurrentUserInfoResponseJsonContext : JsonSerializerContext { }
 
 
-public record ClaimValue
+public sealed record ClaimValue
 {
-    public ClaimValue() { }
-
-    public ClaimValue(string type, string value)
-    {
-        Type = type; 
-        Value = value;
-    }
-    
-    public string Type { get; init; }
-
-    public string Value { get; init; }
+    public required string Type { get; init; }
+    public required string Value { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]

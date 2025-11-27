@@ -69,7 +69,7 @@ public static partial class CreateOrUpdateGame
 
 
     [GeneratedRegex(@"^\d{1,2}:\d{2}$")]
-    private static partial Regex ClockTimeRegex();
+    private static partial Regex ClockTimeRegex { get; }
 
     public sealed class CreateOrUpdateGameValidator : AbstractValidator<Command>
     {
@@ -116,7 +116,7 @@ public static partial class CreateOrUpdateGame
                 .GreaterThanOrEqualTo(0);
 
             RuleFor(x => x.ClockTime)
-                .Matches(ClockTimeRegex())
+                .Matches(ClockTimeRegex)
                 .WithMessage($"{nameof(Command.ClockTime)} must be in the format MM:SS.");
         }
     }

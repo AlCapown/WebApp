@@ -78,6 +78,7 @@ public static class UpsertGamePrediction
 
             RuleFor(x => x.UserId)
                 .NotEmpty()
+                .MaximumLength(450)
                 .MustAsync(async (userId, cancellation) =>
                 {
                     return await _dbContext.AppUsers.FindAsync([userId], cancellation) is not null;

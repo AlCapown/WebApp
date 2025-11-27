@@ -29,7 +29,8 @@ public static class GetUserById
         public GetUserValidator()
         {
             RuleFor(x => x.UserId)
-                .NotEmpty();
+                .NotEmpty()
+                .MaximumLength(450);
         }
     }
 
@@ -56,7 +57,7 @@ public static class GetUserById
 
             var appUser = await _userManager.FindByIdAsync(query.UserId!);
 
-            if (appUser is null)
+            if (appUser is not { UserName: not null, Email: not null })
             {
                 return new NotFoundProblemDetails("User not found.");
             }

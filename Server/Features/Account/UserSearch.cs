@@ -12,45 +12,42 @@ using System.Threading.Tasks;
 using WebApp.Common.Constants;
 using WebApp.Common.Models;
 using WebApp.Database;
-using WebApp.Database.Tables;
 using WebApp.Server.Infrastructure;
-using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Features.Account;
 
-using Result = OneOf<UserSearch.Response, ValidationProblemDetails>;
+using Result = OneOf<SearchUsersResponse, ValidationProblemDetails>;
 
 public static class UserSearch
 {
     public sealed record Query : IRequest<Result>
     {
+        /// <summary>
+        /// Optional search paramter to search against the unique identifier of the user.
+        /// </summary>
+        [FromQuery]
         public string? UserId { get; init; }
     }
     
-    public sealed record Response
-    {
-        public required User[] Users { get; init; }
-    }
-
     public sealed class UserSearchValidator : AbstractValidator<Query>
     {
         public UserSearchValidator()
         {
+            RuleFor(x => x.UserId)
+                .MaximumLength(450)
+                .When(x => x.UserId is not null);
         }
     }
 
     public sealed class Handler : IRequestHandler<Query, Result>
     {
-        private readonly UserManager<AppUser> _userManager;
         private readonly IValidator<Query> _validator;
         private readonly WebAppDbContext _dbContext;
 
-        public Handler(UserManager<AppUser> userManager, IValidator<Query> validator, WebAppDbContext dbContext)
+        public Handler(IValidator<Query> validator, WebAppDbContext dbContext)
         {
-            _userManager = userManager;
             _validator = validator;
             _dbContext = dbContext;
-
         }
 
         public async ValueTask<Result> Handle(Query query, CancellationToken token)
@@ -63,24 +60,36 @@ public static class UserSearch
                 return problemDetails;
             }
 
-            // WIP
-            var dbQuery = _dbContext.Users.AsNoTracking()
+            var userQuery = _dbContext.Users.AsNoTracking()
+                .Where(x => x.UserName != null)
+                .Where(x => x.Email != null)
                 .Select(user => new User
                 {
                     UserId = user.Id,
-                    UserName = user.UserName,
+                    UserName = user.UserName!,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    Email = user.Email,
-                    IsAdmin = false
+                    Email = user.Email!,
+                    IsAdmin = user.UserRoles.Any(ur => ur.RoleId == AppRole.ADMIN)
                 });
 
-            var queryResult = await dbQuery.ToArrayAsync(token);
+            userQuery = AddFilters(userQuery, query);
+            var users = await userQuery.ToArrayAsync(token);
 
-            return new Response
-            {
-                Users = queryResult
+            return new SearchUsersResponse
+            {  
+                Users = users
             };
         }
+    }
+
+    private static IQueryable<User> AddFilters(IQueryable<User> userQuery, Query query)
+    {
+        if (query.UserId is not null)
+        {
+            userQuery = userQuery.Where(x => x.UserId == query.UserId);
+        }
+
+        return userQuery;
     }
 }

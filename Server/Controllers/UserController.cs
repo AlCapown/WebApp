@@ -46,7 +46,7 @@ public sealed class UserController : ControllerBase
         {
             return Ok(new CurrentUserInfoResponse
             {
-                IsAuthenticated = false
+                IsAuthenticated = false,
             });
         }
 
@@ -55,10 +55,13 @@ public sealed class UserController : ControllerBase
             IsAuthenticated = true,
             NameClaimType = claimsIdentity.NameClaimType,
             RoleClaimType = claimsIdentity.RoleClaimType,
-            Claims = claimsIdentity.Claims
+            Claims = [.. claimsIdentity.Claims
                 .Where(x => x.Type != "AspNet.Identity.SecurityStamp")
-                .Select(x => new ClaimValue(x.Type, x.Value))
-                .ToArray()
+                .Select(x => new ClaimValue 
+                {
+                    Type = x.Type,
+                    Value = x.Value
+                })]
         });
     }
 
@@ -87,6 +90,29 @@ public sealed class UserController : ControllerBase
             success => Ok(success),
             validationProblem => BadRequest(validationProblem),
             notFound => NotFound(notFound)
+        );
+    }
+
+    /// <summary>
+    /// User Search
+    /// </summary>
+    /// <param name="query">The search criteria for filtering users.</param>
+    /// <returns>
+    /// Returns <see cref="SearchUsersResponse"/> on success <br/>
+    /// Returns <see cref="ValidationProblemDetails"/> if the request is invalid.<br/>
+    /// </returns>
+    [HttpGet("Search")]
+    [Authorize(Policy = Policy.Admin)]
+    [ProducesResponseType(typeof(SearchUsersResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UserSearch([FromQuery] UserSearch.Query query)
+    {
+        var result = await _mediator.Send(query, HttpContext.RequestAborted);
+
+        return result.Match<IActionResult>
+        (
+            success => Ok(success),
+            validationProblem => BadRequest(validationProblem)
         );
     }
 }

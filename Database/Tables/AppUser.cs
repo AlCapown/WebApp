@@ -14,11 +14,11 @@ public class AppUser : IdentityUser
 
     [Required]
     [MaxLength(50)]
-
     public string LastName { get; set; }
 
     #region Navigation Props
     public virtual ICollection<GamePrediction> GamePredictions { get; set; }
+    public virtual ICollection<IdentityUserRole<string>> UserRoles { get; set; }
     #endregion
 }
 
@@ -26,5 +26,9 @@ internal sealed class AppUserConfiguration : IEntityTypeConfiguration<AppUser>
 {
     public void Configure(EntityTypeBuilder<AppUser> builder)
     {
+        builder.HasMany(u => u.UserRoles)
+            .WithOne()
+            .HasForeignKey(ur => ur.UserId)
+            .IsRequired();
     }
 }
