@@ -4,6 +4,7 @@ using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using OneOf;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,7 +53,8 @@ public static class CreateUser
             var createResult = await _userManager.CreateAsync(appUser);
             if (!createResult.Succeeded)
             {
-                _logger.LogError("Failed to create new user profile for {UserName}.", appUser.UserName);
+                var errors = string.Join(", ", createResult.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                _logger.LogError("Failed to create new user profile for {UserName}. Errors: {Errors}", appUser.UserName, errors);
                 return new InternalServerErrorProblemDetails("Failed to create user.");
             }
 
@@ -60,7 +62,8 @@ public static class CreateUser
             var createLoginResult = await _userManager.AddLoginAsync(appUser, command.ExternalLoginInfo);
             if (!createLoginResult.Succeeded)
             {
-                _logger.LogError("Failed to create login provider for {UserName}.", appUser.UserName);
+                var errors = string.Join(", ", createLoginResult.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                _logger.LogError("Failed to create login provider for {UserName}. Errors: {Errors}", appUser.UserName, errors);
                 return new InternalServerErrorProblemDetails("Failed to create user.");
             }
 
@@ -68,7 +71,8 @@ public static class CreateUser
             var addRoleResult = await _userManager.AddToRoleAsync(appUser, AppRole.USER);
             if (!addRoleResult.Succeeded)
             {
-                _logger.LogError("Failed to create a default app role for {UserName}.", appUser.UserName);
+                var errors = string.Join(", ", addRoleResult.Errors.Select(e => $"{e.Code}: {e.Description}"));
+                _logger.LogError("Failed to create a default app role for {UserName}. Errors: {Errors}", appUser.UserName, errors);
                 return new InternalServerErrorProblemDetails("Failed to create user.");
             }
 
