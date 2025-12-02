@@ -16,7 +16,7 @@ namespace WebApp.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Policy = Policy.User)]
+[Authorize(Policy = Policy.USER)]
 [ValidateAntiForgeryToken]
 public sealed class SeasonController : ControllerBase
 {
@@ -50,7 +50,7 @@ public sealed class SeasonController : ControllerBase
     /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the request is invalid.
     /// </returns>
     [HttpPost("")]
-    [Authorize(Policy = Policy.Admin)]
+    [Authorize(Policy = Policy.ADMIN)]
     [ProducesResponseType(typeof(void), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateSeason([FromBody] CreateSeasonRequest body)
@@ -104,7 +104,7 @@ public sealed class SeasonController : ControllerBase
     /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the season does not exist.
     /// </returns>
     [HttpPut("{seasonId:int}")]
-    [Authorize(Policy = Policy.Admin)]
+    [Authorize(Policy = Policy.ADMIN)]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
@@ -200,7 +200,7 @@ public sealed class SeasonController : ControllerBase
     /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the week does not exist.
     /// </returns>
     [HttpPut("{seasonId:int}/week/{SeasonWeekId:int}")]
-    [Authorize(Policy = Policy.Admin)]
+    [Authorize(Policy = Policy.ADMIN)]
     [ProducesResponseType(typeof(void), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]

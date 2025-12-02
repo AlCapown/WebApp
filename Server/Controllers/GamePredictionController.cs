@@ -16,7 +16,7 @@ namespace WebApp.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Policy = Policy.User)]
+[Authorize(Policy = Policy.USER)]
 [ValidateAntiForgeryToken]
 public sealed class GamePredictionController : ControllerBase
 {
@@ -123,7 +123,7 @@ public sealed class GamePredictionController : ControllerBase
     /// 403 Forbidden if the operation is not allowed.
     /// </returns>
     [HttpPost("{userId}")]
-    [Authorize(Policy = Policy.Admin)]
+    [Authorize(Policy = Policy.ADMIN)]
     [ProducesResponseType(typeof(CreateGamePredictionResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(ForbiddenProblemDetails), StatusCodes.Status403Forbidden)]

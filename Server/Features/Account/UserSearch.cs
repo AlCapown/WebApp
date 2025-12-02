@@ -1,4 +1,5 @@
-﻿#nullable enable
+﻿
+#nullable enable
 
 using FluentValidation;
 using Mediator;
@@ -25,7 +26,6 @@ public static class UserSearch
         /// <summary>
         /// Optional search paramter to search against the unique identifier of the user.
         /// </summary>
-        [FromQuery]
         public string? UserId { get; init; }
     }
     
@@ -74,6 +74,7 @@ public static class UserSearch
                 });
 
             userQuery = AddFilters(userQuery, query);
+
             var users = await userQuery.ToArrayAsync(token);
 
             return new SearchUsersResponse

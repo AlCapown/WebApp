@@ -18,6 +18,7 @@ using StackExchange.Redis;
 using System;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using WebApp.Common.Constants;
 using WebApp.Database;
 using WebApp.Database.Tables;
 using WebApp.ExternalIntegrations.ESPN.Service;
@@ -202,7 +203,7 @@ services
             options.Cookie.Name = "MedGamePicks";
             options.Cookie.IsEssential = true;
             options.Cookie.HttpOnly = true;
-            options.Cookie.SameSite = SameSiteMode.Lax;
+            options.Cookie.SameSite = SameSiteMode.Strict;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });
     });
@@ -283,7 +284,7 @@ app.UseAuthorization();
 
 app.MapRazorPages();
 app.MapControllers();
-app.MapHangfireDashboardWithAuthorizationPolicy(Policy.Hangfire);
+app.MapHangfireDashboardWithAuthorizationPolicy(Policy.HANGFIRE);
 app.MapFallbackToPage("/WasmIndex");
 app.UseHealthChecks("/api/healthchecks", WebApp.Server.Infrastructure.HealthChecks.GetHealthCheckOptions());
 

@@ -1,0 +1,19 @@
+﻿@using WebApp.Client.Components.Common.Page
+@using WebApp.Common.Constants
+@using WebApp.Client.Components.Admin.Season
+
+@page "/Admin/Season/{SeasonId:int}/Week/{SeasonWeekId:int}/Predictions"
+@attribute [Authorize(Roles = AppRole.ADMIN)]
+
+<PageContainer PageHeading="Manage Predictions">
+</PageContainer>
+
+@code
+{
+    [Parameter]
+    public int SeasonId { get; set; }
+
+    [Parameter]
+    public int SeasonWeekId { get; set; }
+}
+

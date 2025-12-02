@@ -4,16 +4,16 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApp.Common.Constants;
 using WebApp.Common.Models;
 using WebApp.Server.Features.Team;
-using WebApp.Server.Infrastructure;
 using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Policy = Policy.User)]
+[Authorize(Policy = Policy.USER)]
 [ValidateAntiForgeryToken]
 public sealed class TeamController : ControllerBase
 {

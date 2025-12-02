@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using WebApp.Common.Constants;
 using WebApp.Common.Models;
 using WebApp.Server.Features.Account;
 using WebApp.Server.Infrastructure;
@@ -16,7 +17,7 @@ namespace WebApp.Server.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize(Policy = Policy.User)]
+[Authorize(Policy = Policy.USER)]
 [ValidateAntiForgeryToken]
 public sealed class UserController : ControllerBase
 {
@@ -80,16 +81,21 @@ public sealed class UserController : ControllerBase
     [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetUserById([FromRoute] string userId)
     {
-        var result = await _mediator.Send(new GetUserById.Query
+        var result = await _mediator.Send(new UserSearch.Query
         {
             UserId = userId
         }, HttpContext.RequestAborted);
 
         return result.Match<IActionResult>
         (
-            success => Ok(success),
-            validationProblem => BadRequest(validationProblem),
-            notFound => NotFound(notFound)
+            success => 
+            {
+                var user = success.Users.FirstOrDefault();
+                return user is null 
+                    ? NotFound(new NotFoundProblemDetails($"User with an Id of {userId} was not found."))
+                    : Ok(user);
+            },
+            validationProblem => BadRequest(validationProblem)
         );
     }
 
@@ -102,7 +108,7 @@ public sealed class UserController : ControllerBase
     /// Returns <see cref="ValidationProblemDetails"/> if the request is invalid.<br/>
     /// </returns>
     [HttpGet("Search")]
-    [Authorize(Policy = Policy.Admin)]
+    [Authorize(Policy = Policy.ADMIN)]
     [ProducesResponseType(typeof(SearchUsersResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UserSearch([FromQuery] UserSearch.Query query)

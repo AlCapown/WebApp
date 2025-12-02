@@ -43,7 +43,7 @@ public sealed class SearchUsersEffect : Effect<UserActions.SearchUsers>
             };
 
         public override FetchFailureAction GetFailureAction(ApiError apiError) =>
-            new UserActions.GetUserByIdFailure();
+            new UserActions.SearchUsersFailure();
     }
 }
 

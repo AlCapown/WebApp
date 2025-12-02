@@ -74,8 +74,9 @@ public static partial class GamePredictionActions
 
 public sealed class GamePredictionSearchSuccessReducer : Reducer<GamePredictionState, GamePredictionActions.GamePredictionSearchSuccess>
 {
-    public override GamePredictionState Reduce(GamePredictionState state, GamePredictionActions.GamePredictionSearchSuccess action) => state with
-    {
-        GamePredictions = state.GamePredictions.SetItems(action.GamePredictions.ToDictionary(key => key.GamePredictionId))
-    };
+    public override GamePredictionState Reduce(GamePredictionState state, GamePredictionActions.GamePredictionSearchSuccess action) => 
+        state with
+        {
+            GamePredictions = state.GamePredictions.SetItems(action.GamePredictions.ToDictionary(key => key.GamePredictionId))
+        };
 }

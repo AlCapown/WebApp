@@ -70,6 +70,7 @@ public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvi
 
         if (user is null || !user.IsAuthenticated)
         {
+            // Anynomous User
             return new ClaimsPrincipal(new ClaimsIdentity());
         }
 

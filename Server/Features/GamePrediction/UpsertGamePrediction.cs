@@ -110,7 +110,7 @@ public static class UpsertGamePrediction
 
             var game = await _dbContext.Games.FindAsync([cmd.GameId], cancellationToken);
 
-            Debug.Assert(game is not null);
+            Debug.Assert(game is not null, "Should not be null becasue of validation.");
 
             if (!cmd.BypassGameStartTimeValidation && game.StartsOn.HasValue && game.StartsOn.Value < DateTimeOffset.Now)
             {

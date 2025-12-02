@@ -42,7 +42,7 @@ public static class ValidationExtensions
     /// <returns>
     /// A ValidationProblemDetails object if validation fails, or null if validation succeeds.
     /// </returns>
-    public static async Task<ValidationProblemDetails?> ValidateRequestAsync<TRequest>(this IValidator<TRequest> validator, TRequest request, CancellationToken cancellationToken = default)
+    public static async Task<ValidationProblemDetails?> ValidateRequestAsync<TRequest>(this IValidator<TRequest> validator, TRequest request, CancellationToken cancellationToken)
     {
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
         
