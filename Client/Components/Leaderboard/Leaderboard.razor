@@ -46,14 +46,13 @@
 
 @code {
 
-    [Parameter]
+    [Parameter, EditorRequired]
     public int SeasonId { get; set; }
 
-    [Parameter]
+    [Parameter, EditorRequired]
     public int TeamId { get; set; }
 
     [SupplyParameterFromQuery]
-    [Parameter]
     public int? TabIndex { get; set; }
 
     private IReadOnlyList<LeaderboardItem> LeaderboardItems { get; set; } = [];

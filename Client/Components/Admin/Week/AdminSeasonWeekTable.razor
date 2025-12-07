@@ -11,8 +11,9 @@
 
 @inject IState<SeasonWeekState> SeasonWeekState
 @inject IState<SeasonState> SeasonState
+@inject NavigationManager Navigation
 
-<div class="wa_table__container">
+<div class="wa_table__container_medium">
     <div class="wa_table__header">
         <MudText Typo="@Typo.h6">@GetSeasonDescription()</MudText>
         <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 15px 0px;" />
@@ -30,6 +31,7 @@
                         </MudTableSortLabel>
                     </MudTh>
                     <MudTh><MudText Typo="Typo.subtitle2">@("Week End")</MudText></MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("View Predictions")</MudText></MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="Week Type"><MudText Typo="Typo.body2">@context.WeekType.ToFriendlyNameString()</MudText></MudTd>
@@ -43,6 +45,14 @@
                         <MudText Typo="Typo.body2">@context.WeekEnd.ToString("dddd")</MudText>
                         <MudText Typo="Typo.body2">@context.WeekEnd.ToString("MM/dd/yy")</MudText>
                     </MudTd>
+                    <MudTd DataLabel="View Predictions">
+                        @if(@context.WeekType == WeekType.RegularSeason)
+                        {
+                            <MudButton OnClick="@(e => NavigateToViewPredictions(@context.SeasonWeekId))" Variant="Variant.Text" EndIcon="@Icons.Material.Filled.NavigateNext">
+                                <MudText Typo="Typo.body2">Predictions</MudText>
+                            </MudButton>
+                        }
+                    </MudTd>
                 </RowTemplate>
             </MudTable>
         </div>
@@ -51,7 +61,7 @@
 
 @code {
 
-    [Parameter]
+    [Parameter, EditorRequired]
     public int SeasonId { get; set; }
 
     private List<SeasonWeek> Weeks => SeasonWeekState.Value.Weeks
@@ -69,7 +79,7 @@
         return string.Empty;
     }
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
         MaybeDispatch(new SeasonWeekActions.LoadSeasonWeekList
         {
@@ -77,7 +87,10 @@
         });
 
         MaybeDispatch(new SeasonActions.LoadSeasonList());
+    }
 
-        base.OnInitialized();
+    private void NavigateToViewPredictions(int seasonWeekId)
+    {
+        Navigation.NavigateTo($"/Admin/Season/{SeasonId}/Week/{seasonWeekId}/Predictions");
     }
 }

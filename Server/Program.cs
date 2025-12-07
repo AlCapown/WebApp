@@ -105,11 +105,11 @@ services.AddMediator(options =>
 // AI Services
 services.AddOpenAIServices();
 
+// External Integrations
 services.RegisterESPNServices();
 
 // Fluent Validation
 services.AddValidatorsFromAssemblyContaining<Program>();
-
 
 // Exception Handling Middleware
 services.AddExceptionHandler<ApiExceptionHandler>();
@@ -203,7 +203,7 @@ services
             options.Cookie.Name = "MedGamePicks";
             options.Cookie.IsEssential = true;
             options.Cookie.HttpOnly = true;
-            options.Cookie.SameSite = SameSiteMode.Strict;
+            options.Cookie.SameSite = SameSiteMode.Lax;
             options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
         });
     });
