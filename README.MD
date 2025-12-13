@@ -1,7 +1,10 @@
-
 ## Install .NET WebAssembly build tools
 ```ps
+# Initial installation
 dotnet workload install wasm-tools
+
+# Keep workloads up to date
+dotnet workload update
 ```
 
 ## Creating A Migration
