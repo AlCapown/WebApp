@@ -28,7 +28,7 @@ public sealed class GetUserByIdEffect : Effect<UserActions.GetUserById>
         public GetUserByIdPlan(UserActions.GetUserById action)
             : base(action) { }
 
-        public override JsonTypeInfo<User> ResponseJsonContext =>
+        public override JsonTypeInfo<User> ResponseBodyJsonContext =>
             UserJsonContext.Default.User;
 
         public override FetchSuccessAction GetSuccessAction(User user) =>

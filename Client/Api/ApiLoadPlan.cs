@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization.Metadata;
 using WebApp.Client.Store.Shared;
 using WebApp.Common.Models;
@@ -32,7 +33,7 @@ public abstract class ApiLoadPlan<TResponse>
     /// This property must provide the appropriate <see cref="JsonTypeInfo{T}"/> for the response type
     /// to enable System.Text.Json source generation and AOT compilation support.
     /// </summary>
-    public abstract JsonTypeInfo<TResponse> ResponseJsonContext { get; }
+    public abstract JsonTypeInfo<TResponse> ResponseBodyJsonContext { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ApiLoadPlan{TResponse}"/> class.
@@ -80,7 +81,7 @@ public abstract class ApiLoadPlanWithBody<TResponse, TBody> : ApiLoadPlan<TRespo
     /// This property must provide the appropriate <see cref="JsonTypeInfo{T}"/> for the body type
     /// to enable System.Text.Json source generation and AOT compilation support.
     /// </summary>
-    public abstract JsonTypeInfo<TBody> BodyJsonContext { get; }
+    public abstract JsonTypeInfo<TBody> RequestBodyJsonContext { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ApiLoadPlanWithBody{TResponse, TBody}"/> class.
@@ -107,7 +108,7 @@ public abstract class ApiLoadPlanWithBodyNoContent<TBody> : ApiLoadPlanWithBody<
     /// because no-content responses do not require JSON deserialization.
     /// </summary>
     /// <exception cref="NotImplementedException">Always thrown since no-content responses don't require JSON context.</exception>
-    public sealed override JsonTypeInfo<NoContentResponse> ResponseJsonContext =>
+    public sealed override JsonTypeInfo<NoContentResponse> ResponseBodyJsonContext =>
         throw new NotImplementedException("No content response does not require a JSON context.");
 
     /// <summary>

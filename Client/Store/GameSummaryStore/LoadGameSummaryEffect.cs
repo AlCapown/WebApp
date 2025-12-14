@@ -27,7 +27,7 @@ public sealed class LoadGameSummaryEffect : Effect<GameSummaryActions.LoadGameSu
     {
         public GetGameSummaryPlan(GameSummaryActions.LoadGameSummary action) : base(action) { }
 
-        public override JsonTypeInfo<GameSummary> ResponseJsonContext => 
+        public override JsonTypeInfo<GameSummary> ResponseBodyJsonContext => 
             GameSummaryJsonContext.Default.GameSummary;
 
         public override FetchSuccessAction GetSuccessAction(GameSummary response) =>

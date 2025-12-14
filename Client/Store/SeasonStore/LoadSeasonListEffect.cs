@@ -29,7 +29,7 @@ public sealed class LoadSeasonListEffect : Effect<SeasonActions.LoadSeasonList>
         public LoadSeasonListPlan(SeasonActions.LoadSeasonList action)
             : base(action) { }
 
-        public override JsonTypeInfo<GetSeasonListResponse> ResponseJsonContext
+        public override JsonTypeInfo<GetSeasonListResponse> ResponseBodyJsonContext
             => GetSeasonListResponseJsonContext.Default.GetSeasonListResponse;
 
         public override FetchSuccessAction GetSuccessAction(GetSeasonListResponse response) =>

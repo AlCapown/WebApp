@@ -29,7 +29,7 @@ public sealed class LoadTeamsEffect : Effect<TeamActions.LoadTeams>
         public LoadTeamsPlan(TeamActions.LoadTeams action)
             : base(action) { }
 
-        public override JsonTypeInfo<TeamSearchResponse> ResponseJsonContext =>
+        public override JsonTypeInfo<TeamSearchResponse> ResponseBodyJsonContext =>
             GetTeamsResponseJsonContext.Default.TeamSearchResponse;
 
         public override FetchSuccessAction GetSuccessAction(TeamSearchResponse response) =>

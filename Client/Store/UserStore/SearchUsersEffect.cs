@@ -33,7 +33,7 @@ public sealed class SearchUsersEffect : Effect<UserActions.SearchUsers>
         public SearchUsersPlan(UserActions.SearchUsers action)
             : base(action) { }
 
-        public override JsonTypeInfo<SearchUsersResponse> ResponseJsonContext =>
+        public override JsonTypeInfo<SearchUsersResponse> ResponseBodyJsonContext =>
             SearchUsersJsonContext.Default.SearchUsersResponse;
 
         public override FetchSuccessAction GetSuccessAction(SearchUsersResponse response) =>

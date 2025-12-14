@@ -38,10 +38,10 @@ public sealed class CreateGamePredictionEffect : Effect<GamePredictionActions.Cr
         public CreateGamePredictionPlan(GamePredictionActions.CreateGamePrediction action) 
             : base(action) { }
 
-        public override JsonTypeInfo<CreateGamePredictionResponse> ResponseJsonContext =>
+        public override JsonTypeInfo<CreateGamePredictionResponse> ResponseBodyJsonContext =>
             CreateGamePredictionResponseJsonContext.Default.CreateGamePredictionResponse;
 
-        public override JsonTypeInfo<CreateGamePredictionRequest> BodyJsonContext =>
+        public override JsonTypeInfo<CreateGamePredictionRequest> RequestBodyJsonContext =>
             CreateGamePredictionRequestJsonContext.Default.CreateGamePredictionRequest;
 
         public override FetchSuccessAction GetSuccessAction(CreateGamePredictionResponse response) =>

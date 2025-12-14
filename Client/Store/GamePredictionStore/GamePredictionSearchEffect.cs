@@ -37,7 +37,7 @@ public sealed class GamePredictionSearchEffect : Effect<GamePredictionActions.Ga
         public GamePredictionSearchPlan(GamePredictionActions.GamePredictionSearch action) 
             : base(action) { }
 
-        public override JsonTypeInfo<GamePredictionSearchResponse> ResponseJsonContext =>
+        public override JsonTypeInfo<GamePredictionSearchResponse> ResponseBodyJsonContext =>
             GamePredictionSearchResponseJsonContext.Default.GamePredictionSearchResponse;
 
         public override FetchSuccessAction GetSuccessAction(GamePredictionSearchResponse response) =>

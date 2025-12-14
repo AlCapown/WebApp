@@ -28,7 +28,7 @@ public sealed class GetGamePredictionEffect : Effect<GamePredictionActions.GetGa
         public GetGamePredictionPlan(GamePredictionActions.GetGamePrediction action) 
             : base(action) { }
 
-        public override JsonTypeInfo<GetGamePredictionResponse> ResponseJsonContext =>
+        public override JsonTypeInfo<GetGamePredictionResponse> ResponseBodyJsonContext =>
             GetGamePredictionResponseJsonContext.Default.GetGamePredictionResponse;
 
         public override FetchSuccessAction GetSuccessAction(GetGamePredictionResponse response) =>

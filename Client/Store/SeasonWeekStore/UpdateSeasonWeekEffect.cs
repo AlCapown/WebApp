@@ -39,7 +39,7 @@ public sealed class UpdateSeasonWeekEffect : Effect<SeasonWeekActions.UpdateSeas
     {
         public UpdateSeasonWeekPlan(SeasonWeekActions.UpdateSeasonWeek action) : base(action) { }
 
-        public override JsonTypeInfo<UpdateSeasonWeekRequest> BodyJsonContext =>
+        public override JsonTypeInfo<UpdateSeasonWeekRequest> RequestBodyJsonContext =>
             UpdateSeasonWeekRequestJsonContext.Default.UpdateSeasonWeekRequest;
 
         public override FetchSuccessAction GetSuccessAction(NoContentResponse response)

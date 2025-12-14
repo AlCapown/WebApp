@@ -42,7 +42,7 @@ public sealed class SearchGamesForSeasonEffect : Effect<GameActions.SearchGamesF
     {
         public SearchGamesForSeasonPlan(GameActions.SearchGamesForSeason action) : base(action) { }
 
-        public override JsonTypeInfo<GameSearchResponse> ResponseJsonContext => 
+        public override JsonTypeInfo<GameSearchResponse> ResponseBodyJsonContext => 
             SearchGamesResponseJsonContext.Default.GameSearchResponse;
 
         public override FetchSuccessAction GetSuccessAction(GameSearchResponse response) =>

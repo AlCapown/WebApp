@@ -67,7 +67,7 @@ public sealed class ApiClient : IApiClient
         {
             var httpClient = _httpClientFactory.CreateClient(ServiceConstants.WEBAPP_API_CLIENT);
 
-            using var response = await httpClient.PostAsJsonAsync(uri, body, apiLoadPlan.BodyJsonContext);
+            using var response = await httpClient.PostAsJsonAsync(uri, body, apiLoadPlan.RequestBodyJsonContext);
 
             if (response.IsSuccessStatusCode)
             {
@@ -91,7 +91,7 @@ public sealed class ApiClient : IApiClient
         {
             var httpClient = _httpClientFactory.CreateClient(ServiceConstants.WEBAPP_API_CLIENT);
 
-            using var response = await httpClient.PutAsJsonAsync(uri, body, apiLoadPlan.BodyJsonContext);
+            using var response = await httpClient.PutAsJsonAsync(uri, body, apiLoadPlan.RequestBodyJsonContext);
 
             if (response.IsSuccessStatusCode)
             {
@@ -138,7 +138,7 @@ public sealed class ApiClient : IApiClient
     {
         TResponse? content = typeof(TResponse) == typeof(NoContentResponse)
             ? NoContentResponse.Value as TResponse
-            : await response.Content.ReadFromJsonAsync(apiLoadPlan.ResponseJsonContext);
+            : await response.Content.ReadFromJsonAsync(apiLoadPlan.ResponseBodyJsonContext);
 
         if (content is null)
         {
