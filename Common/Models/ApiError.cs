@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace WebApp.Common.Models;
 
-public record ErrorBase { }
+public abstract record ErrorBase { }
 
+
+[ImmutableObject(true)]
 public sealed record ApiError : ErrorBase
 {
     public string Title { get; init; }
@@ -19,17 +22,15 @@ public sealed record ApiError : ErrorBase
     public object RetryAction { get; init; }
 }
 
+[ImmutableObject(true)]
 public sealed record LocalError : ErrorBase
 {
-    public Type TypeOfException { get; init; }
     public string Message { get; init; }
     public string StackTrace { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(ApiError))]
-public partial class ApiErrorJsonContext : JsonSerializerContext { }
-
-[JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(LocalError))]
-public partial class LocalErrorJsonContext : JsonSerializerContext { }
+public partial class ErrorJsonContext : JsonSerializerContext { }
+

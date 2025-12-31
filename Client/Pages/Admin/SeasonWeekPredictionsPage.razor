@@ -1,6 +1,6 @@
 ﻿@using WebApp.Client.Components.Common.Page
 @using WebApp.Common.Constants
-@using WebApp.Client.Components.Admin.Season
+@using WebApp.Client.Components.Admin.ManagePreditions
 
 @page "/Admin/Season/{SeasonId:int}/Week/{SeasonWeekId:int}/Predictions"
 @attribute [Authorize(Roles = AppRole.ADMIN)]
@@ -8,6 +8,7 @@
 <PageContainer PageHeading="Manage Predictions">
     <MudGrid Justify="Justify.FlexStart">
         <MudItem xs="12">
+            <ManagePreditionsTable TeamId="@SeasonConstants.CURRENT_TEAM_ID" SeasonId="@SeasonId" SeasonWeekId="@SeasonWeekId" />
         </MudItem>
     </MudGrid>
 </PageContainer>

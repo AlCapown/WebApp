@@ -43,6 +43,7 @@ public abstract class WebAppComponentBase : FluxorComponent
     public string MaybeDispatch(FetchStartedAction action)
     {
         var fetchName = action.GenerateFetchName();
+        _fetches.Add(fetchName);
         Dispatcher.Dispatch(action with
         {
             FetchName = fetchName,
@@ -111,7 +112,6 @@ public abstract class WebAppComponentBase : FluxorComponent
                 {
                     Error = new LocalError
                     {
-                        TypeOfException = ex.GetType(),
                         Message = ex.Message,
                         StackTrace = ex.StackTrace
                     }

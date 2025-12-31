@@ -30,6 +30,11 @@ public static class GamePredictionSearch
         public int? SeasonId { get; init; }
 
         /// <summary>
+        /// The identifier for the season week to filter game predictions.
+        /// </summary>
+        public int? SeasonWeekId { get; init; }
+
+        /// <summary>
         /// The identifier for a specific game to filter predictions.
         /// Optional. If provided, only predictions for the specified game will be included.
         /// </summary>
@@ -61,6 +66,10 @@ public static class GamePredictionSearch
             RuleFor(x => x.SeasonId)
                 .GreaterThan(0)
                 .When(x => x.SeasonId.HasValue);
+
+            RuleFor(x => x.SeasonWeekId)
+                .GreaterThan(0)
+                .When(x => x.SeasonWeekId.HasValue);
 
             RuleFor(x => x.GameId)
                 .GreaterThan(0)
@@ -107,6 +116,7 @@ public static class GamePredictionSearch
                 {
                     GamePredictionId = x.GamePredictionId,
                     SeasonId = x.Game.SeasonWeek.SeasonId,
+                    SeasonWeekId = x.Game.SeasonWeekId,
                     GameId = x.GameId,
                     UserId = x.UserId,
                     IsCurrentUser = x.UserId == userId,
@@ -133,6 +143,11 @@ public static class GamePredictionSearch
             if (query.SeasonId.HasValue)
             {
                 gamePredictionQuery = gamePredictionQuery.Where(x => x.SeasonId == query.SeasonId.Value);
+            }
+
+            if (query.SeasonWeekId.HasValue)
+            {
+                gamePredictionQuery = gamePredictionQuery.Where(x => x.SeasonWeekId == query.SeasonWeekId.Value);
             }
 
             if (query.GameId.HasValue)

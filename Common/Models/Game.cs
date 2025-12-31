@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System;
+using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using WebApp.Common.Enums;
@@ -11,6 +12,7 @@ namespace WebApp.Common.Models;
 /// Represents a sporting game with teams, scores, and scheduling information.
 /// This record is used as a data transfer object for game-related operations.
 /// </summary>
+[ImmutableObject(true)]
 public sealed record Game
 {
     /// <summary>
@@ -96,19 +98,18 @@ public sealed record Game
     public bool HasSummary { get; init; }
 }
 
-[JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
-[JsonSerializable(typeof(Game))]
-public partial class GameJsonContext : JsonSerializerContext { }
-
 public sealed record GameSearchResponse
 {
     public required Game[] Games { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
+[JsonSerializable(typeof(Game))]
 [JsonSerializable(typeof(GameSearchResponse))]
-public partial class SearchGamesResponseJsonContext : JsonSerializerContext { }
+public partial class GameJsonContext : JsonSerializerContext { }
 
+
+[ImmutableObject(true)]
 public sealed record GameSummary
 {
     /// <summary>

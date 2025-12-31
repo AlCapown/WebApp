@@ -239,10 +239,10 @@ services.AddSingleton<SecurityHeadersMiddleware>();
 
 var app = builder.Build();
 
-
-#if DEBUG
 app.Logger.LogInformation("Application Name: {Application}", app.Environment.ApplicationName);
 app.Logger.LogInformation("Hosting Environment: {Environment}", app.Environment.EnvironmentName);
+
+#if DEBUG
 app.Logger.LogInformation("WebApp Sql Connection String: {SQLConnection}", connectionStrings.Database);
 app.Logger.LogInformation("Hangfire Sql Connection String: {HangfireConnection}", connectionStrings.HangfireDatabase);
 app.Logger.LogInformation("Redis Connection String: {RedisConnection}", connectionStrings.Redis);

@@ -1,6 +1,7 @@
 ﻿#nullable enable
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization.Metadata;
 using WebApp.Client.Store.Shared;
 using WebApp.Common.Models;
@@ -107,8 +108,11 @@ public abstract class ApiLoadPlanWithBodyNoContent<TBody> : ApiLoadPlanWithBody<
     /// because no-content responses do not require JSON deserialization.
     /// </summary>
     /// <exception cref="NotImplementedException">Always thrown since no-content responses don't require JSON context.</exception>
-    public sealed override JsonTypeInfo<NoContentResponse> ResponseBodyJsonContext =>
-        throw new NotImplementedException("No content response does not require a JSON context.");
+    public sealed override JsonTypeInfo<NoContentResponse> ResponseBodyJsonContext
+    {
+        [DoesNotReturn]
+        get => throw new NotImplementedException("NoContentResponse does not require JSON context.");
+    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ApiLoadPlanWithBodyNoContent{TBody}"/> class.

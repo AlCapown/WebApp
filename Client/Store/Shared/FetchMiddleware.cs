@@ -38,7 +38,6 @@ internal sealed class FetchMiddleware : Middleware
             {
                 Error = new LocalError
                 {
-                    TypeOfException = typeof(InvalidOperationException),
                     Message = $"A {nameof(FetchStartedAction)} was dispatched without a FetchName specified."
                 }
             });

@@ -25,6 +25,7 @@ public sealed class GamePredictionSearchEffect : Effect<GamePredictionActions.Ga
         await _client.GetAsync(new GamePredictionSearchPlan(action), "api/GamePrediction/Search", new Dictionary<string, string?>
         {
             { nameof(action.SeasonId), action.SeasonId?.ToString() },
+            { nameof(action.SeasonWeekId), action.SeasonWeekId?.ToString() },
             { nameof(action.GameId), action.GameId?.ToString() },
             { nameof(action.TeamId), action.TeamId?.ToString() },
             { nameof(action.UserId), action.UserId },
@@ -57,6 +58,7 @@ public static partial class GamePredictionActions
     public sealed record GamePredictionSearch : FetchStartedAction
     {
         public int? SeasonId { get; init; }
+        public int? SeasonWeekId { get; init; }
         public int? GameId { get; init; }
         public string? UserId { get; init; }
         public bool? LimitToCurrentUser { get; init; }

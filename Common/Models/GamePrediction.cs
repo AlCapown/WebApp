@@ -8,6 +8,7 @@ public record GamePrediction
 {
     public int GamePredictionId { get; init; }
     public int SeasonId { get; init; }
+    public int SeasonWeekId { get; init; }
     public int GameId { get; init; }
     public bool IsCurrentUser { get; init; }
     public string UserId { get; init; }

@@ -1,0 +1,128 @@
+﻿@using WebApp.Client.Components.Common.WebAppComponentBase
+@using WebApp.Client.Components.Common.LoadingWrapper
+@using WebApp.Client.Store.GameStore
+@using WebApp.Client.Store.GamePredictionStore
+@using WebApp.Common.Models
+
+@inherits WebAppComponentBase
+
+@inject IState<GamePredictionState> GamePredictionState
+@inject IState<GameState> GameState
+
+<div class="wa_table__container">
+    <div class="wa_table__header">
+        <MudText Typo="@Typo.h6">User Preditions</MudText>
+        <MudText Typo="@Typo.subtitle1"></MudText>
+        <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 15px 0px;" />
+    </div>
+    <SkeletonLoadingWrapper IsLoading=@IsLoading() Width="100%" Height="30rem">
+        <div class="wa_table__overflowContainer">
+            <MudTable T="GamePredictionTableItem" Items="GetGamePredictions()" Hover="true" Breakpoint="Breakpoint.None" Dense="false" Class="wa_table__mudOverrides">
+                <HeaderContent>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("User")</MudText></MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Prediction")</MudText></MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd DataLabel="User">
+                        <MudText Typo="Typo.body2">@context.FirstName</MudText>
+                        <MudText Typo="Typo.body2">@context.LastName</MudText>
+                    </MudTd>
+                    <MudTd DataLabel="Predition">
+                        <MudText Typo="Typo.body2">@($"{context.AwayTeamName} - {context.PredictedAwayTeamScore}")</MudText>
+                        <MudText Typo="Typo.body2">@("@")</MudText>
+                        <MudText Typo="Typo.body2">@($"{context.HomeTeamName} - {context.PredictedHomeTeamScore}")</MudText>
+                    </MudTd>
+                </RowTemplate>
+            </MudTable>
+        </div>
+    </SkeletonLoadingWrapper>
+</div>
+
+@code 
+{
+    #nullable enable
+
+    [Parameter]
+    [EditorRequired]
+    public int TeamId { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public int SeasonId { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public int SeasonWeekId { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        MaybeDispatch(new GamePredictionActions.GamePredictionSearch
+        {
+            TeamId = TeamId,
+            SeasonId = SeasonId,
+            SeasonWeekId = SeasonWeekId
+        });
+
+        MaybeDispatch(new GameActions.SearchGamesForSeason
+        {
+            TeamId = TeamId,
+            SeasonId = SeasonId,
+            SeasonWeekId = SeasonWeekId
+        });
+
+        base.OnParametersSet();
+    }
+
+    private IReadOnlyList<GamePredictionTableItem> GetGamePredictions()
+    {
+        var game = GameState.Value.Games.Values
+            .Where(x => x.SeasonWeekId == SeasonWeekId)
+            .Where(x => x.SeasonId == SeasonId)
+            .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
+            .FirstOrDefault();
+
+        if (game is null)
+        {
+            return [];
+        }
+
+        var gamePredictions = GamePredictionState.Value.GamePredictions.Values
+            .Where(x => x.SeasonWeekId == SeasonWeekId)
+            .Where(x => x.SeasonId == SeasonId)
+            .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
+            .ToArray();
+
+        var users = GamePredictionState.Value.GamePredictions.Values
+            .Where(x => x.SeasonId == SeasonId)
+            .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
+            .DistinctBy(x => x.UserId)
+            .ToArray();
+
+        return
+            (from u in users
+             join gp in gamePredictions on u.UserId equals gp.UserId into gpt
+             from t in gpt.DefaultIfEmpty()
+             select new GamePredictionTableItem
+             {
+                 UserId = u.UserId,
+                 FirstName = u.FirstName,
+                 LastName = u.LastName,
+                 HomeTeamName = game.HomeTeamName,
+                 PredictedHomeTeamScore = t?.PredictedHomeTeamScore ?? 0,
+                 AwayTeamName = game.AwayTeamName,
+                 PredictedAwayTeamScore = t?.PredictedAwayTeamScore ?? 0
+             }).ToList();
+    }
+
+    private record GamePredictionTableItem
+    {
+        public required string UserId { get; init; }
+        public required string FirstName { get; init; }
+        public required string LastName { get; init; }
+        public required string HomeTeamName { get; init; }
+        public int PredictedHomeTeamScore { get; init; }
+        public required string AwayTeamName { get; init; }
+        public int PredictedAwayTeamScore { get; init; }
+    }
+
+}

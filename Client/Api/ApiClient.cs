@@ -217,7 +217,7 @@ public sealed class ApiClient : IApiClient
                 HttpStatusCode.Conflict or
                 HttpStatusCode.InternalServerError or
                 HttpStatusCode.ServiceUnavailable =>
-                    await response.Content.ReadFromJsonAsync(ApiErrorJsonContext.Default.ApiError)
+                    await response.Content.ReadFromJsonAsync(ErrorJsonContext.Default.ApiError)
                     ?? UnknownApiErrorOccurred((int)response.StatusCode),
                 HttpStatusCode.Unauthorized => new ApiError
                 {
