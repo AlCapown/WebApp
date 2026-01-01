@@ -73,6 +73,7 @@ public static class GetGamePrediction
                 .Select(x => new Common.Models.GamePrediction
                 {
                     GamePredictionId = x.GamePredictionId,
+                    SeasonWeekId = x.Game.SeasonWeekId,
                     SeasonId = x.Game.SeasonWeek.SeasonId,
                     GameId = x.GameId,
                     UserId = x.UserId,

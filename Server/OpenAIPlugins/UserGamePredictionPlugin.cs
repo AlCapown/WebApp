@@ -72,8 +72,7 @@ public sealed class UserGamePredictionPlugin
         return gamePredictionSearch.Match
         (
             success => success,
-            validationError => throw new InvalidOperationException(validationError.Detail),
-            notFound => throw new InvalidOperationException(notFound.Detail)
+            validationError => throw new InvalidOperationException(validationError.Detail)
         );
     }
 

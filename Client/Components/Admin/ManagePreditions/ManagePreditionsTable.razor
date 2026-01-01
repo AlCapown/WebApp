@@ -8,6 +8,7 @@
 
 @inject IState<GamePredictionState> GamePredictionState
 @inject IState<GameState> GameState
+@inject IDialogService DialogService
 
 <div class="wa_table__container">
     <div class="wa_table__header">
@@ -21,6 +22,7 @@
                 <HeaderContent>
                     <MudTh><MudText Typo="Typo.subtitle2">@("User")</MudText></MudTh>
                     <MudTh><MudText Typo="Typo.subtitle2">@("Prediction")</MudText></MudTh>
+                    <MudTh><MudText Typo="Typo.subtitle2">@("Edit")</MudText></MudTh>
                 </HeaderContent>
                 <RowTemplate>
                     <MudTd DataLabel="User">
@@ -31,6 +33,11 @@
                         <MudText Typo="Typo.body2">@($"{context.AwayTeamName} - {context.PredictedAwayTeamScore}")</MudText>
                         <MudText Typo="Typo.body2">@("@")</MudText>
                         <MudText Typo="Typo.body2">@($"{context.HomeTeamName} - {context.PredictedHomeTeamScore}")</MudText>
+                    </MudTd>
+                    <MudTd DataLabel="Edit">
+                        <MudButton OnClick="() => OpenPredictionDialog(context)" Variant="Variant.Text" EndIcon="@Icons.Material.Filled.Edit">
+                            <MudText Typo="Typo.body2">Edit Prediction</MudText>
+                        </MudButton>
                     </MudTd>
                 </RowTemplate>
             </MudTable>
@@ -107,6 +114,7 @@
                  UserId = u.UserId,
                  FirstName = u.FirstName,
                  LastName = u.LastName,
+                 GameId = game.GameId,
                  HomeTeamName = game.HomeTeamName,
                  PredictedHomeTeamScore = t?.PredictedHomeTeamScore ?? 0,
                  AwayTeamName = game.AwayTeamName,
@@ -114,11 +122,29 @@
              }).ToList();
     }
 
+    private async Task OpenPredictionDialog(GamePredictionTableItem item)
+    {
+        var dialogParams = new DialogParameters<EditUserPredictionDialog>();
+
+        dialogParams.Add(x => x.UserId, item.UserId);
+        dialogParams.Add(x => x.FirstName, item.FirstName);
+        dialogParams.Add(x => x.LastName, item.LastName);
+        dialogParams.Add(x => x.GameId, item.GameId);
+        dialogParams.Add(x => x.HomeTeamName, item.HomeTeamName);
+        dialogParams.Add(x => x.HomeTeamScore, item.PredictedHomeTeamScore);
+        dialogParams.Add(x => x.AwayTeamName, item.AwayTeamName);
+        dialogParams.Add(x => x.AwayTeamScore, item.PredictedAwayTeamScore);
+
+
+        await DialogService.ShowAsync<EditUserPredictionDialog>(string.Empty, dialogParams);
+    }
+
     private record GamePredictionTableItem
     {
         public required string UserId { get; init; }
         public required string FirstName { get; init; }
         public required string LastName { get; init; }
+        public int GameId { get; init; }
         public required string HomeTeamName { get; init; }
         public int PredictedHomeTeamScore { get; init; }
         public required string AwayTeamName { get; init; }

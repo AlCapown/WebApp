@@ -62,12 +62,10 @@ public sealed class GamePredictionController : ControllerBase
     /// <returns>
     /// 200 OK with the search results.<br/>
     /// 400 Bad Request if the query is invalid.<br/>
-    /// 404 Not Found if no predictions match the criteria.
     /// </returns>
     [HttpGet("search")]
     [ProducesResponseType(typeof(GamePredictionSearchResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetGamePredictionSearch([FromQuery] GamePredictionSearch.Query query)
     { 
         var result = await _mediator.Send(query, HttpContext.RequestAborted);
@@ -75,8 +73,7 @@ public sealed class GamePredictionController : ControllerBase
         return result.Match<IActionResult>
         (
             success => Ok(success),
-            validationProblem => BadRequest(validationProblem),
-            notFound => NotFound(notFound)
+            validationProblem => BadRequest(validationProblem)
         );
     }
 

@@ -13,11 +13,10 @@ using WebApp.Common.Extensions;
 using WebApp.Common.Models;
 using WebApp.Database;
 using WebApp.Server.Infrastructure;
-using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Features.GamePrediction;
 
-using Result = OneOf<GamePredictionSearchResponse, ValidationProblemDetails, ForbiddenProblemDetails>;
+using Result = OneOf<GamePredictionSearchResponse, ValidationProblemDetails>;
 
 public static class GamePredictionSearch
 {

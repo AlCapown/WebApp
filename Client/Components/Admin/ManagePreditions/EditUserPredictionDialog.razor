@@ -1,0 +1,109 @@
+@using WebApp.Common.Models
+@using WebApp.Client.Components.Common.FormDialog
+@using WebApp.Client.Common.Extensions
+@using WebApp.Client.Store.Shared
+@using WebApp.Client.Store.GamePredictionStore
+
+@implements IDisposable
+@implements IFormDialogContent
+
+@inject IDispatcher Dispatcher
+@inject IActionSubscriber ActionSubscriber
+
+<FormDialog @ref="FormDialog" Title="@Title" SubTitle="@SubTitle" Model="@Model" OnSubmit="DispatchSubmitAction">
+    <MudNumericField @bind-Value="Model.AwayTeamScore" For="@(() => Model.AwayTeamScore)" Label="@AwayTeamLabel" Min="0" Max="999" HideSpinButtons="true" Disabled="FormDialog.IsFormDialogSubmitting" />
+    <MudNumericField @bind-Value="Model.HomeTeamScore" For="@(() => Model.HomeTeamScore)" Label="@HomeTeamLabel" Min="0" Max="999" HideSpinButtons="true" Class="mt-6" Disabled="FormDialog.IsFormDialogSubmitting" />
+</FormDialog>
+
+@code 
+{
+    [Parameter]
+    [EditorRequired]
+    public string UserId { get; set; }
+    
+    [Parameter]
+    [EditorRequired]
+    public string FirstName { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public string LastName { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public int GameId { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public int HomeTeamScore { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public int AwayTeamScore { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public string HomeTeamName { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public string AwayTeamName { get; set; }
+
+    public Action OnValidSubmitCallbackSuccess { get; set; }
+
+    public Func<ApiError, Task> OnValidSubmitCallbackErrorAsync { get; set; }
+
+    private FormDialog FormDialog { get; set; }
+
+    private CreateGamePredictionRequest Model { get; set; }
+
+    private string Title => $"Enter Prediction for {FirstName} {LastName}";
+
+    private string SubTitle => $"{AwayTeamName} @ {HomeTeamName}";
+
+    private string HomeTeamLabel => $"{HomeTeamName} Score";
+
+    private string AwayTeamLabel => $"{AwayTeamName} Score";
+
+    protected override void OnInitialized()
+    {
+        Model = GetDefaultModelState();
+
+        ActionSubscriber.SubscribeToAction<GamePredictionActions.CreateGamePredictionForUserSuccess>(this, action =>
+        {
+            OnValidSubmitCallbackSuccess?.Invoke();
+        });
+
+        ActionSubscriber.SubscribeToAction<GamePredictionActions.CreateGamePredictionForUserFailure>(this, async action =>
+        {
+            await OnValidSubmitCallbackErrorAsync?.Invoke(action.ApiError);
+        });
+
+        base.OnInitialized();
+    }
+
+    private void DispatchSubmitAction()
+    {
+        Dispatcher.DispatchFetch(new GamePredictionActions.CreateGamePredictionForUser
+        {
+            UserId = UserId,
+            Request = Model,
+            FetchOptions = FetchOptions.FormSubmit
+        });
+    }
+
+    public void Dispose()
+    {
+        ActionSubscriber.UnsubscribeFromAllActions(this);
+    }
+
+    private CreateGamePredictionRequest GetDefaultModelState()
+    {
+        return new CreateGamePredictionRequest
+        {
+            GameId = GameId,
+            HomeTeamScore = HomeTeamScore,
+            AwayTeamScore = AwayTeamScore
+        };
+    }
+}
