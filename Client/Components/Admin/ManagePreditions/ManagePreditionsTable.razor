@@ -67,14 +67,12 @@
         {
             TeamId = TeamId,
             SeasonId = SeasonId,
-            SeasonWeekId = SeasonWeekId
         });
 
         MaybeDispatch(new GameActions.SearchGamesForSeason
         {
             TeamId = TeamId,
             SeasonId = SeasonId,
-            SeasonWeekId = SeasonWeekId
         });
 
         base.OnParametersSet();

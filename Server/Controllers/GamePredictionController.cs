@@ -9,7 +9,6 @@ using WebApp.Client.Common.Extensions;
 using WebApp.Common.Constants;
 using WebApp.Common.Models;
 using WebApp.Server.Features.GamePrediction;
-using WebApp.Server.Infrastructure;
 using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Controllers;

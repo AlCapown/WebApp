@@ -8,6 +8,7 @@
 @using WebApp.Common.Models
 @using WebApp.Common.Extensions
 
+@inherits ComponentBase
 @implements IDisposable
 
 <EditForm Model="@Model" OnValidSubmit="@OnValidSubmitAsync">
@@ -143,6 +144,7 @@
             {
                 await MudDialog.SetOptionsAsync(MudDialog.Options with { BackdropClick = true });
             }
+
             IsFormDialogSubmitting = false;
             Validator?.DisplayApiErrors(error);
             StateHasChanged();
