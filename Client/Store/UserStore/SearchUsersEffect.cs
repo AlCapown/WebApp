@@ -1,10 +1,10 @@
 ﻿#nullable enable
 
 using Fluxor;
-using System.Linq;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
+using WebApp.Client.Common.Extensions;
 using WebApp.Client.Store.Shared;
 using WebApp.Common.Models;
 
@@ -67,6 +67,6 @@ public sealed class SearchUsersSuccessReducer : Reducer<UserState, UserActions.S
     public override UserState Reduce(UserState state, UserActions.SearchUsersSuccess action) =>
         state with
         {
-            Users = state.Users.SetItems(action.Users.ToDictionary(x => x.UserId))
+            Users = state.Users.SetItems(action.Users.ToKeyValuePairs(x => x.UserId))
         };
 }

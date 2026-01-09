@@ -1,10 +1,10 @@
 ﻿#nullable enable
 
 using Fluxor;
-using System.Linq;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
+using WebApp.Client.Common.Extensions;
 using WebApp.Client.Store.Shared;
 using WebApp.Common.Models;
 
@@ -60,6 +60,6 @@ public sealed class LoadTeamsSuccessReducer : Reducer<TeamState, TeamActions.Loa
     public override TeamState Reduce(TeamState state, TeamActions.LoadTeamsSuccess action) =>
         state with
         {
-            Teams = state.Teams.SetItems(action.Teams.ToDictionary(key => key.TeamId))
+            Teams = state.Teams.SetItems(action.Teams.ToKeyValuePairs(key => key.TeamId))
         };
 }

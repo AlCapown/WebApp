@@ -2,10 +2,10 @@
 
 using Fluxor;
 using System;
-using System.Linq;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
+using WebApp.Client.Common.Extensions;
 using WebApp.Client.Store.Shared;
 using WebApp.Common.Enums;
 using WebApp.Common.Models;
@@ -83,6 +83,6 @@ public sealed class SearchGamesForSeasonSuccessReducer : Reducer<GameState, Game
     public override GameState Reduce(GameState state, GameActions.SearchGamesForSeasonSuccess action) =>
         state with
         {
-            Games = state.Games.SetItems(action.Games.ToDictionary(key => key.GameId))
+            Games = state.Games.SetItems(action.Games.ToKeyValuePairs(key => key.GameId))
         };
 }

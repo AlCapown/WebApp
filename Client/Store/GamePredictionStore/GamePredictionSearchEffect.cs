@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
+using WebApp.Client.Common.Extensions;
 using WebApp.Client.Store.Shared;
 using WebApp.Common.Models;
 
@@ -78,6 +79,6 @@ public sealed class GamePredictionSearchSuccessReducer : Reducer<GamePredictionS
     public override GamePredictionState Reduce(GamePredictionState state, GamePredictionActions.GamePredictionSearchSuccess action) => 
         state with
         {
-            GamePredictions = state.GamePredictions.SetItems(action.GamePredictions.ToDictionary(key => key.GamePredictionId))
+            GamePredictions = state.GamePredictions.SetItems(action.GamePredictions.ToKeyValuePairs(key => key.GamePredictionId))
         };
 }

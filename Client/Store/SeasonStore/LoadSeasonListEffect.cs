@@ -1,10 +1,10 @@
 ﻿#nullable enable
 
 using Fluxor;
-using System.Linq;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
+using WebApp.Client.Common.Extensions;
 using WebApp.Client.Store.Shared;
 using WebApp.Common.Models;
 
@@ -60,6 +60,6 @@ public sealed class LoadSeasonListSuccessReducer : Reducer<SeasonState, SeasonAc
     public override SeasonState Reduce(SeasonState state, SeasonActions.LoadSeasonListSuccess action) =>
         state with
         {
-            Seasons = state.Seasons.SetItems(action.Seasons.ToDictionary(key => key.SeasonId)),
+            Seasons = state.Seasons.SetItems(action.Seasons.ToKeyValuePairs(key => key.SeasonId)),
         };
 }

@@ -2,10 +2,10 @@
 
 using Fluxor;
 using System;
-using System.Linq;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
+using WebApp.Client.Common.Extensions;
 using WebApp.Client.Store.Shared;
 using WebApp.Common.Enums;
 using WebApp.Common.Models;
@@ -88,6 +88,6 @@ public sealed class LoadSeasonWeekListSuccessReducer : Reducer<SeasonWeekState, 
     public override SeasonWeekState Reduce(SeasonWeekState state, SeasonWeekActions.LoadSeasonWeekListSuccess action) =>
         state with
         {
-            Weeks = state.Weeks.SetItems(action.Weeks.ToDictionary(key => key.SeasonWeekId))
+            Weeks = state.Weeks.SetItems(action.Weeks.ToKeyValuePairs(key => key.SeasonWeekId))
         };
 }
