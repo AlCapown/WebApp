@@ -54,10 +54,9 @@ public sealed class ApiClient : IApiClient
     }
 
 
-    public async Task<ApiResponse<TResponse>> GetAsync<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, string uri, Dictionary<string, string?> queryPrams)
+    public Task<ApiResponse<TResponse>> GetAsync<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, string uri, ReadOnlySpan<KeyValuePair<string, string?>> queryParameters)
         where TResponse : class
-        => await GetAsync(apiLoadPlan, QueryHelpers.AddQueryString(uri, queryPrams));
-
+         => GetAsync(apiLoadPlan, QueryHelpers.AddQueryString(uri, queryParameters));
 
     public async Task<ApiResponse<TResponse>> PostAsync<TResponse, TBody>(ApiLoadPlanWithBody<TResponse, TBody> apiLoadPlan, string uri, TBody body)
         where TResponse : class

@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -10,7 +11,7 @@ public interface IApiClient
     Task<ApiResponse<TResponse>> GetAsync<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, string uri)
         where TResponse : class;
 
-    Task<ApiResponse<TResponse>> GetAsync<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, string uri, Dictionary<string, string?> queryPrams)
+    Task<ApiResponse<TResponse>> GetAsync<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, string uri, ReadOnlySpan<KeyValuePair<string, string?>> queryParameters)
         where TResponse : class;
 
     Task<ApiResponse<TResponse>> PostAsync<TResponse, TBody>(ApiLoadPlanWithBody<TResponse, TBody> apiLoadPlan, string uri, TBody body)

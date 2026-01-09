@@ -2,7 +2,6 @@
 
 using Fluxor;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
@@ -24,18 +23,18 @@ public sealed class SearchGamesForSeasonEffect : Effect<GameActions.SearchGamesF
 
     public override async Task HandleAsync(GameActions.SearchGamesForSeason action, IDispatcher dispatcher)
     {
-        await _client.GetAsync(new SearchGamesForSeasonPlan(action), "/Api/Game/Search", new Dictionary<string, string?>
-        {
-            { nameof(action.SeasonWeekId), action.SeasonWeekId?.ToString() },
-            { nameof(action.SeasonId), action.SeasonId?.ToString() },
-            { nameof(action.GameId), action.GameId?.ToString() },
-            { nameof(action.TeamId), action.TeamId?.ToString() },
-            { nameof(action.GameStartsOnMin), action.GameStartsOnMin?.ToString() },
-            { nameof(action.GameStartsOnMax), action.GameStartsOnMax?.ToString() },
-            { nameof(action.IsGameComplete), action.IsGameComplete?.ToString() },
-            { nameof(action.WeekType), action.WeekType?.ToString() },
-            { nameof(action.HasSummary), action.HasSummary?.ToString() }
-        });
+        await _client.GetAsync(new SearchGamesForSeasonPlan(action), "/Api/Game/Search",
+        [
+            new(nameof(action.SeasonWeekId), action.SeasonWeekId?.ToString()),
+            new(nameof(action.SeasonId), action.SeasonId?.ToString()),
+            new(nameof(action.GameId), action.GameId?.ToString()),
+            new(nameof(action.TeamId), action.TeamId?.ToString()),
+            new(nameof(action.GameStartsOnMin), action.GameStartsOnMin?.ToString()),
+            new(nameof(action.GameStartsOnMax), action.GameStartsOnMax?.ToString()),
+            new(nameof(action.IsGameComplete), action.IsGameComplete?.ToString()),
+            new(nameof(action.WeekType), action.WeekType?.ToString()),
+            new(nameof(action.HasSummary), action.HasSummary?.ToString())
+        ]);
     }
 
     private sealed class SearchGamesForSeasonPlan : ApiLoadPlan<GameSearchResponse>

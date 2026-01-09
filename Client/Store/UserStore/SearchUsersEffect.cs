@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using Fluxor;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
@@ -22,10 +21,10 @@ public sealed class SearchUsersEffect : Effect<UserActions.SearchUsers>
 
     public override async Task HandleAsync(UserActions.SearchUsers action, IDispatcher dispatcher)
     {
-        await _client.GetAsync(new SearchUsersPlan(action), $"api/User/Search", new Dictionary<string, string?>
-        {
-            { nameof(action.UserId), action.UserId }
-        });
+        await _client.GetAsync(new SearchUsersPlan(action), $"api/User/Search",
+        [
+            new(nameof(action.UserId), action.UserId)
+        ]);
     }
 
     private sealed class SearchUsersPlan: ApiLoadPlan<SearchUsersResponse>

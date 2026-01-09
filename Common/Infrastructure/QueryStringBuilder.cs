@@ -3,27 +3,43 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace WebApp.Common.Infrastructure;
 
 public static class QueryHelpers
 {
-    public static string AddQueryString(string uri, Dictionary<string, string?> queryPrams)
+    public static string AddQueryString(string uri, ReadOnlySpan<KeyValuePair<string, string?>> queryParameters)
     {
-        if (queryPrams is null || queryPrams.Count == 0)
+        if (queryParameters.Length == 0)
         {
             return uri;
         }
 
-        string queryString = string.Join("&", queryPrams
-            .Where(kvp => kvp.Key is not null && kvp.Value is not null)
-            .Select(kvp => string.Concat(Uri.EscapeDataString(kvp.Key), "=", Uri.EscapeDataString(kvp.Value!))));
+        var sb = new StringBuilder();
 
-        if (queryString == string.Empty)
+        for (int i = 0; i < queryParameters.Length; i++)
         {
-            return uri;
+            AppendKeyValuePair(sb, queryParameters[i]);
         }
 
-        return string.Concat(uri.TrimEnd('/'), "?", queryString);
+        return string.Concat(uri.TrimEnd('/'), "?", sb.ToString());
+    }
+
+    private static void AppendKeyValuePair(StringBuilder sb, KeyValuePair<string, string?> kvp)
+    {
+        if (kvp.Key is null || kvp.Value is null)
+        {
+            return;
+        }
+
+        if (sb.Length > 0)
+        {
+            sb.Append('&');
+        }
+
+        sb.Append(Uri.EscapeDataString(kvp.Key));
+        sb.Append('=');
+        sb.Append(Uri.EscapeDataString(kvp.Value));
     }
 }

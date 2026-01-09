@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using Fluxor;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
@@ -22,15 +21,15 @@ public sealed class GamePredictionSearchEffect : Effect<GamePredictionActions.Ga
 
     public override async Task HandleAsync(GamePredictionActions.GamePredictionSearch action, IDispatcher dispatcher)
     {
-        await _client.GetAsync(new GamePredictionSearchPlan(action), "api/GamePrediction/Search", new Dictionary<string, string?>
-        {
-            { nameof(action.SeasonId), action.SeasonId?.ToString() },
-            { nameof(action.SeasonWeekId), action.SeasonWeekId?.ToString() },
-            { nameof(action.GameId), action.GameId?.ToString() },
-            { nameof(action.TeamId), action.TeamId?.ToString() },
-            { nameof(action.UserId), action.UserId },
-            { nameof(action.LimitToCurrentUser), action.LimitToCurrentUser?.ToString() }
-        });
+        await _client.GetAsync(new GamePredictionSearchPlan(action), "api/GamePrediction/Search", 
+        [
+            new(nameof(action.SeasonId), action.SeasonId?.ToString()),
+            new(nameof(action.SeasonWeekId), action.SeasonWeekId?.ToString()),
+            new(nameof(action.GameId), action.GameId?.ToString()),
+            new(nameof(action.TeamId), action.TeamId?.ToString()),
+            new(nameof(action.UserId), action.UserId),
+            new(nameof(action.LimitToCurrentUser), action.LimitToCurrentUser?.ToString())
+        ]);
     }
 
     private sealed class GamePredictionSearchPlan : ApiLoadPlan<GamePredictionSearchResponse>
