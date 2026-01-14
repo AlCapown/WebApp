@@ -2,7 +2,7 @@
 
 namespace WebApp.Client.Common.Constants;
 
-public static class ServiceConstants
+internal static class ServiceConstants
 {
     public const string WEBAPP_API_CLIENT = "webapp-api-client";
 }

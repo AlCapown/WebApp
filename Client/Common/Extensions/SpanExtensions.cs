@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace WebApp.Client.Common.Extensions;
 
-public static class SpanExtensions
+internal static class SpanExtensions
 {
     public static KeyValuePair<TKey, TSource>[] ToKeyValuePairs<TKey, TSource>(this ReadOnlySpan<TSource> source, Func<TSource, TKey> keySelector) 
         where TKey : notnull

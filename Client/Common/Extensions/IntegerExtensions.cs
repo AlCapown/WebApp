@@ -2,7 +2,7 @@
 
 namespace WebApp.Client.Common.Extensions;
 
-public static class IntegerExtensions
+internal static class IntegerExtensions
 {
     public static string ToOrdinalNumberString(this int number)
     {

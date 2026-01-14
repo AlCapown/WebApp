@@ -22,6 +22,11 @@ public static class QueryHelpers
             AppendKeyValuePair(sb, queryParameters[i]);
         }
 
+        if (sb.Length == 0)
+        {
+            return uri;
+        }
+
         return string.Concat(uri.TrimEnd('/'), "?", sb.ToString());
     }
 

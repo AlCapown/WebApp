@@ -5,7 +5,7 @@ using WebApp.Client.Store.Shared;
 
 namespace WebApp.Client.Common.Extensions;
 
-public static class DispatcherExtensions
+internal static class DispatcherExtensions
 {
     public static void DispatchFetch(this IDispatcher dispatcher, FetchStartedAction action)
     {

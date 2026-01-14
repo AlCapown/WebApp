@@ -3,7 +3,7 @@
 using System.Linq;
 using System.Security.Claims;
 
-namespace WebApp.Client.Common.Extensions;
+namespace WebApp.Common.Extensions;
 
 public static class ClaimsPrincipalExtensions
 {
@@ -14,7 +14,7 @@ public static class ClaimsPrincipalExtensions
     /// <returns>The UserId if the user is authenticated, null otherwise.</returns>
     public static string? GetUserId(this ClaimsPrincipal claimsPrincipal)
     {
-        if (claimsPrincipal == null || claimsPrincipal.Identity == null || !claimsPrincipal.Identity.IsAuthenticated)
+        if (claimsPrincipal is not { Identity.IsAuthenticated: true })
         {
             return null;
         }

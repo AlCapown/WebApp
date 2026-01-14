@@ -19,6 +19,7 @@
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path="Directory.Build.props" />
+    <File Path="global.json" />
     <File Path="RandomQueries.txt" />
     <File Path="README.md" />
     <File Path="RemoveAllTablesFromDb.txt" />
