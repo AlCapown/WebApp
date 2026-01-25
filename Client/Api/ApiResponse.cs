@@ -16,18 +16,18 @@ public sealed class ApiResponse<TResponse>
     /// When true, the Response property is guaranteed to be non-null.
     /// </summary>
     [MemberNotNullWhen(true, nameof(Response))]
-    public bool IsSuccess { get; init; }
+    public bool IsSuccess { get; private init; }
 
     /// <summary>
     /// Gets the HTTP status code returned by the API.
     /// </summary>
-    public int StatusCode { get; init; }
+    public int StatusCode { get; private init; }
 
     /// <summary>
     /// Gets the response data from the API call.
     /// This will be null when IsSuccess is false, and non-null when IsSuccess is true.
     /// </summary>
-    public TResponse? Response { get; init; }
+    public TResponse? Response { get; private init; }
 
     /// <summary>
     /// Initializes a new instance of the ApiResponse class.

@@ -52,12 +52,12 @@ public sealed class GameController : ControllerBase
     /// </summary>
     /// <param name="gameId">The unique identifier of the game.</param>
     /// <returns>
-    /// Returns a 200 OK response with the <see cref="Common.Models.Game"/> if found. <br/>
+    /// Returns a 200 OK response with the <see cref="Game"/> if found. <br/>
     /// Returns a 400 Bad Request response with a <see cref="ValidationProblemDetails"/> if the request is invalid. <br/>
     /// Returns a 404 Not Found response with a <see cref="NotFoundProblemDetails"/> if the game does not exist.
     /// </returns>
     [HttpGet("{GameId:int}")]
-    [ProducesResponseType(typeof(Common.Models.Game), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Game), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ValidationProblemDetails), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetGame([FromRoute] int gameId)

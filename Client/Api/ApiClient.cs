@@ -157,7 +157,7 @@ public sealed class ApiClient : IApiClient
         return ApiResponse<TResponse>.Success((int)response.StatusCode, content);
     }
 
-    private async Task<ApiResponse<TResponse>> HandleApiFailure<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, HttpResponseMessage response)
+    private async ValueTask<ApiResponse<TResponse>> HandleApiFailure<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, HttpResponseMessage response)
         where TResponse : class
     {
         var apiError = await GetApiErrorFromResponse(response);
