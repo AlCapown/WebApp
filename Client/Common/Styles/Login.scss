@@ -22,6 +22,10 @@
     padding: 1rem;
     border-radius: 4px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    border: 1px;
+    border-radius: 4px;
+    border-style: solid;
+    border-color: Colors.$softWhite;
 
     h1 {
         margin: 1rem;
@@ -61,12 +65,14 @@
     }
 
     button {
-        background: Colors.$primaryColor;
-        border: none;
+        border-color: Colors.$primaryColor;
+        background-color: transparent;
+        border: 1px;
         border-radius: 4px;
+        border-style: solid;
         margin: 10px 10px;
         padding: 10px 30px;
-        color: Colors.$softWhite;
+        color: Colors.$primaryColor;
         width: 95%;
         font-size: 1rem;
         font-weight: 500;
@@ -81,7 +87,28 @@
         overflow: hidden;
 
         &:hover {
-            background: Colors.$primaryColorDark;
+            background: Colors.$primaryColorDarkTranslucent;
+        }
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            padding-bottom: 100%;
+            background: rgba(Colors.$primaryColorDark, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(4);
+            opacity: 0;
+            transition: transform 0.8s ease-out, opacity 1s ease-out;
+            pointer-events: none;
+        }
+
+        &:active::after {
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 1;
+            transition: 0s;
         }
     }
 
@@ -117,7 +144,7 @@
         }
 
         .wa_card_formGroup_validation {
-            color: #fa3d20;
+            color: Colors.$softError;
             margin-top: 0.775rem;
         }
     }

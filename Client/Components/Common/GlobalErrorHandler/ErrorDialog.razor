@@ -13,12 +13,12 @@
     <DialogActions>
         @if (IsRetriable) 
         {
-            <MudButton ButtonType="ButtonType.Button" Color="Color.Secondary" OnClick="@OnCancel">Cancel</MudButton>
-            <MudButton ButtonType="ButtonType.Button" Color="Color.Primary" OnClick="@OnRetry">Retry</MudButton>
+            <MudButton ButtonType="ButtonType.Button" Color="Color.Secondary" Variant="Variant.Outlined" OnClick="@OnCancel">Cancel</MudButton>
+            <MudButton ButtonType="ButtonType.Button" Color="Color.Primary" Variant="Variant.Outlined"  OnClick="@OnRetry">Retry</MudButton>
         }
         else
         {
-            <MudButton ButtonType="ButtonType.Button" Color="Color.Primary" OnClick="@OnRefresh">Refresh</MudButton>
+            <MudButton ButtonType="ButtonType.Button" Color="Color.Primary" Variant="Variant.Outlined" OnClick="@OnRefresh">Refresh</MudButton>
         }
     </DialogActions>
 </MudDialog>

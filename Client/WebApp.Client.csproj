@@ -32,6 +32,12 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Common\WebApp.Common.csproj" />
+    </ItemGroup>	
+
+    <ItemGroup>
+      <Folder Include="wwwroot\lib\jquery-validate\" />
+      <Folder Include="wwwroot\lib\jquery-validation-unobtrusive\" />
+      <Folder Include="wwwroot\lib\jquery\" />
     </ItemGroup>
 
 </Project>

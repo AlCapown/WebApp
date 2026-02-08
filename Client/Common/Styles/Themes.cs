@@ -12,8 +12,8 @@ public static class Themes
             AppbarBackground = "#000000",
             Surface = "#000000",
             DrawerBackground = "#000000",
-            Primary = "#C0BCB5",
-            Secondary = "#C9DDFF"
+            Primary = "#C9DDFF",
+            Secondary = "#C0BCB5"
         }
     };
 }

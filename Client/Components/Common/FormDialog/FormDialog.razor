@@ -23,7 +23,7 @@
                     @SubTitle
                 </MudText>
             }
-            <hr class="wa_hr__purpleGradient" style="margin: 15px 0px 0px 0px;" />
+            <hr class="wa_hr__primaryGradient" style="margin: 15px 0px 0px 0px;" />
         </TitleContent>
         <DialogContent>
             <DataAnnotationsValidator  />
@@ -41,8 +41,8 @@
         <DialogActions>
             @if (!IsFormDialogSubmitting) 
             {
-                <MudButton ButtonType="ButtonType.Button" Color="Color.Secondary" OnClick="@OnCancel">Cancel</MudButton>
-                <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary">Ok</MudButton>
+                <MudButton ButtonType="ButtonType.Button" Color="Color.Secondary" Variant="Variant.Outlined" OnClick="@OnCancel">Cancel</MudButton>
+                <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" Variant="Variant.Outlined">Ok</MudButton>
             }
         </DialogActions>
     </MudDialog>
