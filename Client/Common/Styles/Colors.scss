@@ -1,11 +1,13 @@
 @use "sass:color";
 
-$surface-color: rgba(55, 55, 64, 1);
+$primaryColor: #C0BCB5;
+$primaryColorDark: color.scale($primaryColor, $lightness: -10% );
+
+$secondaryColor: #C9DDFF;
+$secondaryColorDark: color.scale($secondaryColor, $lightness: -10% );
+
+$surface-color: #000000;
 $surface-color-light: color.adjust($surface-color, $lightness: 8%, $space: hsl);
 $surface-color-lighter: color.adjust($surface-color, $lightness: 16%, $space: hsl);
-
-
-$primaryColor: #776be7;
-$primaryColorDark: color.scale($primaryColor, $lightness: -10% );
 
 $softWhite: rgba(255,255,255,0.698);

@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace WebApp.Common.Models;
 
-public record GamePrediction
+public sealed record GamePrediction
 {
     public int GamePredictionId { get; init; }
     public int SeasonId { get; init; }
@@ -20,17 +20,17 @@ public record GamePrediction
     public int PredictedAwayTeamScore { get; init; }
 }
 
-public record GetGamePredictionResponse
+public sealed record GetGamePredictionResponse
 {
     public GamePrediction GamePrediction { get; init; }
 }
 
-public record GamePredictionSearchResponse
+public sealed record GamePredictionSearchResponse
 {
     public GamePrediction[] GamePredictions { get; init; }
 }
 
-public class CreateGamePredictionRequest
+public sealed class CreateGamePredictionRequest
 {
     [Required]
     public int? GameId { get; set; }
@@ -42,23 +42,23 @@ public class CreateGamePredictionRequest
     public int? AwayTeamScore { get; set; }
 }
 
-public record CreateGamePredictionResponse
+public sealed record CreateGamePredictionResponse
 {
     public int GamePredictionId { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(GetGamePredictionResponse))]
-public partial class GetGamePredictionResponseJsonContext : JsonSerializerContext { }
+public sealed partial class GetGamePredictionResponseJsonContext : JsonSerializerContext { }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(GamePredictionSearchResponse))]
-public partial class GamePredictionSearchResponseJsonContext : JsonSerializerContext { }
+public sealed partial class GamePredictionSearchResponseJsonContext : JsonSerializerContext { }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(CreateGamePredictionRequest))]
-public partial class CreateGamePredictionRequestJsonContext : JsonSerializerContext { }
+public sealed partial class CreateGamePredictionRequestJsonContext : JsonSerializerContext { }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(CreateGamePredictionResponse))]
-public partial class CreateGamePredictionResponseJsonContext : JsonSerializerContext { }
+public sealed partial class CreateGamePredictionResponseJsonContext : JsonSerializerContext { }

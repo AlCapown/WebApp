@@ -17,26 +17,26 @@
 <MudTabs Rounded="true" TabHeaderClass="mb-6" Outlined="true" @bind-ActivePanelIndex=@InternalTabIndex>
     <MudTabPanel Text="Summary" Icon="@Icons.Material.Outlined.Summarize">
         <MudGrid>
-            <MudItem xs="12" lg="6">
+            <MudItem xs="12" sm="6">
                 <LeaderboardScoreDifferentialSummary LeaderboardItems=@LeaderboardItems DisplayLoading=@IsLoading() />
             </MudItem>
-            <MudItem xs="12" lg="6">
+            <MudItem xs="12" sm="6">
                 <LeaderboardWinPredictionSummary LeaderboardItems=@LeaderboardItems DisplayLoading=@IsLoading() />
             </MudItem>
         </MudGrid>
     </MudTabPanel>
     <MudTabPanel Text="Details" Icon="@Icons.Material.Outlined.Details">
         <MudGrid>
-            <MudItem xs="12" lg="6">
+            <MudItem xs="12" sm="6">
                 <LeaderboardScoreDifferentialGrid LeaderboardItems=@LeaderboardItems DisplayLoading=@IsLoading() />
             </MudItem>
-            <MudItem xs="12" lg="6">
+            <MudItem xs="12" sm="6">
                 <LeaderboardWinPredictionGrid LeaderboardItems=@LeaderboardItems DisplayLoading=@IsLoading() />
             </MudItem>
-            <MudItem xs="12" lg="6">
+            <MudItem xs="12" sm="6">
                 <LeaderboardScoreDifferentialChart LeaderboardItems=@LeaderboardItems DisplayLoading=@IsLoading() />
             </MudItem>
-            <MudItem xs="12" lg="6">
+            <MudItem xs="12" sm="6">
                 <LeaderboardWinPredictionChart LeaderboardItems=@LeaderboardItems DisplayLoading=@IsLoading() />
             </MudItem>
         </MudGrid>

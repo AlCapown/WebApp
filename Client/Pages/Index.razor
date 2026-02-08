@@ -16,7 +16,7 @@
 <PageContainer PageHeading="Home">
     @if (CurrentUserId is not null)
     {
-        <MudGrid Justify="Justify.FlexStart">
+        <MudGrid Justify="Justify.Center">
             <MudItem xs="12">
                 <NextGamePredictionAlertBanner SeasonId="SeasonConstants.CURRENT_SEASON_ID" TeamId="SeasonConstants.CURRENT_TEAM_ID" UserId="@CurrentUserId" />
             </MudItem>

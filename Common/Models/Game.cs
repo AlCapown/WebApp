@@ -106,7 +106,7 @@ public sealed record GameSearchResponse
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(Game))]
 [JsonSerializable(typeof(GameSearchResponse))]
-public partial class GameJsonContext : JsonSerializerContext { }
+public sealed partial class GameJsonContext : JsonSerializerContext { }
 
 
 [ImmutableObject(true)]
@@ -130,4 +130,4 @@ public sealed record GameSummary
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(GameSummary))]
-public partial class GameSummaryJsonContext : JsonSerializerContext { }
+public sealed partial class GameSummaryJsonContext : JsonSerializerContext { }

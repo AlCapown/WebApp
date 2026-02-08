@@ -29,7 +29,7 @@ public sealed record SearchUsersResponse
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(SearchUsersResponse))]
-public partial class SearchUsersJsonContext : JsonSerializerContext { }
+public sealed partial class SearchUsersJsonContext : JsonSerializerContext { }
 
 public sealed record CurrentUserInfoResponse
 {
@@ -42,7 +42,7 @@ public sealed record CurrentUserInfoResponse
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(CurrentUserInfoResponse))]
-public partial class CurrentUserInfoResponseJsonContext : JsonSerializerContext { }
+public sealed partial class CurrentUserInfoResponseJsonContext : JsonSerializerContext { }
 
 
 public sealed record ClaimValue
@@ -53,4 +53,4 @@ public sealed record ClaimValue
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(ClaimValue))]
-public partial class ClaimValueJsonContext : JsonSerializerContext { }
+public sealed partial class ClaimValueJsonContext : JsonSerializerContext { }

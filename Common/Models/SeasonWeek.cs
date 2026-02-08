@@ -22,14 +22,14 @@ public sealed record SeasonWeek
 [JsonSerializable(typeof(SeasonWeek))]
 public partial class SeasonWeekJsonContext : JsonSerializerContext { }
 
-public record SeasonWeekSearchResponse
+public sealed record SeasonWeekSearchResponse
 {
     public SeasonWeek[] SeasonWeeks { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(SeasonWeekSearchResponse))]
-public partial class GetSeasonWeekListResponseJsonContext : JsonSerializerContext { }
+public sealed partial class GetSeasonWeekListResponseJsonContext : JsonSerializerContext { }
 
 [ImmutableObject(true)]
 public sealed record UpdateSeasonWeekRequest
@@ -40,4 +40,4 @@ public sealed record UpdateSeasonWeekRequest
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(UpdateSeasonWeekRequest))]
-public partial class UpdateSeasonWeekRequestJsonContext : JsonSerializerContext { }
+public sealed partial class UpdateSeasonWeekRequestJsonContext : JsonSerializerContext { }

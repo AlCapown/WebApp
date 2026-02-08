@@ -1,6 +1,6 @@
 ﻿namespace WebApp.Client.Components.DivisionalRankings;
 
-public record TeamRecord
+public sealed record TeamRecord
 {
     public int TeamId { get; init; }
     public string TeamName { get; init; }

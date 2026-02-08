@@ -4,9 +4,6 @@
 body {
     margin: 0;
     height: 100vh;
-    background: radial-gradient(
-        color.mix(Colors.$primaryColor, #0b0c10, 32%) 0%,
-        #0b0c10 100%
-    );
+    background-color: Colors.$surface-color;
 }
 

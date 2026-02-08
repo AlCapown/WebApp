@@ -15,18 +15,18 @@ public sealed record Season
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(Season))]
-public partial class SeasonJsonContext : JsonSerializerContext { }
+public sealed partial class SeasonJsonContext : JsonSerializerContext { }
 
-public record GetSeasonListResponse
+public sealed record GetSeasonListResponse
 {
     public Season[] Seasons { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(GetSeasonListResponse))]
-public partial class GetSeasonListResponseJsonContext : JsonSerializerContext { }
+public sealed partial class GetSeasonListResponseJsonContext : JsonSerializerContext { }
 
-public class CreateSeasonRequest
+public sealed class CreateSeasonRequest
 {
     [Required]
     public int? SeasonId { get; set; }
@@ -38,10 +38,10 @@ public class CreateSeasonRequest
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(CreateSeasonRequest))]
-public partial class CreateSeasonRequestJsonContext : JsonSerializerContext { }
+public sealed partial class CreateSeasonRequestJsonContext : JsonSerializerContext { }
 
 
-public class UpdateSeasonRequest
+public sealed class UpdateSeasonRequest
 {
     [Required]
     [StringLength(255)]
@@ -50,4 +50,4 @@ public class UpdateSeasonRequest
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(UpdateSeasonRequest))]
-public partial class UpdateSeasonRequestJsonContext : JsonSerializerContext { }
+public sealed partial class UpdateSeasonRequestJsonContext : JsonSerializerContext { }

@@ -18,7 +18,7 @@ public sealed record Team
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(Team))]
-public partial class TeamJsonContext : JsonSerializerContext { }
+public sealed partial class TeamJsonContext : JsonSerializerContext { }
 
 
 public sealed record TeamSearchResponse
@@ -28,4 +28,4 @@ public sealed record TeamSearchResponse
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(TeamSearchResponse))]
-public partial class GetTeamsResponseJsonContext : JsonSerializerContext { }
+public sealed partial class GetTeamsResponseJsonContext : JsonSerializerContext { }

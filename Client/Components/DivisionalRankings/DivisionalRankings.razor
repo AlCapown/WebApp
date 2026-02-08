@@ -8,29 +8,29 @@
 @inject IState<GameState> GameState
 @inject IState<TeamState> TeamState
 
-<MudGrid Justify="Justify.FlexStart">
-    <MudItem xs="12" sm="6" lg="5">
+<MudGrid Justify="Justify.Center">
+    <MudItem xs="12" sm="6">
         <DivisionalTable Division="NFC NORTH" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
-    <MudItem xs="12" sm="6" lg="5">
+    <MudItem xs="12" sm="6">
         <DivisionalTable Division="NFC EAST" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
-    <MudItem xs="12" sm="6" lg="5">
+    <MudItem xs="12" sm="6">
         <DivisionalTable Division="NFC SOUTH" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
-    <MudItem xs="12" sm="6" lg="5">
+    <MudItem xs="12" sm="6">
         <DivisionalTable Division="NFC WEST" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
-    <MudItem xs="12" sm="6" lg="5">
+    <MudItem xs="12" sm="6">
         <DivisionalTable Division="AFC NORTH" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
-    <MudItem xs="12" sm="6" lg="5">
+    <MudItem xs="12" sm="6">
         <DivisionalTable Division="AFC EAST" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
-    <MudItem xs="12" sm="6" lg="5">
+    <MudItem xs="12" sm="6">
         <DivisionalTable Division="AFC SOUTH" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
-    <MudItem xs="12" sm="6" lg="5">
+    <MudItem xs="12" sm="6">
         <DivisionalTable Division="AFC WEST" TeamRecords=@TeamRecords DisplayLoading=@IsLoading() />
     </MudItem>
 </MudGrid>

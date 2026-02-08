@@ -8,14 +8,14 @@
 
 @inject IState<PageState> PageState
 
-<MudThemeProvider IsDarkMode="true"/>
+<MudThemeProvider IsDarkMode="true" Theme="Themes.DarkTheme"/>
 <MudDialogProvider />
 <MudPopoverProvider />
 <GlobalErrorHandler>
     <AuthorizeView>
         <Authorized>
             <MudLayout>
-                <MudAppBar Elevation="1">
+                <MudAppBar Elevation="1" Dense="false">               
                     <MudText Typo="Typo.h6" Class="ml-3">@PageHeading</MudText>
                     <MudSpacer  />
                     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@DrawerToggle" aria-label="open navigation menu" />

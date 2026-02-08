@@ -32,5 +32,5 @@ public sealed record LocalError : ErrorBase
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
 [JsonSerializable(typeof(ApiError))]
 [JsonSerializable(typeof(LocalError))]
-public partial class ErrorJsonContext : JsonSerializerContext { }
+public sealed partial class ErrorJsonContext : JsonSerializerContext { }
 
