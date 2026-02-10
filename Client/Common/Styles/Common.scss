@@ -10,7 +10,7 @@
     background: -o-linear-gradient(left, rgba(0, 0, 0, 0), Colors.$primaryColor, rgba(0, 0, 0, 0));
     background: linear-gradient(left, rgba(0, 0, 0, 0), Colors.$primaryColor, rgba(0, 0, 0, 0));
 
-    &after {
+    &:after {
         display: block;
         content: '';
         height: 30px;

@@ -22,10 +22,8 @@
     padding: 1rem;
     border-radius: 4px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-    border: 1px;
+    border: 1px solid rgba(255,255,255,0.11764705882352941);
     border-radius: 4px;
-    border-style: solid;
-    border-color: Colors.$softWhite;
 
     h1 {
         margin: 1rem;
@@ -52,7 +50,7 @@
         background: -o-linear-gradient(left, rgba(0, 0, 0, 0), Colors.$primaryColor, rgba(0, 0, 0, 0));
         background: linear-gradient(left, rgba(0, 0, 0, 0), Colors.$primaryColor, rgba(0, 0, 0, 0));
 
-        &after {
+        &:after {
             display: block;
             content: '';
             height: 30px;
@@ -65,11 +63,9 @@
     }
 
     button {
-        border-color: Colors.$primaryColor;
         background-color: transparent;
-        border: 1px;
+        border: 1px solid Colors.$primaryColor;
         border-radius: 4px;
-        border-style: solid;
         margin: 10px 10px;
         padding: 10px 30px;
         color: Colors.$primaryColor;
@@ -88,6 +84,7 @@
 
         &:hover {
             background: Colors.$primaryColorDarkTranslucent;
+            cursor: pointer;
         }
 
         &::after {

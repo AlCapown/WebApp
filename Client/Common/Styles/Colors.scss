@@ -2,11 +2,11 @@
 
 $primaryColor: #C9DDFF;
 $primaryColorDark: color.scale($primaryColor, $lightness: -10% );
-$primaryColorDarkTranslucent: rgba($primaryColorDark, 0.6);
+$primaryColorDarkTranslucent: rgba($primaryColorDark, 0.2);
 
 $secondaryColor: #C0BCB5;
 $secondaryColorDark: color.scale($secondaryColor, $lightness: -10% );
-$secondaryColorDarkTranslucent: rgba($secondaryColorDark, 0.6);
+$secondaryColorDarkTranslucent: rgba($secondaryColorDark, 0.2);
 
 $surface-color: #000000;
 $surface-color-light: color.adjust($surface-color, $lightness: 8%, $space: hsl);
