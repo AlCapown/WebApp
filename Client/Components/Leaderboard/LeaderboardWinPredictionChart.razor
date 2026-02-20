@@ -11,7 +11,7 @@
     </div>
     <SkeletonLoadingWrapper IsLoading=@DisplayLoading Width="100%" Height="30rem">
         <div class="wa_table__overflowContainer">
-            <MudChart ChartType="ChartType.Line" ChartSeries="GetChartSeries()" XAxisLabels="GetXAxisLabels()" ChartOptions="@Options" />
+            <MudChart ChartType="ChartType.Line" ChartSeries="GetChartSeries()" ChartLabels="GetXAxisLabels()" ChartOptions="_chartOptions" />
         </div>
     </SkeletonLoadingWrapper>
 </div>
@@ -26,12 +26,12 @@
     [EditorRequired]
     public bool DisplayLoading { get; set; }
 
-    private ChartOptions Options = new ChartOptions
+    private static readonly LineChartOptions _chartOptions = new LineChartOptions
     {
         YAxisTicks = 1
     };
 
-    private List<ChartSeries> GetChartSeries()
+    private List<ChartSeries<double>> GetChartSeries()
     {
         if (LeaderboardItems.Count == 0)
         {
@@ -56,7 +56,7 @@
                         }) 
                     };
 
-        return users.Select(x => new ChartSeries
+        return users.Select(x => new ChartSeries<double>
         {
             Name = x.FirstName + " " + x.LastName,
             Data = x.RollingTotal.ToArray()
