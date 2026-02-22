@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using OneOf;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -77,8 +76,8 @@ public static class SeasonWeekSearch
             var seasonWeeks = await _cache.GetOrCreateAsync
             (
                 key: $"{nameof(SeasonWeekSearch)}_{query.SeasonId}",
-                state: (dbContext: _dbContext, query.SeasonId),
-                factory: static async (state, cancellationToken) => await GetSeasonWeeksAsync(state.dbContext, state.SeasonId, cancellationToken),
+                state: (DbContext: _dbContext, query.SeasonId),
+                factory: static async (state, cancellationToken) => await GetSeasonWeeksAsync(state.DbContext, state.SeasonId, cancellationToken),
                 options: CacheOptions.STANDARD_L20_D60,
                 tags: null,
                 cancellationToken: cancellationToken
