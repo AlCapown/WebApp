@@ -67,12 +67,11 @@ public static partial class CreateOrUpdateGame
         public bool IsComplete { get; init; }
     }
 
-
-    [GeneratedRegex(@"^\d{1,2}:\d{2}$")]
-    private static partial Regex ClockTimeRegex { get; }
-
-    public sealed class CreateOrUpdateGameValidator : AbstractValidator<Command>
+    public sealed partial class CreateOrUpdateGameValidator : AbstractValidator<Command>
     {
+        [GeneratedRegex(@"^\d{1,2}:\d{2}")]
+        private static partial Regex ClockTimeRegex { get; }
+
         private readonly WebAppDbContext _dbContext;
 
         public CreateOrUpdateGameValidator(WebAppDbContext dbContext)
@@ -91,6 +90,10 @@ public static partial class CreateOrUpdateGame
                 .NotEmpty();
 
             RuleFor(x => x.HomeTeamId)
+                .NotEqual(x => x.AwayTeamId)
+                .WithMessage($"{nameof(Command.HomeTeamId)} and {nameof(Command.AwayTeamId)} cannot be the same.");
+
+            RuleFor(x => x.HomeTeamId)
                 .GreaterThan(0)
                 .MustAsync(async (homeTeamId, cancellation) =>
                 {
@@ -102,7 +105,7 @@ public static partial class CreateOrUpdateGame
                 .GreaterThanOrEqualTo(0);
 
             RuleFor(x => x.AwayTeamId)
-                .NotEmpty()
+                .GreaterThan(0)
                 .MustAsync(async (awayTeamId, cancellation) =>
                 {
                     return await _dbContext.Teams.FindAsync([awayTeamId], cancellation) is not null;
@@ -117,6 +120,7 @@ public static partial class CreateOrUpdateGame
 
             RuleFor(x => x.ClockTime)
                 .Matches(ClockTimeRegex)
+                .When(x => x.ClockTime is not null)
                 .WithMessage($"{nameof(Command.ClockTime)} must be in the format MM:SS.");
         }
     }
@@ -134,8 +138,6 @@ public static partial class CreateOrUpdateGame
 
         public async ValueTask<Result> Handle(Command cmd, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             ValidationProblemDetails? problemDetails = await _validator.ValidateRequestAsync(cmd, cancellationToken);
             if (problemDetails is not null)
             {
@@ -180,4 +182,3 @@ public static partial class CreateOrUpdateGame
         }
     }
 }
-
