@@ -2,21 +2,24 @@
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace WebApp.Server.Infrastructure;
 
+/// <summary>
+/// Singleton middleware that adds security headers to all HTTP responses.
+/// </summary>
 public sealed class SecurityHeadersMiddleware : IMiddleware
 {
-    private readonly IHostEnvironment _environment;
-    private readonly string _contentSecurityPolicy;
+    private readonly KeyValuePair<string, string>[] _headers;
 
     public SecurityHeadersMiddleware(IHostEnvironment environment)
     {
-        _environment = environment;
-        _contentSecurityPolicy = environment.IsDevelopment()
-            ? string.Join("; ", new[]
-            {
+        var csp = environment.IsDevelopment()
+            ? string.Join("; ",
+            [
                 CspDirectives.DefaultSrc,
                 CspDirectives.ScriptSrc,
                 CspDirectives.StyleSrc,
@@ -25,9 +28,9 @@ public sealed class SecurityHeadersMiddleware : IMiddleware
                 CspDirectives.ImgSrc,
                 CspDirectives.FrameSrc,
                 CspDirectives.TrustedTypes
-            })
-            : string.Join("; ", new[]
-            {
+            ])
+            : string.Join("; ",
+            [
                 CspDirectives.DefaultSrc,
                 CspDirectives.ScriptSrc,
                 CspDirectives.StyleSrc,
@@ -36,25 +39,33 @@ public sealed class SecurityHeadersMiddleware : IMiddleware
                 CspDirectives.ImgSrc,
                 CspDirectives.FrameSrc,
                 CspDirectives.TrustedTypes
-            });
+            ]);
+
+        var headers = new List<KeyValuePair<string, string>>(capacity: 7)
+        {
+            new(HeaderNames.XFrameOptions, HeaderValues.XFrameOptionsDeny),
+            new(HeaderNames.XContentTypeOptions, HeaderValues.XContentTypeOptionsNoSniff),
+            new(HeaderNames.ReferrerPolicy, HeaderValues.ReferrerPolicyStrictOrigin),
+            new(HeaderNames.CrossOriginEmbedderPolicy, HeaderValues.CrossOriginEmbedderPolicyRequireCorp),
+            new(HeaderNames.CrossOriginOpenerPolicy, HeaderValues.CrossOriginOpenerPolicySameOrigin),
+            new(HeaderNames.ContentSecurityPolicy, csp)
+        };
+
+        if (environment.IsProduction())
+        {
+            headers.Add(new(HeaderNames.StrictTransportSecurity, HeaderValues.StrictTransportSecurity));
+        }
+
+        _headers = [.. headers];
     }
 
     public Task InvokeAsync(HttpContext context, RequestDelegate requestDelegate)
     {
-        // Security Headers
-        context.Response.Headers[HeaderNames.XFrameOptions] = HeaderValues.XFrameOptionsDeny;
-        context.Response.Headers[HeaderNames.XContentTypeOptions] = HeaderValues.XContentTypeOptionsNoSniff;
-        context.Response.Headers[HeaderNames.ReferrerPolicy] = HeaderValues.ReferrerPolicyStrictOrigin;
-        context.Response.Headers[HeaderNames.ContentSecurityPolicy] = _contentSecurityPolicy;
+        var headers = context.Response.Headers;
 
-        // Cross-origin headers for WASM multithreading support (for when its is finally implemented in the future).
-        context.Response.Headers[HeaderNames.CrossOriginEmbedderPolicy] = HeaderValues.CrossOriginEmbedderPolicyRequireCorp;
-        context.Response.Headers[HeaderNames.CrossOriginOpenerPolicy] = HeaderValues.CrossOriginOpenerPolicySameOrigin;
-
-        // HSTS - Strict Transport Security
-        if (_environment.IsProduction())
+        foreach (var header in _headers)
         {
-            context.Response.Headers[HeaderNames.StrictTransportSecurity] = HeaderValues.StrictTransportSecurity;
+            headers[header.Key] = header.Value;
         }
 
         return requestDelegate(context);
@@ -122,7 +133,7 @@ public sealed class SecurityHeadersMiddleware : IMiddleware
         public const string StyleSrc = "style-src 'self' 'unsafe-inline' fonts.googleapis.com";
         public const string FontSrc = "font-src 'self' fonts.gstatic.com";
         public const string ConnectSrcProduction = "connect-src 'self'";
-        public const string ConnectSrcDevelopment = "connect-src 'self' ws: wss: http://localhost:* https://localhost:* https://raw.githubusercontent.com";
+        public const string ConnectSrcDevelopment = "connect-src 'self' ws: wss: http://localhost:* https://localhost:* ";
         public const string ImgSrc = "img-src 'self' data:";
         public const string FrameSrc = "frame-src 'none'";
         public const string TrustedTypes = "trusted-types 'none'";
