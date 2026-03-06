@@ -2,7 +2,6 @@
 
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -17,14 +16,14 @@ public sealed class SecurityHeadersMiddleware : IMiddleware
 
     public SecurityHeadersMiddleware(IHostEnvironment environment)
     {
-        var csp = environment.IsDevelopment()
+        var csp = environment.IsProduction()
             ? string.Join("; ",
             [
                 CspDirectives.DefaultSrc,
                 CspDirectives.ScriptSrc,
                 CspDirectives.StyleSrc,
                 CspDirectives.FontSrc,
-                CspDirectives.ConnectSrcDevelopment,
+                CspDirectives.ConnectSrcProduction,
                 CspDirectives.ImgSrc,
                 CspDirectives.FrameSrc,
                 CspDirectives.TrustedTypes
@@ -35,13 +34,13 @@ public sealed class SecurityHeadersMiddleware : IMiddleware
                 CspDirectives.ScriptSrc,
                 CspDirectives.StyleSrc,
                 CspDirectives.FontSrc,
-                CspDirectives.ConnectSrcProduction,
+                CspDirectives.ConnectSrcDevelopment,
                 CspDirectives.ImgSrc,
                 CspDirectives.FrameSrc,
                 CspDirectives.TrustedTypes
             ]);
 
-        var headers = new List<KeyValuePair<string, string>>(capacity: 7)
+        var headers = new List<KeyValuePair<string, string>>(capacity: 7) // 6 common headers + 1 conditional header
         {
             new(HeaderNames.XFrameOptions, HeaderValues.XFrameOptionsDeny),
             new(HeaderNames.XContentTypeOptions, HeaderValues.XContentTypeOptionsNoSniff),
