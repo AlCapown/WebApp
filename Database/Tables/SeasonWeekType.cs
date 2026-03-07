@@ -15,7 +15,7 @@ public class SeasonWeekType
     public WeekType SeasonWeekTypeName { get; set; }
 
     #region Navigation Props
-    public virtual ICollection<SeasonWeek> SeasonWeeks { get; set; }
+    public virtual ICollection<SeasonWeek> SeasonWeeks { get; set; } = [];
     #endregion
 }
 

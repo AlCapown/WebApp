@@ -20,14 +20,14 @@ public class GameSummary
 
     [Required]
     [MaxLength(int.MaxValue)]
-    public string Summary { get; set; }
+    public required string Summary { get; set; }
 
     [Required]
     [Column(TypeName = SQLServerTypes.DATETIME_OFFSET_ZERO)]
     public DateTimeOffset DateCreated { get; set; }
 
     #region Navigation Props
-    public virtual Game Game { get; set; }
+    public virtual Game Game { get; set; } = null!;
     #endregion
 }
 

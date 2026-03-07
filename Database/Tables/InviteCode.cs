@@ -17,15 +17,15 @@ public class InviteCode
 
     [Required]
     [MaxLength(30)]
-    public string Code { get; set; }
+    public required string Code { get; set; }
 
     [Required]
     [Column(TypeName = SQLServerTypes.DATETIME_OFFSET_ZERO)]
-    public DateTimeOffset? Created { get; set; }
+    public DateTimeOffset Created { get; set; }
 
     [Required]
     [Column(TypeName = SQLServerTypes.DATETIME_OFFSET_ZERO)]
-    public DateTimeOffset? Expires { get; set; }
+    public DateTimeOffset Expires { get; set; }
 }
 
 internal sealed class InviteCodeConfiguration : IEntityTypeConfiguration<InviteCode>

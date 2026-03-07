@@ -22,8 +22,8 @@ public static class CreateUser
     public sealed record Command : IRequest<Result>
     {
         public required ExternalLoginInfo ExternalLoginInfo { get; init; }
-        public string? FirstName { get; init; }
-        public string? LastName { get; init; }
+        public required string FirstName { get; init; }
+        public required string LastName { get; init; }
     }
 
     public sealed class Handler : IRequestHandler<Command, Result>
@@ -39,14 +39,12 @@ public static class CreateUser
 
         public async ValueTask<Result> Handle(Command command, CancellationToken token)
         {
-            token.ThrowIfCancellationRequested();
-
             var appUser = new AppUser
             {
                 UserName = command.ExternalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email),
                 Email = command.ExternalLoginInfo.Principal.FindFirstValue(ClaimTypes.Email),
-                FirstName = command.FirstName ?? command.ExternalLoginInfo.Principal.FindFirstValue(ClaimTypes.GivenName)?.ToTitleCase(),
-                LastName = command.LastName ?? command.ExternalLoginInfo.Principal.FindFirstValue(ClaimTypes.Surname)?.ToTitleCase()
+                FirstName = command.FirstName,
+                LastName = command.LastName
             };
 
             // Creates the AspNetUsers profile without a password
@@ -77,7 +75,7 @@ public static class CreateUser
             }
 
             _logger.LogInformation("Successfully created new account for {UserName}.", appUser.UserName);
-
+            
             // User manager fills in some of the missing properties that weren't specified in the original create
             // so we want to do a re-fetch to return the most up to date result
             var result = await _userManager.FindByIdAsync(appUser.Id);

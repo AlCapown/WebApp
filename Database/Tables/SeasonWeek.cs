@@ -33,12 +33,12 @@ public class SeasonWeek
 
     [Required]
     [MaxLength(1000)]
-    public string Description { get; set; }
+    public required string Description { get; set; }
 
     #region Navigation Props
-    public virtual ICollection<Game> Games { get; set; }
-    public virtual Season Season { get; set; }
-    public virtual SeasonWeekType SeasonWeekType { get; set; }
+    public virtual ICollection<Game> Games { get; set; } = [];
+    public virtual Season Season { get; set; } = null!;
+    public virtual SeasonWeekType SeasonWeekType { get; set; } = null!;
     #endregion
 }
 

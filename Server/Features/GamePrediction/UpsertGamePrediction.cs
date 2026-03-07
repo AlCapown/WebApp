@@ -110,9 +110,9 @@ public static class UpsertGamePrediction
 
             var game = await _dbContext.Games.FindAsync([cmd.GameId], cancellationToken);
 
-            Debug.Assert(game is not null, "Should not be null becasue of validation.");
+            Debug.Assert(game is not null, "Should not be null because of validation.");
 
-            if (!cmd.BypassGameStartTimeValidation && game.StartsOn.HasValue && game.StartsOn.Value < DateTimeOffset.Now)
+            if (!cmd.BypassGameStartTimeValidation && game.StartsOn < DateTimeOffset.Now)
             {
                 return new ForbiddenProblemDetails("You cannot modify or add a prediction for this game since it has already started.");
             }
@@ -135,7 +135,7 @@ public static class UpsertGamePrediction
                 var gamePredictionDb = new Database.Tables.GamePrediction
                 {
                     GameId = cmd.GameId!.Value,
-                    UserId = cmd.UserId,
+                    UserId = cmd.UserId!,
                     HomeTeamScore = cmd.HomeTeamScore!.Value,
                     AwayTeamScore = cmd.AwayTeamScore!.Value,
                     DateCreated = DateTimeOffset.Now,

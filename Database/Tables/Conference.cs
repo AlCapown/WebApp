@@ -17,14 +17,14 @@ public class Conference
 
     [Required]
     [MaxLength(30)]
-    public string ConferenceName { get; set; }
+    public required string ConferenceName { get; set; }
 
     [Required]
     [MaxLength(3)]
-    public string ConferenceShortName { get; set; }
+    public required string ConferenceShortName { get; set; }
 
     #region Navigation Props
-    public virtual ICollection<Division> Divisions { get; set; }
+    public virtual ICollection<Division> Divisions { get; set; } = [];
     #endregion
 }
 

@@ -5,8 +5,8 @@
 	<TrimMode>partial</TrimMode>
 	<PublishTrimmed>false</PublishTrimmed>
 	<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+	<Nullable>enable</Nullable>
   </PropertyGroup>
-
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.3" />

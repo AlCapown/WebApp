@@ -19,8 +19,9 @@ public class Game
     [Required]
     public int SeasonWeekId { get; set; }
 
+    [Required]
     [Column(TypeName = SQLServerTypes.DATETIME_OFFSET_ZERO)]
-    public DateTimeOffset? StartsOn { get; set; }
+    public DateTimeOffset StartsOn { get; set; }
 
     [Required]
     public int HomeTeamId { get; set; }
@@ -37,18 +38,18 @@ public class Game
     public int Quarter { get; set; }
 
     [MaxLength(20)]
-    public string ClockTime { get; set; }
+    public string? ClockTime { get; set; }
 
     [Required]
     public bool IsComplete { get; set; }
 
 
     #region Navigation Props
-    public virtual SeasonWeek SeasonWeek { get; set; }
-    public virtual Team HomeTeam { get; set; }
-    public virtual Team AwayTeam { get; set; }
-    public virtual ICollection<GamePrediction> GamePredictions { get; set; }
-    public virtual GameSummary GameAISummary { get; set; }
+    public virtual SeasonWeek SeasonWeek { get; set; } = null!;
+    public virtual Team HomeTeam { get; set; } = null!;
+    public virtual Team AwayTeam { get; set; } = null!;
+    public virtual ICollection<GamePrediction> GamePredictions { get; set; } = [];
+    public virtual GameSummary? GameAISummary { get; set; }
     #endregion
 }
 

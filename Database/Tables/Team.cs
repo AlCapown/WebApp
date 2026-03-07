@@ -27,26 +27,26 @@ public class Team
 
     [Required]
     [MaxLength(50)]
-    public string TeamFullName { get; set; }
+    public required string TeamFullName { get; set; }
 
     [Required]
     [MaxLength(50)]
-    public string TeamName { get; set; }
+    public required string TeamName { get; set; }
 
     [Required]
     [MaxLength(3)]
-    public string Abbreviation { get; set; }
+    public required string Abbreviation { get; set; }
 
     [MaxLength(255)]
-    public string BrandingLogo { get; set; }
+    public string? BrandingLogo { get; set; }
 
     [Required]
     public int DivisionId { get; set; }
 
     #region Navigation Props
-    public virtual ICollection<Game> HomeGames { get; set; }
-    public virtual ICollection<Game> AwayGames { get; set; }
-    public virtual Division Division { get; set; }
+    public virtual ICollection<Game> HomeGames { get; set; } = [];
+    public virtual ICollection<Game> AwayGames { get; set; } = [];
+    public virtual Division Division { get; set; } = null!;
     #endregion
 }
 

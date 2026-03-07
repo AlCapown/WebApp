@@ -62,6 +62,7 @@ public static class UpsertWeekForSeason
                 .GreaterThan(x => x.WeekStart);
 
             RuleFor(x => x.Description)
+                .NotEmpty()
                 .MaximumLength(1000);
         }
     }
@@ -79,8 +80,6 @@ public static class UpsertWeekForSeason
 
         public async ValueTask<Result> Handle(Command cmd, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             ValidationProblemDetails? problemDetails = await _validator.ValidateRequestAsync(cmd, cancellationToken);
             if (problemDetails is not null)
             {
@@ -102,7 +101,7 @@ public static class UpsertWeekForSeason
                     SeasonWeekTypeName = cmd.WeekType!.Value,
                     WeekStart = cmd.WeekStart!.Value,
                     WeekEnd = cmd.WeekEnd!.Value,
-                    Description = cmd.Description,
+                    Description = cmd.Description!,
                 };
 
                 _dbContext.SeasonWeeks.Add(seasonWeek);
@@ -111,7 +110,7 @@ public static class UpsertWeekForSeason
             {
                 week.WeekStart = cmd.WeekStart!.Value;
                 week.WeekEnd = cmd.WeekEnd!.Value;
-                week.Description = cmd.Description;
+                week.Description = cmd.Description!;
             }
 
             await _dbContext.SaveChangesAsync(cancellationToken);

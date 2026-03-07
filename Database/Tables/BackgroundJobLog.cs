@@ -17,18 +17,20 @@ public class BackgroundJobLog
 
     [Required]
     [MaxLength(500)]
-    public string BackgroundJobName { get; set; }
+    public required string BackgroundJobName { get; set; }
 
     public bool IsSuccess { get; set; }
-  
-    [Column(TypeName = SQLServerTypes.DATETIME_OFFSET_ZERO)]
-    public DateTimeOffset? Started { get; set; }
 
+    [Required]
     [Column(TypeName = SQLServerTypes.DATETIME_OFFSET_ZERO)]
-    public DateTimeOffset? Ended { get; set; }
+    public DateTimeOffset Started { get; set; }
+
+    [Required]
+    [Column(TypeName = SQLServerTypes.DATETIME_OFFSET_ZERO)]
+    public DateTimeOffset Ended { get; set; }
 
     [Column(TypeName = SQLServerTypes.NVARCHAR_MAX)]
-    public string ErrorsJson { get; set; }
+    public string? ErrorsJson { get; set; }
 }
 
 internal sealed class BackgroundJobLogConfiguration : IEntityTypeConfiguration<BackgroundJobLog>

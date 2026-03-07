@@ -57,8 +57,6 @@ public static class CreateSeason
 
         public async ValueTask<Result> Handle(Command cmd, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             ValidationProblemDetails? problemDetails = await _validator.ValidateRequestAsync(cmd, cancellationToken);
             if (problemDetails is not null)
             {
@@ -66,6 +64,7 @@ public static class CreateSeason
             }
 
             Debug.Assert(cmd.SeasonId is not null);
+            Debug.Assert(cmd.Description is not null);
 
             var season = new Database.Tables.Season
             {

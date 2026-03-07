@@ -10,15 +10,15 @@ public class AppUser : IdentityUser
 {
     [Required]
     [MaxLength(50)]
-    public string FirstName { get; set; }
+    public required string FirstName { get; set; }
 
     [Required]
     [MaxLength(50)]
-    public string LastName { get; set; }
+    public required string LastName { get; set; }
 
     #region Navigation Props
-    public virtual ICollection<GamePrediction> GamePredictions { get; set; }
-    public virtual ICollection<IdentityUserRole<string>> UserRoles { get; set; }
+    public virtual ICollection<GamePrediction> GamePredictions { get; set; } = [];
+    public virtual ICollection<IdentityUserRole<string>> UserRoles { get; set; } = [];
     #endregion
 }
 

@@ -20,7 +20,7 @@ public class GamePrediction
 
     [Required]
     [MaxLength(450)]
-    public string UserId { get; set; }
+    public required string UserId { get; set; }
 
     [Required]
     public int HomeTeamScore { get; set; }
@@ -28,12 +28,13 @@ public class GamePrediction
     [Required]
     public int AwayTeamScore { get; set; }
 
+    [Required]
     [Column(TypeName = SQLServerTypes.DATETIME_OFFSET_ZERO)]
     public DateTimeOffset DateCreated { get; set; }
 
     #region Navigation Props
-    public virtual Game Game { get; set; }
-    public virtual AppUser AppUser { get; set; }
+    public virtual Game Game { get; set; } = null!;
+    public virtual AppUser AppUser { get; set; } = null!;
     #endregion
 }
 

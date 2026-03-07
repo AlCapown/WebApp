@@ -16,14 +16,14 @@ public class Division
 
     [Required]
     [MaxLength(20)]
-    public string DivisionName { get; set; }
+    public required string DivisionName { get; set; }
 
     [Required]
     public int ConferenceId { get; set; }
 
     #region Navigation Props
-    public virtual ICollection<Team> Teams { get; set; }
-    public virtual Conference Conference { get; set; }
+    public virtual ICollection<Team> Teams { get; set; } = [];
+    public virtual Conference Conference { get; set; } = null!;
     #endregion
 }
 

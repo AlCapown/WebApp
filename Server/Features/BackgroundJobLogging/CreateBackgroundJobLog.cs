@@ -16,7 +16,7 @@ public static class CreateBackgroundJobLog
     public sealed record Command : IRequest<Unit>
     {
         public required string BackgroundJobName { get; init; }
-        public DateTimeOffset? Started { get; init; }
+        public DateTimeOffset Started { get; init; }
         public List<Error> Errors { get; init; } = [];
 
         public sealed record Error
@@ -45,8 +45,6 @@ public static class CreateBackgroundJobLog
 
         public async ValueTask<Unit> Handle(Command command, CancellationToken token)
         {
-            token.ThrowIfCancellationRequested();
-
             string? errorsJson = null;
             bool isSuccess = true;
 

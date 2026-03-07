@@ -17,14 +17,16 @@ public class Season
 
     [Required]
     [MaxLength(255)]
-    public string Description { get; set; }
+    public required string Description { get; set; }
 
+    [Required]
     public DateOnly SeasonStart { get; set; }
 
+    [Required]
     public DateOnly SeasonEnd { get; set; }
 
     #region Navigation Props
-    public virtual ICollection<SeasonWeek> SeasonWeeks { get; set; }
+    public virtual ICollection<SeasonWeek> SeasonWeeks { get; set; } = [];
     #endregion
 }
 
