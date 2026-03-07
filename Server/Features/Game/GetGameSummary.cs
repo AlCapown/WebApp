@@ -37,7 +37,7 @@ public static class GetGameSummary
 
             RuleFor(x => x.GameId)
                 .GreaterThan(0)
-                .WithMessage("GameId must be greater than 0.");
+                .WithMessage($"{nameof(Query.GameId)} must be greater than 0.");
 
             RuleFor(x => x.GameId)
                 .MustAsync(async (gameId, cancellationToken) =>
@@ -61,8 +61,6 @@ public static class GetGameSummary
 
         public async ValueTask<Result> Handle(Query query, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             ValidationProblemDetails? problemDetails = await _validator.ValidateRequestAsync(query, cancellationToken);
             if (problemDetails is not null)
             {

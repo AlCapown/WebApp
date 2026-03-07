@@ -23,6 +23,12 @@ public static class GameSearch
     public sealed record Query : IRequest<Result>
     {
         /// <summary>
+        /// The unique identifier of the game.
+        /// Optional. If provided, only the game with the specified ID will be included.
+        /// </summary>
+        public int? GameId { get; init; }
+
+        /// <summary>
         /// The identifier for the specific season week to filter games.
         /// Optional. If provided, only games from the specified season week will be included.
         /// </summary>
@@ -33,12 +39,6 @@ public static class GameSearch
         /// Optional. If provided, only games from the specified season will be included.
         /// </summary>
         public int? SeasonId { get; init; }
-
-        /// <summary>
-        /// The unique identifier of the game.
-        /// Optional. If provided, only the game with the specified ID will be included.
-        /// </summary>
-        public int? GameId { get; init; }
 
         /// <summary>
         /// The identifier for the team to filter games.
@@ -97,7 +97,8 @@ public static class GameSearch
 
             RuleFor(x => x.GameStartsOnMin)
                 .LessThan(x => x.GameStartsOnMax)
-                .When(x => x.GameStartsOnMin.HasValue && x.GameStartsOnMax.HasValue);
+                .When(x => x.GameStartsOnMin.HasValue && x.GameStartsOnMax.HasValue)
+                .WithMessage($"{nameof(Query.GameStartsOnMin)} must be less than {nameof(Query.GameStartsOnMax)}.");
 
             RuleFor(x => x.WeekType)
                 .IsInEnum()
@@ -118,8 +119,6 @@ public static class GameSearch
 
         public async ValueTask<Result> Handle(Query query, CancellationToken token)
         {
-            token.ThrowIfCancellationRequested();
-
             ValidationProblemDetails? problemDetails = _validator.ValidateRequest(query);
             if (problemDetails is not null)
             {
@@ -161,6 +160,11 @@ public static class GameSearch
 
         private static IQueryable<Common.Models.Game> AddFilters(IQueryable<Common.Models.Game> gameQuery, Query query)
         {
+            if (query.GameId.HasValue)
+            {
+                gameQuery = gameQuery.Where(x => x.GameId == query.GameId.Value);
+            }
+
             if (query.SeasonWeekId.HasValue)
             {
                 gameQuery = gameQuery.Where(x => x.SeasonWeekId == query.SeasonWeekId.Value);
@@ -169,11 +173,6 @@ public static class GameSearch
             if (query.SeasonId.HasValue)
             {
                 gameQuery = gameQuery.Where(x => x.SeasonId == query.SeasonId.Value);
-            }
-
-            if(query.GameId.HasValue)
-            {
-                gameQuery = gameQuery.Where(x => x.GameId == query.GameId.Value);
             }
 
             if (query.TeamId.HasValue)
