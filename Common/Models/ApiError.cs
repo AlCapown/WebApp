@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -12,21 +11,21 @@ public abstract record ErrorBase { }
 [ImmutableObject(true)]
 public sealed record ApiError : ErrorBase
 {
-    public string Title { get; init; }
+    public required string Title { get; init; }
     public int Status { get; init; }
-    public string Detail { get; init; }
-    public string TraceId { get; init; }
-    public string StackTrace { get; init; }
-    public ImmutableDictionary<string, ImmutableList<string>> Errors { get; init; }
-    public string FetchName { get; init; }
-    public object RetryAction { get; init; }
+    public string? Detail { get; init; }
+    public string? TraceId { get; init; }
+    public string? StackTrace { get; init; }
+    public ImmutableDictionary<string, ImmutableList<string>>? Errors { get; init; }
+    public string? FetchName { get; init; }
+    public object? RetryAction { get; init; }
 }
 
 [ImmutableObject(true)]
 public sealed record LocalError : ErrorBase
 {
-    public string Message { get; init; }
-    public string StackTrace { get; init; }
+    public required string Message { get; init; }
+    public string? StackTrace { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]

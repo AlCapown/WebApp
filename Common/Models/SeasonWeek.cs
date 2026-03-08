@@ -15,7 +15,7 @@ public sealed record SeasonWeek
     public DateOnly WeekStart { get; init; }
     public DateOnly WeekEnd { get; init; }
     public WeekType WeekType { get; init; }
-    public string Description { get; init; }
+    public required string Description { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
@@ -24,7 +24,7 @@ public partial class SeasonWeekJsonContext : JsonSerializerContext { }
 
 public sealed record SeasonWeekSearchResponse
 {
-    public SeasonWeek[] SeasonWeeks { get; init; }
+    public required SeasonWeek[] SeasonWeeks { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
@@ -34,8 +34,8 @@ public sealed partial class GetSeasonWeekListResponseJsonContext : JsonSerialize
 [ImmutableObject(true)]
 public sealed record UpdateSeasonWeekRequest
 {
-    public DateOnly? WeekStart { get; init; }
-    public DateOnly? WeekEnd { get; init; }
+    public required DateOnly WeekStart { get; init; }
+    public required DateOnly WeekEnd { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]

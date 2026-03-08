@@ -8,12 +8,12 @@ namespace WebApp.Common.Models;
 public sealed record Team
 {
     public int TeamId { get; init; }
-    public string TeamFullName { get; init; }
-    public string TeamName { get; init; }
-    public string Abbreviation { get; init; }
-    public string BrandingLogo { get; init; }
-    public string Division { get; init; }
-    public string Conference { get; init; }
+    public required string TeamFullName { get; init; }
+    public required string TeamName { get; init; }
+    public required string Abbreviation { get; init; }
+    public string? BrandingLogo { get; init; }
+    public required string Division { get; init; }
+    public required string Conference { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
@@ -23,7 +23,7 @@ public sealed partial class TeamJsonContext : JsonSerializerContext { }
 
 public sealed record TeamSearchResponse
 {
-    public Team[] Teams { get; init; }
+    public required Team[] Teams { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]

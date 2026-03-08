@@ -10,7 +10,7 @@ public enum WeekType
 
 public static class WeekTypeExtensions
 {
-    public static string ToString(this WeekType w) =>
+    public static string? ToString(this WeekType w) =>
         w switch
         {
             WeekType.Preseason => "Preseason",
@@ -20,7 +20,7 @@ public static class WeekTypeExtensions
             _ => null
         };
 
-    public static string ToSlugString(this WeekType w) =>
+    public static string? ToSlugString(this WeekType w) =>
         w switch
         {
             WeekType.Preseason => "Pre",
@@ -30,7 +30,7 @@ public static class WeekTypeExtensions
             _ => null
         };
 
-    public static string ToFriendlyNameString(this WeekType w) =>
+    public static string? ToFriendlyNameString(this WeekType w) =>
         w switch
         {
             WeekType.Preseason => "Pre Season",

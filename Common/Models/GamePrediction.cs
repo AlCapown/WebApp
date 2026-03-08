@@ -11,9 +11,9 @@ public sealed record GamePrediction
     public int SeasonWeekId { get; init; }
     public int GameId { get; init; }
     public bool IsCurrentUser { get; init; }
-    public string UserId { get; init; }
-    public string FirstName { get; init; }
-    public string LastName { get; init; }
+    public required string UserId { get; init; }
+    public required string FirstName { get; init; }
+    public required string LastName { get; init; }
     public int HomeTeamId { get; init; }
     public int PredictedHomeTeamScore { get; init; }
     public int AwayTeamId { get; init; }
@@ -22,12 +22,12 @@ public sealed record GamePrediction
 
 public sealed record GetGamePredictionResponse
 {
-    public GamePrediction GamePrediction { get; init; }
+    public required GamePrediction GamePrediction { get; init; }
 }
 
 public sealed record GamePredictionSearchResponse
 {
-    public GamePrediction[] GamePredictions { get; init; }
+    public required GamePrediction[] GamePredictions { get; init; }
 }
 
 public sealed class CreateGamePredictionRequest

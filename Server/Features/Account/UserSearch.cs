@@ -3,7 +3,6 @@
 
 using FluentValidation;
 using Mediator;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using OneOf;
@@ -24,7 +23,7 @@ public static class UserSearch
     public sealed record Query : IRequest<Result>
     {
         /// <summary>
-        /// Optional search paramter to search against the unique identifier of the user.
+        /// Optional search parameter to search against the unique identifier of the user.
         /// </summary>
         public string? UserId { get; init; }
     }
@@ -52,8 +51,6 @@ public static class UserSearch
 
         public async ValueTask<Result> Handle(Query query, CancellationToken token)
         {
-            token.ThrowIfCancellationRequested();
-
             ValidationProblemDetails? problemDetails = _validator.ValidateRequest(query);
             if (problemDetails is not null)
             {

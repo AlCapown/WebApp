@@ -9,7 +9,7 @@ namespace WebApp.Common.Models;
 public sealed record Season
 {
     public int SeasonId { get; init; }
-    public string Description { get; init; }
+    public required string Description { get; init; }
     public bool IsCurrent { get; init; }
 }
 
@@ -19,7 +19,7 @@ public sealed partial class SeasonJsonContext : JsonSerializerContext { }
 
 public sealed record GetSeasonListResponse
 {
-    public Season[] Seasons { get; init; }
+    public required Season[] Seasons { get; init; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
@@ -33,7 +33,7 @@ public sealed class CreateSeasonRequest
 
     [Required]
     [StringLength(255)]
-    public string Description { get; set; }
+    public string? Description { get; set; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]
@@ -45,7 +45,7 @@ public sealed class UpdateSeasonRequest
 {
     [Required]
     [StringLength(255)]
-    public string Description { get; set; }
+    public string? Description { get; set; }
 }
 
 [JsonSourceGenerationOptions(JsonSerializerDefaults.Web)]

@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using System.Linq;
+﻿using System.Linq;
 using System.Security.Claims;
 
 namespace WebApp.Common.Extensions;

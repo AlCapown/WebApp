@@ -1,15 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 	
-    <PropertyGroup>
-        <TargetFramework>net10.0</TargetFramework>
-        <SignAssembly>false</SignAssembly>
-        <Nullable>disable</Nullable>
-        <InvariantGlobalization>true</InvariantGlobalization>
-        <PublishTrimmed>true</PublishTrimmed>
-        <TrimMode>partial</TrimMode>
-        <RunAOTCompilation>false</RunAOTCompilation>
-		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    </PropertyGroup>
+	<PropertyGroup>
+		<SignAssembly>false</SignAssembly>
+		<Nullable>disable</Nullable>
+		<InvariantGlobalization>true</InvariantGlobalization>
+		<PublishTrimmed>true</PublishTrimmed>
+		<TrimMode>partial</TrimMode>
+		<RunAOTCompilation>false</RunAOTCompilation>
+	</PropertyGroup>
 
 	<ItemGroup>
         <PackageReference Include="AspNetCore.SassCompiler" Version="1.97.1" />

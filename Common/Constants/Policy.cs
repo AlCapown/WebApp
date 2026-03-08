@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-namespace WebApp.Common.Constants;
+﻿namespace WebApp.Common.Constants;
 
 public static class Policy
 {
