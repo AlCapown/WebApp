@@ -102,8 +102,8 @@ public class UpdateScheduleAndGameScores
         {
             SeasonId = year,
             Description = $"{year}-{year + 1} Football Season",
-            SeasonStart = DateOnly.FromDateTime(league.CalendarStartDate),
-            SeasonEnd = DateOnly.FromDateTime(league.CalendarEndDate)
+            SeasonStart = DateOnly.FromDateTime(league.CalendarStartDate.LocalDateTime),
+            SeasonEnd = DateOnly.FromDateTime(league.CalendarEndDate.LocalDateTime)
         }, token);
 
         _ = result.Match
@@ -157,8 +157,8 @@ public class UpdateScheduleAndGameScores
                     Week = week,
                     WeekType = weekType.Value,
                     Description = entry.Label,
-                    WeekStart = DateOnly.FromDateTime(entry.StartDate),
-                    WeekEnd = DateOnly.FromDateTime(entry.EndDate),
+                    WeekStart = DateOnly.FromDateTime(entry.StartDate.LocalDateTime),
+                    WeekEnd = DateOnly.FromDateTime(entry.EndDate.LocalDateTime),
                 }, token);
 
                 result.Match

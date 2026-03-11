@@ -16,10 +16,19 @@ public sealed class ESPNApi : IESPNApi
     {
         var httpClient = _httpClientFactory.CreateClient(Constants.ESPN_SERVICE_NAME);
 
-        return await httpClient.GetFromJsonAsync(
+        var result = await httpClient.GetFromJsonAsync(
             requestUri: "https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard",
             jsonTypeInfo: ESPNScoreboardModelJsonContext.Default.ESPNScoreboardModel,
             cancellationToken: token);
+
+        if (result is null)
+        {
+            // TODO handle this better. Use result pattern. 
+            throw new InvalidOperationException("Failed to retrieve scoreboard data from ESPN API.");
+        }
+
+
+        return result;
     }
 }
 

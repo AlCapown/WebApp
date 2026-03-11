@@ -8,27 +8,43 @@ namespace WebApp.ExternalIntegrations.ESPN.Service.Models;
  */
 public class ESPNScoreboardModel
 {
-    public League[] Leagues { get; set; }
-    public Season Season { get; set; }
-    public Week Week { get; set; }
-    public Event[] Events { get; set; }
+    public required League[] Leagues { get; set; }
+    public required Season Season { get; set; }
+    public required Week Week { get; set; }
+    public required Event[] Events { get; set; }
 }
 
 #region Leagues
 
 public class League
 {
-    public string Name { get; set; }
-    public string Abbreviation { get; set; }
+    /// <summary>
+    /// League name
+    /// </summary>
+    /// <remarks>
+    /// National Football League
+    /// </remarks>
+    public required string Name { get; set; }
+
+    /// <summary>
+    /// League abbreviation
+    /// </summary>
+    /// <remarks>
+    /// NFL
+    /// </remarks>
+    public required string Abbreviation { get; set; }
+    
     /// <summary>
     /// Season Start Date
     /// </summary>
-    public DateTime CalendarStartDate { get; set; }
+    public DateTimeOffset CalendarStartDate { get; set; }
+    
     /// <summary>
     /// Season End Date
     /// </summary>
-    public DateTime CalendarEndDate { get; set; }
-    public LeagueCalendar[] Calendar { get; set; }
+    public DateTimeOffset CalendarEndDate { get; set; }
+
+    public LeagueCalendar[] Calendar { get; set; } = [];
 }
 
 public class LeagueCalendar
@@ -36,23 +52,24 @@ public class LeagueCalendar
     /// <summary>
     /// Season Type Label. Examples: Preseason, Regular Season, Postseason
     /// </summary>
-    public string Label { get; set; }
+    public required string Label { get; set; }
+    
     /// <summary>
     /// Season Type Identifier
     /// </summary>
-    public string Value { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public LeagueCalendarEntries[] Entries { get; set; }
+    public required string Value { get; set; }
+    public DateTimeOffset StartDate { get; set; }
+    public DateTimeOffset EndDate { get; set; }
+    public LeagueCalendarEntries[] Entries { get; set; } = [];
 }
 
 public class LeagueCalendarEntries
 {
-    public string Label { get; set; }
-    public string AlternativeLabel { get; set; }
-    public string Value { get; set; }
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
+    public required string Label { get; set; }
+    public required string AlternativeLabel { get; set; }
+    public required string Value { get; set; }
+    public DateTimeOffset StartDate { get; set; }
+    public DateTimeOffset EndDate { get; set; }
 }
 
 #endregion
@@ -88,12 +105,12 @@ public class Week
 
 public class Event
 {
-    public DateTime Date { get; set; }
-    public string Name { get; set; }
-    public string ShortName { get; set; }
-    public EventSeason Season { get; set; }
-    public EventWeek Week { get; set; }
-    public EventCompetition[] Competitions { get; set; }
+    public DateTimeOffset Date { get; set; }
+    public required string Name { get; set; }
+    public required string ShortName { get; set; }
+    public required EventSeason Season { get; set; }
+    public required EventWeek Week { get; set; }
+    public EventCompetition[] Competitions { get; set; } = [];
 }
 
 public class EventSeason
@@ -108,7 +125,7 @@ public class EventSeason
     /// Season Type Identifier in regular name string
     /// </summary>
     [JsonIgnore]
-    public string TypeName =>
+    public string? TypeName =>
         Type switch
         {
             1 => "Preseason",
@@ -134,39 +151,39 @@ public class EventWeek
 
 public class EventCompetition
 {
-    public EventCompetitor[] Competitors { get; set; }
-    public EventStatus Status { get; set; }
+    public EventCompetitor[] Competitors { get; set; } = [];
+    public required EventStatus Status { get; set; }
 }
 
 public class EventCompetitor
 {
-    public string HomeAway { get; set; }
-    public EventTeam Team { get; set; }
-    public string Score { get; set; }
+    public required string HomeAway { get; set; }
+    public required EventTeam Team { get; set; }
+    public required string Score { get; set; }
 }
 
 public class EventTeam
 {
-    public string Name { get; set; }
-    public string Abbreviation { get; set; }
-    public string DisplayName { get; set; }
-    public string ShortDisplayName { get; set; }
+    public required string Name { get; set; }
+    public required string Abbreviation { get; set; }
+    public required string DisplayName { get; set; }
+    public required string ShortDisplayName { get; set; }
 }
 
 public class EventStatus
 {
-    public string DisplayClock { get; set; }
+    public required string DisplayClock { get; set; }
     public int Period { get; set; }
-    public EventStatusType Type { get; set; }
+    public required EventStatusType Type { get; set; }
 }
 
 public class EventStatusType
 {
-    public string Name { get; set; }
+    public required string Name { get; set; }
     public bool Completed { get; set; }
-    public string Description { get; set; }
-    public string Detail { get; set; }
-    public string ShortDetail { get; set; }
+    public required string Description { get; set; }
+    public required string Detail { get; set; }
+    public required string ShortDetail { get; set; }
 }
 
 #endregion
