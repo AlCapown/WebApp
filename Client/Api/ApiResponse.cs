@@ -9,7 +9,7 @@ namespace WebApp.Client.Api;
 /// Represents a generic API response wrapper that encapsulates the result of an API call.
 /// </summary>
 /// <typeparam name="TResponse">The type of the response data when the API call is successful.</typeparam>
-public sealed class ApiResponse<TResponse>
+public readonly struct ApiResponse<TResponse>
 {
     /// <summary>
     /// Gets a value indicating whether the API call was successful.
@@ -17,6 +17,12 @@ public sealed class ApiResponse<TResponse>
     /// </summary>
     [MemberNotNullWhen(true, nameof(Response))]
     public bool IsSuccess { get; private init; }
+
+    /// <summary>
+    /// Gets a value indicating whether the API call was successful.
+    /// When true, the Response property is guaranteed to be non-null.
+    /// </summary>
+    public bool IsFailure => !IsSuccess;
 
     /// <summary>
     /// Gets the HTTP status code returned by the API.
