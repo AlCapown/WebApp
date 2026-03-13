@@ -5,7 +5,7 @@ using System;
 namespace WebApp.Client.Api;
 
 /// <summary>
-/// Represents a http 204 no content response.
+/// Immutable singleton class representing a http 204 no content response.
 /// </summary>
 public sealed class NoContentResponse : IEquatable<NoContentResponse>, IComparable<NoContentResponse>, IComparable
 {
