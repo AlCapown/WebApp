@@ -70,12 +70,9 @@ public sealed class TeamController : ControllerBase
             success =>
             {
                 var team = success.Teams.FirstOrDefault(t => t.TeamId == teamId);
-                if (team is null)
-                {
-                    return NotFound(new NotFoundProblemDetails($"Team with ID {teamId} was not found."));
-                }
-
-                return Ok(team);
+                return team is null
+                    ? NotFound(new NotFoundProblemDetails($"Team with the ID {teamId} was not found."))
+                    : Ok(team);
             },
             validationProblem => BadRequest(validationProblem)
         );

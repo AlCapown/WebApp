@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using WebApp.Common.Constants;
 using WebApp.Common.Models;
 using WebApp.Server.Features.Account;
-using WebApp.Server.Infrastructure;
 using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Controllers;
@@ -90,7 +89,7 @@ public sealed class UserController : ControllerBase
             {
                 var user = success.Users.FirstOrDefault();
                 return user is null 
-                    ? NotFound(new NotFoundProblemDetails($"User with an Id of {userId} was not found."))
+                    ? NotFound(new NotFoundProblemDetails($"User with the Id {userId} was not found."))
                     : Ok(user);
             },
             validationProblem => BadRequest(validationProblem)

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System.Threading.Tasks;
 using WebApp.Common.Constants;
 using WebApp.Common.Enums;
@@ -175,12 +176,10 @@ public sealed class SeasonController : ControllerBase
         (
             success =>
             {
-                if(success is null)
-                {
-                    return NotFound(new NotFoundProblemDetails($"The season with the ID {seasonId} does not have a week with the ID {seasonWeekId}."));
-                }
-
-                return Ok(success);
+                var seasonWeek = success.SeasonWeeks.FirstOrDefault(x => x.SeasonWeekId == seasonWeekId);
+                return seasonWeek is null
+                    ? NotFound(new NotFoundProblemDetails($"The season with the ID {seasonId} does not have a week with the ID {seasonWeekId}."))
+                    : Ok(seasonWeek);
             },
             badRequest => BadRequest(badRequest)
         );
