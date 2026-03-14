@@ -1,5 +1,3 @@
-#nullable enable
-
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;

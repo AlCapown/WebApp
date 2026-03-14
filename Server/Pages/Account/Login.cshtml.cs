@@ -19,11 +19,11 @@ public class LoginModel : PageModel
         _signInManager = signInManager;
     }
 
-    public IEnumerable<AuthenticationScheme> ExternalLogins { get; set; }
+    public IEnumerable<AuthenticationScheme> ExternalLogins { get; set; } = [];
 
     public async Task<IActionResult> OnGetAsync()
     {
-        if (User.Identity.IsAuthenticated)
+        if (User.Identity?.IsAuthenticated == true)
         {
             return Redirect(Url.Content("~/"));
         }
@@ -36,7 +36,7 @@ public class LoginModel : PageModel
     {
         if (ModelState.IsValid)
         {
-            string redirectUrl = Url.Page("ExternalLoginCallback");
+            string? redirectUrl = Url.Page("ExternalLoginCallback");
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return Challenge(properties, provider);
         }

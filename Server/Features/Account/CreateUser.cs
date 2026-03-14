@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using Mediator;
+﻿using Mediator;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using OneOf;

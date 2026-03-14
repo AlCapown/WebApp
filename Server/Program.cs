@@ -37,14 +37,25 @@ var services = builder.Services;
 var configuration = builder.Configuration;
 var environment = builder.Environment;
 
+
 // Configure Options
-services.Configure<Authentication>(configuration.GetSection("Authentication"));
-Authentication authenticationConfig = configuration.GetSection("Authentication").Get<Authentication>();
+services.AddOptions<Authentication>()
+    .Bind(configuration.GetSection("Authentication"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
-services.Configure<ConnectionStrings>(builder.Configuration.GetSection("ConnectionStrings"));
-ConnectionStrings connectionStrings = configuration.GetSection("ConnectionStrings").Get<ConnectionStrings>();
+services.AddOptions<ConnectionStrings>()
+    .Bind(configuration.GetSection("ConnectionStrings"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
 
-services.Configure<AzureOpenAI>(builder.Configuration.GetSection("AzureOpenAI"));
+services.AddOptions<AzureOpenAI>()
+    .Bind(configuration.GetSection("AzureOpenAI"))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+
+Authentication authenticationConfig = configuration.GetSection("Authentication").Get<Authentication>()!;
+ConnectionStrings connectionStrings = configuration.GetSection("ConnectionStrings").Get<ConnectionStrings>()!; 
 
 // Register logging provider
 services
@@ -186,7 +197,7 @@ services
     {
         yahooOptions.ClientId = authenticationConfig.Yahoo.ClientId;
         yahooOptions.ClientSecret = authenticationConfig.Yahoo.ClientSecret;
-        yahooOptions.Authority = authenticationConfig.Yahoo.AuthorityEndpoint;
+        yahooOptions.Authority = authenticationConfig.Yahoo.AuthorityEndpoint; 
         yahooOptions.ResponseType = OpenIdConnectResponseType.Code;
         yahooOptions.UsePkce = true;
         yahooOptions.Scope.Add("email");
@@ -194,7 +205,7 @@ services
     })
     .AddIdentityCookies(cookieOptions =>
     {
-        cookieOptions.ApplicationCookie.Configure(options =>
+        cookieOptions.ApplicationCookie?.Configure(options =>
         {
             options.ExpireTimeSpan = TimeSpan.FromDays(30);
             options.SlidingExpiration = true;
@@ -251,14 +262,14 @@ app.Logger.LogInformation("Redis Connection String: {RedisConnection}", connecti
 app.UseForwardedHeaders();
 app.UseMiddleware<SecurityHeadersMiddleware>();
 
-app.UseWhen(x => x.Request.Path.Value.StartsWith("/api", StringComparison.InvariantCultureIgnoreCase), builder =>
-{
-    builder.UseExceptionHandler("/");
-});
+app.UseWhen(x => x.Request.Path.StartsWithSegments("/api"), builder =>
+    {
+        builder.UseExceptionHandler("/");
+    });
 
 if (app.Environment.IsDevelopment())
 {
-    app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api", StringComparison.InvariantCultureIgnoreCase), builder =>
+    app.UseWhen(x => !x.Request.Path.StartsWithSegments("/api"), builder =>
     {
         builder.UseDeveloperExceptionPage();
     });
@@ -267,7 +278,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    app.UseWhen(x => !x.Request.Path.Value.StartsWith("/api", StringComparison.InvariantCultureIgnoreCase), builder =>
+    app.UseWhen(x => !x.Request.Path.StartsWithSegments("/api"), builder =>
     {
         builder.UseExceptionHandler("/error");
     });

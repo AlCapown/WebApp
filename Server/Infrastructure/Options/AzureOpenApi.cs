@@ -1,10 +1,15 @@
-﻿#nullable enable
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebApp.Server.Infrastructure.Options;
 
-public record AzureOpenAI
+public sealed record AzureOpenAI
 {
-    public string? DeploymentName { get; init; }
-    public string? Endpoint { get; init; }
-    public string? ApiKey { get; init; }
+    [Required]
+    public required string DeploymentName { get; init; }
+
+    [Required]
+    public required string Endpoint { get; init; }
+
+    [Required]
+    public required string ApiKey { get; init; }
 }

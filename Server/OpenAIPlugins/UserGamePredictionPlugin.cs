@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using Mediator;
+﻿using Mediator;
 using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using System;

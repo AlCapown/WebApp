@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using Mediator;
+﻿using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SemanticKernel;
 using Microsoft.SemanticKernel.ChatCompletion;

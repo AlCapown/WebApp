@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using System;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using WebApp.Common.Extensions;
@@ -22,22 +23,22 @@ public class ExternalLoginConfirmationModel : PageModel
     [MaxLength(50)]
     [Display(Name = "First Name")]
     [BindProperty]
-    public string FirstName { get; set; }
+    public string? FirstName { get; set; }
 
     [Required]
     [MaxLength(50)]
     [Display(Name = "Last Name")]
     [BindProperty]
-    public string LastName { get; set; }
+    public string? LastName { get; set; }
 
     [Required]
     [MaxLength(30)]
     [Display(Name = "Invite Code")]
     [BindProperty]
-    public string InviteCode { get; set; }
+    public string? InviteCode { get; set; }
 
     [Display(Name = "Email")]
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
 
     private readonly SignInManager<AppUser> _signInManager;
@@ -64,8 +65,8 @@ public class ExternalLoginConfirmationModel : PageModel
             return RedirectToPage("Account/Login");
         }
 
-        FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName)?.ToTitleCase();
-        LastName = info.Principal.FindFirstValue(ClaimTypes.Surname)?.ToTitleCase();
+        FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName)?.ToTitleCase() ?? string.Empty;
+        LastName = info.Principal.FindFirstValue(ClaimTypes.Surname)?.ToTitleCase() ?? string.Empty;
         Email = info.Principal.FindFirstValue(ClaimTypes.Email);
 
         return Page();
@@ -85,6 +86,11 @@ public class ExternalLoginConfirmationModel : PageModel
         {
             return Page();
         }
+
+        // Not null because of validation
+        Debug.Assert(InviteCode is not null);
+        Debug.Assert(FirstName is not null);
+        Debug.Assert(LastName is not null);
 
         var inviteCodeValidation = await _mediator.Send(new InviteCodeIsValid.Query
         {
@@ -108,7 +114,7 @@ public class ExternalLoginConfirmationModel : PageModel
 
             if (appUserResult.TryPickT1(out InternalServerErrorProblemDetails problem, out AppUser appUser))
             {
-                ModelState.AddModelError(string.Empty, problem.Detail);
+                ModelState.AddModelError(string.Empty, problem.Detail ?? "An error occurred.");
                 return Page();
             }
 

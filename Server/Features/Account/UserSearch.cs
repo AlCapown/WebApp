@@ -1,6 +1,4 @@
 ﻿
-#nullable enable
-
 using FluentValidation;
 using Mediator;
 using Microsoft.AspNetCore.Mvc;

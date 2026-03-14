@@ -1,5 +1,3 @@
-#nullable enable
-
 using FluentValidation;
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Http;

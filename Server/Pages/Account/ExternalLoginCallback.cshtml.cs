@@ -23,7 +23,7 @@ public class ExternalLoginCallbackModel : PageModel
 
     public async Task<IActionResult> OnGetAsync()
     {
-        ExternalLoginInfo info = await _signInManager.GetExternalLoginInfoAsync();
+        var info = await _signInManager.GetExternalLoginInfoAsync();
 
         if (info == null)
         {

@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using Mediator;
+﻿using Mediator;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;

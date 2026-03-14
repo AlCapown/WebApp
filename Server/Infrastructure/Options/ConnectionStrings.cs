@@ -1,10 +1,15 @@
-﻿#nullable enable
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebApp.Server.Infrastructure.Options;
 
-public record ConnectionStrings
+public sealed record ConnectionStrings
 {
-    public string? Database { get; init; }
-    public string? HangfireDatabase { get; init; }
-    public string? Redis { get; init; }
+    [Required]
+    public required string Database { get; init; }
+
+    [Required]
+    public required string HangfireDatabase { get; init; }
+
+    [Required]
+    public required string Redis { get; init; }
 }

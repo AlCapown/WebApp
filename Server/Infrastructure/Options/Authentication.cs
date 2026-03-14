@@ -1,33 +1,57 @@
-﻿#nullable enable
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WebApp.Server.Infrastructure.Options;
 
-public record Authentication
+public sealed record Authentication
 {
+    [Required]
     public required MicrosoftOptions Microsoft { get; init; }
+
+    [Required]
     public required GoogleOptions Google { get; init; }
+
+    [Required]
     public required YahooOptions Yahoo { get; init; }
 }
 
-public record MicrosoftOptions
+public sealed record MicrosoftOptions
 {
-    public string? ClientId { get; init; }
-    public string? ClientSecret { get; init; }
-    public string? AuthorizationEndpoint { get; init; }
-    public string? TokenEndpoint { get; init; }
+    [Required]
+    public required string ClientId { get; init; }
+
+    [Required]
+    public required string ClientSecret { get; init; }
+
+    [Required]
+    public required string AuthorizationEndpoint { get; init; }
+
+    [Required]
+    public required string TokenEndpoint { get; init; }
 }
 
-public record GoogleOptions
+public sealed record GoogleOptions
 {
-    public string? ClientId { get; init; }
-    public string? ClientSecret { get; init; }
-    public string? AuthorizationEndpoint { get; init; }
-    public string? TokenEndpoint { get; init; }
+    [Required]
+    public required string ClientId { get; init; }
+
+    [Required]
+    public required string ClientSecret { get; init; }
+
+    [Required]
+    public required string AuthorizationEndpoint { get; init; }
+
+    [Required]
+    public required string TokenEndpoint { get; init; }
 }
 
-public record YahooOptions
+public sealed record YahooOptions
 {
-    public string? ClientId { get; init; }
-    public string? ClientSecret { get; init; }
-    public string? AuthorityEndpoint { get; init; }
+    [Required]
+    public required string ClientId { get; init; }
+
+    [Required]
+    public required string ClientSecret { get; init; }
+
+    [Required]
+    public required string AuthorityEndpoint { get; init; }
 }

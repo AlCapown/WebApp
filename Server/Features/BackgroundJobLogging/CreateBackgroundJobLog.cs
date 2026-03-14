@@ -1,6 +1,4 @@
-﻿#nullable enable
-
-using Mediator;
+﻿using Mediator;
 using System;
 using System.Collections.Generic;
 using System.Text.Json;

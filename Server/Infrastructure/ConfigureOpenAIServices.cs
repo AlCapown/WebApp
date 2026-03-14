@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.AI;
+﻿using System;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.SemanticKernel;

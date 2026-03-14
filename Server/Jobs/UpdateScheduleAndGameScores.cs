@@ -33,6 +33,7 @@ public class UpdateScheduleAndGameScores
             BackgroundJobName = nameof(UpdateScheduleAndGameScores),
             Started = DateTimeOffset.Now
         };
+        TeamLookupByAbbreviation = [];
     }
 
     public async Task Process(bool overrideShouldRunJob, CancellationToken token)
@@ -198,6 +199,13 @@ public class UpdateScheduleAndGameScores
             var year = game.Season.Year;
             var week = game.Week.Number;
             var weekType = game.Season.TypeName?.ToWeekTypeEnum();
+
+            if (weekType is null)
+            {
+                 AddError($"Failed to parse WeekType with value: {game.Season.TypeName}");
+                 continue;
+            }
+
             var date = game.Date;
 
             var competition = game.Competitions.FirstOrDefault();
@@ -277,7 +285,7 @@ public class UpdateScheduleAndGameScores
         }
     }
 
-    private void AddError(string message, string stackTrace = null)
+    private void AddError(string message, string? stackTrace = null)
     {
         _logCommand.Errors.Add(new CreateBackgroundJobLog.Command.Error
         {
