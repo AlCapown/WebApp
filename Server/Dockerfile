@@ -11,6 +11,7 @@ COPY ["Client/WebApp.Client.csproj", "Client/"]
 COPY ["Common/WebApp.Common.csproj", "Common/"]
 COPY ["Database/WebApp.Database.csproj", "Database/"]
 COPY ["External Integrations/ESPN/ESPN.Service/ESPN.Service.csproj", "External Integrations/ESPN/ESPN.Service/"]
+COPY ["Directory.Build.props", "Directory.Build.props"]
 RUN dotnet restore "./Server/WebApp.Server.csproj"
 COPY . .
 WORKDIR "/src/Server"
