@@ -18,8 +18,8 @@
     <PackageReference Include="Hangfire.AspNetCore" Version="1.8.23" />
     <PackageReference Include="Hangfire.Core" Version="1.8.23" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.8.23" />
-    <PackageReference Include="Mediator.Abstractions" Version="3.0.1" />
-    <PackageReference Include="Mediator.SourceGenerator" Version="3.0.1">
+    <PackageReference Include="Mediator.Abstractions" Version="3.0.2" />
+    <PackageReference Include="Mediator.SourceGenerator" Version="3.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -42,7 +42,6 @@
     <PackageReference Include="OneOf" Version="3.0.271" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="StackExchange.Redis" Version="2.12.4" />
-    <PackageReference Include="Scriban" Version="6.6.0" />
   </ItemGroup>
 
   <ItemGroup>
