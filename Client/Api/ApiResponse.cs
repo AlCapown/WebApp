@@ -22,6 +22,7 @@ public readonly struct ApiResponse<TResponse>
     /// Gets a value indicating whether the API call was successful.
     /// When true, the Response property is guaranteed to be non-null.
     /// </summary>
+    [MemberNotNullWhen(false, nameof(Response))]
     public bool IsFailure => !IsSuccess;
 
     /// <summary>
@@ -60,10 +61,8 @@ public readonly struct ApiResponse<TResponse>
     /// <param name="statusCode">The HTTP status code.</param>
     /// <param name="response">The response data returned by the API.</param>
     /// <returns>A new ApiResponse instance representing a successful API call.</returns>
-    /// <exception cref="ArgumentNullException">Thrown when response is null.</exception>
     public static ApiResponse<TResponse> Success(int statusCode, TResponse response)
     {
-        ArgumentNullException.ThrowIfNull(response);
         return new ApiResponse<TResponse>(true, statusCode, response);
     }
 
