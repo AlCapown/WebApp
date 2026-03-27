@@ -13,35 +13,31 @@ public static class QueryHelpers
             return uri;
         }
 
-        var sb = new StringBuilder();
+        bool hasQuery = false;
+        var sb = new StringBuilder(uri.TrimEnd('/'));
 
-        for (int i = 0; i < queryParameters.Length; i++)
+        foreach (var kvp in queryParameters)
         {
-            AppendKeyValuePair(sb, queryParameters[i]);
+            if (kvp.Key is null || kvp.Value is null)
+            {
+                continue;
+            }
+
+            if (hasQuery)
+            {
+                sb.Append('&');
+            }
+            else
+            {
+                sb.Append('?');
+                hasQuery = true;
+            }
+
+            sb.Append(Uri.EscapeDataString(kvp.Key));
+            sb.Append('=');
+            sb.Append(Uri.EscapeDataString(kvp.Value));
         }
 
-        if (sb.Length == 0)
-        {
-            return uri;
-        }
-
-        return string.Concat(uri.TrimEnd('/'), "?", sb.ToString());
-    }
-
-    private static void AppendKeyValuePair(StringBuilder sb, KeyValuePair<string, string?> kvp)
-    {
-        if (kvp.Key is null || kvp.Value is null)
-        {
-            return;
-        }
-
-        if (sb.Length > 0)
-        {
-            sb.Append('&');
-        }
-
-        sb.Append(Uri.EscapeDataString(kvp.Key));
-        sb.Append('=');
-        sb.Append(Uri.EscapeDataString(kvp.Value));
+        return hasQuery ? uri : sb.ToString();
     }
 }
