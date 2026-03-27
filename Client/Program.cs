@@ -4,15 +4,12 @@ using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
-using Polly;
-using Polly.Extensions.Http;
 using System;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
 using WebApp.Client.Common.Constants;
 using WebApp.Client.Infrastructure;
 using WebApp.Client.Store.Shared;
-using System.Net;
 
 
 #if DEBUG
@@ -49,13 +46,7 @@ public class Program
                 client.DefaultRequestHeaders.Add("Accept", "application/json; charset=utf-8");
             })
             .AddHttpMessageHandler<WebAppHttpMessageHandler>()
-            .AddPolicyHandler
-            (
-                HttpPolicyExtensions
-                    .HandleTransientHttpError()
-                    .OrResult(x => x.StatusCode == HttpStatusCode.TooManyRequests)
-                    .WaitAndRetryAsync(2, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)))
-            );
+            .AddStandardResilienceHandler();
 
         builder.Services.AddFluxor(options =>
         {

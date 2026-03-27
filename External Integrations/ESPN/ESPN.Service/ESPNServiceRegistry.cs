@@ -8,7 +8,7 @@ public static class ESPNServiceRegistry
     public static IServiceCollection RegisterESPNServices(this IServiceCollection serviceCollection)
     {
         serviceCollection
-            .AddTransient<IESPNApi, ESPNApi>()
+            .AddScoped<IESPNApi, ESPNApi>()
             .AddHttpClient(Constants.ESPN_SERVICE_NAME);
 
         return serviceCollection;
