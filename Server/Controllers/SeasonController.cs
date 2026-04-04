@@ -8,7 +8,6 @@ using WebApp.Common.Constants;
 using WebApp.Common.Enums;
 using WebApp.Common.Models;
 using WebApp.Server.Features.Season;
-using WebApp.Server.Infrastructure;
 using WebApp.Server.Infrastructure.ProblemDetailsModels;
 
 namespace WebApp.Server.Controllers;

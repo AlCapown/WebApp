@@ -65,8 +65,6 @@ public static class SeasonWeekSearch
 
         public async ValueTask<Result> Handle(Query query, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             ValidationProblemDetails? problemDetails = _validator.ValidateRequest(query);
             if (problemDetails is not null)
             {
@@ -109,7 +107,7 @@ public static class SeasonWeekSearch
 
         private static IEnumerable<SeasonWeek> Filter(IEnumerable<SeasonWeek> seasonWeekQuery, Query query)
         {
-            if(query.SeasonWeekId.HasValue)
+            if (query.SeasonWeekId.HasValue)
             {
                 seasonWeekQuery = seasonWeekQuery.Where(x => x.SeasonWeekId == query.SeasonWeekId);
             }

@@ -1,7 +1,6 @@
 ﻿#nullable enable
 
 using Fluxor;
-using System.Linq;
 using System.Text.Json.Serialization.Metadata;
 using System.Threading.Tasks;
 using WebApp.Client.Api;
