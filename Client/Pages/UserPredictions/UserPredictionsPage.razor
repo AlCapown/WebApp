@@ -15,8 +15,11 @@
 
 @code 
 {
+    #nullable enable
+    
     [Parameter]
-    public string UserId { get; set; }
+    [EditorRequired]
+    public required string UserId { get; set; }
 
     private void GoBack()
     {

@@ -67,6 +67,7 @@
 
 @code 
 {
+#nullable enable
 
     [Parameter, EditorRequired]
     public int SeasonId { get; set; }  
@@ -131,7 +132,7 @@
 
     private string GetUserFirstLastName()
     {
-        if (UserId is not null && UserState.Value.Users.TryGetValue(UserId, out User user))
+        if (UserId is not null && UserState.Value.Users.TryGetValue(UserId, out User? user))
         {
             return $"{user.FirstName} {user.LastName}";
         }
@@ -184,10 +185,10 @@
         public int GameId { get; init; }
         public int Week { get; init; }
         public DateTimeOffset? GameStartsOn { get; set; }
-        public string HomeTeamName { get; init; }
+        public required string HomeTeamName { get; init; }
         public int PredictedHomeTeamScore { get; init; }
         public int ActualHomeTeamScore { get; init; }
-        public string AwayTeamName { get; init; }
+        public required string AwayTeamName { get; init; }
         public int PredictedAwayTeamScore { get; init; }
         public int ActualAwayTeamScore { get; init; }
     }

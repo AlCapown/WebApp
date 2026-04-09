@@ -1,25 +1,27 @@
-﻿using System.Collections.Generic;
+﻿#nullable enable
+
+using System.Collections.Generic;
 
 namespace WebApp.Client.Components.Leaderboard;
 
-public record LeaderboardItem
+public sealed record LeaderboardItem
 {
     public int Week { get; init; }
-    public IReadOnlyDictionary<string, UserPrediction> UserPredictions { get; init; }
+    public required IReadOnlyDictionary<string, UserPrediction> UserPredictions { get; init; }
 }
 
-public record UserPrediction
+public sealed record UserPrediction
 {
-    public string UserId { get; init; }
-    public string FirstName { get; init; }
-    public string LastName { get; init; }
+    public required string UserId { get; init; }
+    public required string FirstName { get; init; }
+    public required string LastName { get; init; }
     public int ScoreDifferential { get; init; }
     public bool PredictedWinningTeam { get; init; }
 }
 
-public record User
+public sealed record User
 {
-    public string UserId { get; init; }
-    public string FirstName { get; init; }
-    public string LastName { get; init; }
+    public required string UserId { get; init; }
+    public required string FirstName { get; init; }
+    public required string LastName { get; init; }
 }

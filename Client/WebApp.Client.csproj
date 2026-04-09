@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-        <PackageReference Include="AspNetCore.SassCompiler" Version="1.98.0" />
+        <PackageReference Include="AspNetCore.SassCompiler" Version="1.99.0" />
         <PackageReference Include="Fluxor" Version="6.9.0" />
         <PackageReference Include="Fluxor.Blazor.Web" Version="6.9.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Analyzers" Version="10.0.5" />

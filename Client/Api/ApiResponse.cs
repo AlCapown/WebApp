@@ -13,14 +13,12 @@ public readonly struct ApiResponse<TResponse>
 {
     /// <summary>
     /// Gets a value indicating whether the API call was successful.
-    /// When true, the Response property is guaranteed to be non-null.
     /// </summary>
     [MemberNotNullWhen(true, nameof(Response))]
     public bool IsSuccess { get; private init; }
 
     /// <summary>
     /// Gets a value indicating whether the API call was successful.
-    /// When true, the Response property is guaranteed to be non-null.
     /// </summary>
     [MemberNotNullWhen(false, nameof(Response))]
     public bool IsFailure => !IsSuccess;
@@ -32,8 +30,10 @@ public readonly struct ApiResponse<TResponse>
 
     /// <summary>
     /// Gets the response data from the API call.
-    /// This will be null when IsSuccess is false, and non-null when IsSuccess is true.
     /// </summary>
+    /// <remarks>
+    /// This property will be non-null if <see cref="IsSuccess"/> is true or <see cref="IsFailure"/> is false.
+    /// </remarks>
     public TResponse? Response { get; private init; }
 
     /// <summary>

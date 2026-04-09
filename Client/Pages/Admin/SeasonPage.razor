@@ -29,6 +29,8 @@
 
 @code 
 {
+    #nullable enable
+
     private async Task AddNewSeason()
     {
         await DialogService.ShowAsync<AdminCreateSeasonDialog>("Create Season");
