@@ -56,9 +56,9 @@
 
     public Func<ApiError, Task>? OnValidSubmitCallbackErrorAsync { get; set; }
 
-    private CreateGamePredictionRequest? Model { get; set; }
+    private CreateGamePredictionRequest Model { get; set; } = new();
 
-    private FormDialog? FormDialog { get; set; }
+    private FormDialog FormDialog { get; set; } = default!;
 
     private string Title => $"Enter Prediction for {FirstName} {LastName}";
 
@@ -90,15 +90,12 @@
 
     private void DispatchSubmitAction()
     {
-        if (Model is not null)
+        Dispatcher.DispatchFetch(new GamePredictionActions.CreateGamePredictionForUser
         {
-            Dispatcher.DispatchFetch(new GamePredictionActions.CreateGamePredictionForUser
-            {
-                UserId = UserId,
-                Request = Model,
-                FetchOptions = FetchOptions.FormSubmit
-            });
-        }    
+            UserId = UserId,
+            Request = Model,
+            FetchOptions = FetchOptions.FormSubmit
+        });    
     }
 
     public async ValueTask DisposeAsync()

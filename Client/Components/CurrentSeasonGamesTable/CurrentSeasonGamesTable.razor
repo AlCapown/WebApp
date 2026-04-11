@@ -45,7 +45,7 @@
                 <HeaderContent>
                     <MudTh><MudText Typo="Typo.subtitle2">@("Week")</MudText></MudTh>
                     <MudTh>
-                        <MudTableSortLabel SortBy="new Func<Game, object>(x => x.GameStartsOn)" InitialDirection="SortDirection.Descending">
+                        <MudTableSortLabel SortBy="new Func<Game, object>(x => x.GameStartsOn ?? DateTimeOffset.MaxValue)" InitialDirection="SortDirection.Descending">
                             <MudText Typo="Typo.subtitle2">@("Starts")</MudText>
                         </MudTableSortLabel>
                     </MudTh>
@@ -129,7 +129,7 @@
             .Select(x => x.Value.TeamName));
     }
 
-    private string QuarterToTableValue(DateTimeOffset? GameStartsOn, string clockTime, int quarter, bool isComplete)
+    private string QuarterToTableValue(DateTimeOffset? GameStartsOn, string? clockTime, int? quarter, bool isComplete)
     {
         if (isComplete)
         {

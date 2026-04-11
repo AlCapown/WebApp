@@ -31,7 +31,7 @@
 
     private UpdateSeasonRequest Model { get; set; } = new();
 
-    private FormDialog? FormDialog { get; set; }
+    private FormDialog FormDialog { get; set; } = default!;
 
     protected override void OnInitialized()
     {

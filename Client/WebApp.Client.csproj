@@ -2,7 +2,7 @@
 	
 	<PropertyGroup>
 		<SignAssembly>false</SignAssembly>
-		<Nullable>disable</Nullable>
+		<Nullable>enable</Nullable>
 		<InvariantGlobalization>true</InvariantGlobalization>
 		<PublishTrimmed>true</PublishTrimmed>
 		<TrimMode>partial</TrimMode>

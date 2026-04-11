@@ -43,7 +43,7 @@
 
     public Func<ApiError, Task>? OnValidSubmitCallbackErrorAsync { get; set; }
 
-    private FormDialog? FormDialog { get; set; }
+    private FormDialog FormDialog { get; set; } = default!;
 
     private CreateGamePredictionRequest Model { get; set; } = new();
 
