@@ -107,7 +107,8 @@
         var gamePredictions = GamePredictionState.Value.GamePredictions.Values;
 
         return
-           (from game in games
+        (
+            from game in games
             join gamePrediction in gamePredictions on game.GameId equals gamePrediction.GameId into gpt
             from gp in (from gpSub in gpt
                         where gpSub.UserId == UserId
@@ -127,7 +128,9 @@
                 AwayTeamName = game.AwayTeamName,
                 PredictedAwayTeamScore = gp?.PredictedAwayTeamScore ?? 0,
                 ActualAwayTeamScore = game.AwayTeamScore
-            }).ToList();
+            }
+        )
+        .ToList();
     }
 
     private string GetUserFirstLastName()

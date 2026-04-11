@@ -37,6 +37,9 @@
 
 @code 
 {
+
+#nullable enable
+
     private IReadOnlyList<TeamRecord> TeamRecords { get; set; } = [];
 
     protected override void OnParametersSet()
@@ -104,8 +107,8 @@
                      select new TeamRecord
                      {
                          TeamId = teamGroup.Key,
-                         TeamName = teamGroup.Max(x => x.TeamName),
-                         Division = teamGroup.Max(x => x.Division),
+                         TeamName = teamGroup.First().TeamName,
+                         Division = teamGroup.First().Division,
                          Wins = teamGroup.Sum(x => x.Wins),
                          Ties = teamGroup.Sum(x => x.Ties),
                          Losses = teamGroup.Sum(x => x.Losses)

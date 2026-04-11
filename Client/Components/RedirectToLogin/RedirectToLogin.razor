@@ -4,6 +4,8 @@
 @inject NavigationManager Navigation
 
 @code {
+#nullable enable
+
     protected override void OnInitialized()
     {
         Navigation.NavigateTo("/Account/Login", true);

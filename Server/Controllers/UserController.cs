@@ -54,7 +54,7 @@ public sealed class UserController : ControllerBase
             NameClaimType = claimsIdentity.NameClaimType,
             RoleClaimType = claimsIdentity.RoleClaimType,
             Claims = [.. claimsIdentity.Claims
-                .Where(x => x.Type != "AspNet.Identity.SecurityStamp")
+                .Where(x => x.Type != "AspNet.Identity.SecurityStamp") // Server side only security mechanism.
                 .Select(x => new ClaimValue 
                 {
                     Type = x.Type,

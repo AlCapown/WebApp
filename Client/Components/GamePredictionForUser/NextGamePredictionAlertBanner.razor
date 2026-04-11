@@ -69,6 +69,9 @@ else
 
 @code 
 {
+
+#nullable enable
+
     [Parameter, EditorRequired]
     public int SeasonId { get; set; }
 
@@ -78,7 +81,7 @@ else
     [Parameter, EditorRequired]
     public string UserId { get; set; }
 
-    private CountdownTimer CountdownTimer { get; set; }
+    private CountdownTimer? CountdownTimer { get; set; }
 
     private string RemainingTimeFormated => string.Format(
         "{0:D1} days {1:D2} hrs {2:D2} mins and {3:D2} secs",
@@ -116,20 +119,23 @@ else
         base.OnAfterRender(firstRender);
     }
 
-    private Game GetNextGame()
+    private Game? GetNextGame()
     {
         var todaysDate = DateOnly.FromDateTime(DateTime.Now);
 
         return
-            (from game in GameState.Value.Games.Values
-             from week in SeasonWeekState.Value.Weeks.Values
-             where game.SeasonWeekId == week.SeasonWeekId
-             where game.SeasonId == SeasonId
-             where game.SeasonWeekTypeName == WeekType.RegularSeason
-             where game.HomeTeamId == TeamId || game.AwayTeamId == TeamId
-             where game.IsComplete == false
-             where todaysDate >= week.WeekStart && todaysDate <= week.WeekEnd
-             select game).FirstOrDefault();
+        (
+            from game in GameState.Value.Games.Values
+            from week in SeasonWeekState.Value.Weeks.Values
+            where game.SeasonWeekId == week.SeasonWeekId
+            where game.SeasonId == SeasonId
+            where game.SeasonWeekTypeName == WeekType.RegularSeason
+            where game.HomeTeamId == TeamId || game.AwayTeamId == TeamId
+            where game.IsComplete == false
+            where todaysDate >= week.WeekStart && todaysDate <= week.WeekEnd
+            select game
+        )
+        .FirstOrDefault();
     }
 
     private void MaybeStartCountdown()

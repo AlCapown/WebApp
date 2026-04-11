@@ -60,6 +60,8 @@
 @code 
 {
 
+    #nullable enable
+
     [Parameter, EditorRequired]
     public int SeasonId { get; set; }
 
@@ -100,19 +102,23 @@
         return $"{nextGame.AwayTeamName} @ {nextGame.HomeTeamName} - {nextGame.GameStartsOn?.ToLocalTime().ToString("dddd MM/dd h:mm tt")}";
     }
 
-    private Game GetNextGame()
+    private Game? GetNextGame()
     {
         var todaysDate = DateOnly.FromDateTime(DateTime.Now);
 
         return
-            (from game in GameState.Value.Games.Values
-             from week in SeasonWeekState.Value.Weeks.Values
-             where game.SeasonWeekId == week.SeasonWeekId
-             where game.SeasonId == SeasonId
-             where game.SeasonWeekTypeName == WeekType.RegularSeason
-             where game.HomeTeamId == TeamId || game.AwayTeamId == TeamId
-             where todaysDate >= week.WeekStart && todaysDate <= week.WeekEnd
-             select game).OrderByDescending(x => x.GameStartsOn).FirstOrDefault();
+        (
+            from game in GameState.Value.Games.Values
+            from week in SeasonWeekState.Value.Weeks.Values
+            where game.SeasonWeekId == week.SeasonWeekId
+            where game.SeasonId == SeasonId
+            where game.SeasonWeekTypeName == WeekType.RegularSeason
+            where game.HomeTeamId == TeamId || game.AwayTeamId == TeamId
+            where todaysDate >= week.WeekStart && todaysDate <= week.WeekEnd
+            select game
+        )
+        .OrderByDescending(x => x.GameStartsOn)
+        .FirstOrDefault();
     }
 
     private List<CurrentWeekPredictionsTableItem> GetTableItems()
@@ -128,7 +134,8 @@
         var gamePredictions = GamePredictionState.Value.GamePredictions.Values;
 
         return
-           (from game in games
+        (
+            from game in games
             from gamePrediction in gamePredictions
             where game.GameId == gamePrediction.GameId
             where game.GameId == nextGame.GameId
@@ -152,20 +159,21 @@
                     : game.HomeTeamScore > game.AwayTeamScore
                     ? gamePrediction?.PredictedHomeTeamScore > gamePrediction.PredictedAwayTeamScore
                     : gamePrediction?.PredictedHomeTeamScore < gamePrediction.PredictedAwayTeamScore
-            })
-            .OrderBy(x => x.ScoreDifferential)
-            .ThenBy(x => x.LastName)
-            .ToList();
+            }
+        )
+        .OrderBy(x => x.ScoreDifferential)
+        .ThenBy(x => x.LastName)
+        .ToList();
     }
 
     private record CurrentWeekPredictionsTableItem 
     {
-        public string FirstName { get; init; }
-        public string LastName { get; init; }
-        public string HomeTeamName { get; init; }
+        public required string FirstName { get; init; }
+        public required string LastName { get; init; }
+        public required string HomeTeamName { get; init; }
         public int PredictedHomeTeamScore { get; init; }
         public int ActualHomeTeamScore { get; init; }
-        public string AwayTeamName { get; init; }
+        public required string AwayTeamName { get; init; }
         public int PredictedAwayTeamScore { get; init; }
         public int ActualAwayTeamScore { get; init; }
         public int ScoreDifferential { get; init; }

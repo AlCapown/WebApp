@@ -10,11 +10,12 @@
 @inject IState<GameState> GameState
 
 <MudGrid>
-    <Virtualize Items="Games" Context="GameId" ItemSize="500">
+    @foreach (int gameId in Games)
+    {
         <MudItem xs="12">
-            <GameSummary GameId="GameId" />
+            <GameSummary GameId=gameId />
         </MudItem>
-    </Virtualize>
+    }
 </MudGrid>
 
 

@@ -84,9 +84,11 @@
 
 @code {
 
+#nullable enable
+
     [SupplyParameterFromQuery]
     [Parameter]
-    public string TeamSearchValue { get; set; }
+    public string? TeamSearchValue { get; set; }
 
     private List<Game> Games => GameState.Value.Games.Values
         .Where(x => x.SeasonId == SeasonConstants.CURRENT_SEASON_ID)

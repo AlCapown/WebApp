@@ -17,6 +17,7 @@
 </div>
 
 @code {
+#nullable enable
 
     [Parameter]
     [EditorRequired]
@@ -41,13 +42,13 @@
                         UserId = userGroup.Key,
                         FirstName = userGroup.Max(x => x.Value.FirstName),
                         LastName = userGroup.Max(x => x.Value.LastName),
-                        RollingTotal = userGroup.Aggregate(new List<double>(), (accumilator, index) =>
+                        RollingTotal = userGroup.Aggregate(new List<double>(LeaderboardItems.Count), (accumulator, index) =>
                         {
-                            accumilator.Add(accumilator.Count > 0
-                                ? accumilator.Last() + index.Value.ScoreDifferential 
+                            accumulator.Add(accumulator.Count > 0
+                                ? accumulator.Last() + index.Value.ScoreDifferential 
                                 : index.Value.ScoreDifferential);
 
-                            return accumilator;
+                            return accumulator;
                         }) 
                     };
 

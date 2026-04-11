@@ -60,7 +60,7 @@ public sealed class TeamController : ControllerBase
     [ProducesResponseType(typeof(NotFoundProblemDetails), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetTeam([FromRoute] int teamId)
     {
-        var result = await _mediator.Send(new TeamSearch.Query() 
+        var result = await _mediator.Send(new TeamSearch.Query 
         { 
             TeamId = teamId 
         }, HttpContext.RequestAborted);

@@ -18,6 +18,8 @@
 
 @code {
 
+    #nullable enable
+
     [Parameter]
     [EditorRequired]
     public IReadOnlyList<LeaderboardItem> LeaderboardItems { get; set; }
@@ -46,13 +48,13 @@
                         UserId = userGroup.Key,
                         FirstName = userGroup.Max(x => x.Value.FirstName),
                         LastName = userGroup.Max(x => x.Value.LastName),
-                        RollingTotal = userGroup.Aggregate(new List<double>(), (accumilator, index) =>
+                        RollingTotal = userGroup.Aggregate(new List<double>(LeaderboardItems.Count), (accumulator, index) =>
                         {
-                            accumilator.Add(accumilator.Count != 0
-                                ? accumilator.Last() + (index.Value.PredictedWinningTeam ? 1 : 0) 
+                            accumulator.Add(accumulator.Count != 0
+                                ? accumulator.Last() + (index.Value.PredictedWinningTeam ? 1 : 0) 
                                 : index.Value.PredictedWinningTeam ? 1 : 0);
 
-                            return accumilator;
+                            return accumulator;
                         }) 
                     };
 

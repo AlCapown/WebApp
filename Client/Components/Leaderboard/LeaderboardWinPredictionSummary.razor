@@ -34,6 +34,7 @@
 </div>
 
 @code {
+#nullable enable
 
     [Parameter]
     [EditorRequired]
@@ -56,8 +57,8 @@
                     select new UserRanking
                     {
                         UserId = userGroup.Key,
-                        FirstName = userGroup.Max(x => x.Value.FirstName),
-                        LastName = userGroup.Max(x => x.Value.LastName),
+                        FirstName = userGroup.First().Value.FirstName,
+                        LastName = userGroup.First().Value.LastName,
                         WinPredictionTotal = userGroup.Sum(x => x.Value.PredictedWinningTeam ? 1 : 0)
                     };
 
@@ -79,15 +80,15 @@
 
     private record UserRanking
     {
-        public string UserId { get; init; }
-        public string FirstName { get; init; }
-        public string LastName { get; init; }
+        public required string UserId { get; init; }
+        public required string FirstName { get; init; }
+        public required string LastName { get; init; }
         public int WinPredictionTotal { get; init; }
     }
 
     private record OrderedUserRanking
     {
         public int Index { get; init; }
-        public UserRanking UserRanking { get; init; }
+        public required UserRanking UserRanking { get; init; }
     }
 }

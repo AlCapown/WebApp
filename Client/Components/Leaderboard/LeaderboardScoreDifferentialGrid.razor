@@ -36,6 +36,9 @@
 
 @code 
 {
+
+#nullable enable
+
     [Parameter]
     [EditorRequired]
     public IReadOnlyList<LeaderboardItem> LeaderboardItems { get; set; }
@@ -57,10 +60,10 @@
             .Select(g => new User
             {
                 UserId = g.Key,
-                FirstName = g.Max(x => x.FirstName),
-                LastName = g.Max(x => x.LastName),
+                FirstName = g.First().FirstName,
+                LastName = g.First().LastName,
             })
-            .OrderBy(u => LeaderboardItems.Sum(l => l.UserPredictions.TryGetValue(u.UserId, out UserPrediction p) ? p.ScoreDifferential : 0))
+            .OrderBy(u => LeaderboardItems.Sum(l => l.UserPredictions.TryGetValue(u.UserId, out UserPrediction? p) ? p.ScoreDifferential : 0))
             .ThenBy(u => u.UserId)
             .ToList();
     }

@@ -35,6 +35,8 @@
 
 @code {
 
+    #nullable enable
+
     [Parameter]
     [EditorRequired]
     public IReadOnlyList<LeaderboardItem> LeaderboardItems { get; set; }
@@ -56,8 +58,8 @@
                     select new UserRanking
                     {
                         UserId = userGroup.Key,
-                        FirstName = userGroup.Max(x => x.Value.FirstName),
-                        LastName = userGroup.Max(x => x.Value.LastName),
+                        FirstName = userGroup.First().Value.FirstName,
+                        LastName = userGroup.First().Value.LastName,
                         ScoreDifferentialTotal = userGroup.Sum(x => x.Value.ScoreDifferential)
                     };
 
@@ -79,15 +81,15 @@
 
     private record UserRanking
     {
-        public string UserId { get; init; }
-        public string FirstName { get; init; }
-        public string LastName { get; init; }
+        public required string UserId { get; init; }
+        public required string FirstName { get; init; }
+        public required string LastName { get; init; }
         public int ScoreDifferentialTotal { get; init; }
     }
 
     private record OrderedUserRanking
     {
         public int Index { get; init; }
-        public UserRanking UserRanking { get; init; }
+        public required UserRanking UserRanking { get; init; }
     }
 }
