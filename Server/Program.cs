@@ -251,7 +251,9 @@ services.AddSingleton<SecurityHeadersMiddleware>();
 
 var app = builder.Build();
 
+
 app.Logger.LogInformation("Application Name: {Application}", app.Environment.ApplicationName);
+app.Logger.LogInformation("Application Version: {ApplicationVersion}", typeof(Program).Assembly.GetName().Version);
 app.Logger.LogInformation("Hosting Environment: {Environment}", app.Environment.EnvironmentName);
 
 #if DEBUG

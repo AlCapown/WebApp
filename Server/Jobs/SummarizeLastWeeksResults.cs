@@ -177,13 +177,12 @@ public sealed class SummarizeLastWeeksResults
         var thread = new ChatHistoryAgentThread();
         var responseContent = new StringBuilder();
 
-        await foreach (var response in agent.InvokeAsync(
-            new ChatMessageContent(AuthorRole.User, inputPrompt),
-            thread,
-            cancellationToken: cancellationToken))
+        await foreach (var response in agent.InvokeAsync(new ChatMessageContent(AuthorRole.User, inputPrompt), thread, cancellationToken: cancellationToken))
         {
             if (response.Message.Role == AuthorRole.Assistant)
+            {
                 responseContent.Append(response.Message.Content);
+            }
         }
 
         return responseContent.ToString();
