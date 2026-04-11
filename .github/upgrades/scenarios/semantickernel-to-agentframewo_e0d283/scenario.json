@@ -1,0 +1,12 @@
+{
+  "scenarioId": "SemanticKernel-To-AgentFramework",
+  "operationId": "e0d283ea-c237-431e-a26b-2ab0f68b6ad7",
+  "description": "Migrate from Semantic Kernel Agents to Agent Framework in .NET projects.",
+  "startTime": "2026-04-11T15:06:54.2817319Z",
+  "lastUpdateTime": "2026-04-11T15:39:50.6467519Z",
+  "stage": "Execution",
+  "properties": {
+    "SelectedScenarioStrategy": "AllAtOnce"
+  },
+  "folderPath": ""
+}

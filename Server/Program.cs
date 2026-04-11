@@ -55,7 +55,8 @@ services.AddOptions<AzureOpenAI>()
     .ValidateOnStart();
 
 Authentication authenticationConfig = configuration.GetSection("Authentication").Get<Authentication>()!;
-ConnectionStrings connectionStrings = configuration.GetSection("ConnectionStrings").Get<ConnectionStrings>()!; 
+ConnectionStrings connectionStrings = configuration.GetSection("ConnectionStrings").Get<ConnectionStrings>()!;
+AzureOpenAI azureOpenAIConfig = configuration.GetSection("AzureOpenAI").Get<AzureOpenAI>()!;
 
 // Register logging provider
 services
@@ -114,7 +115,7 @@ services.AddMediator(options =>
 });
 
 // AI Services
-services.AddOpenAIServices();
+services.AddOpenAIServices(azureOpenAIConfig);
 
 // External Integrations
 services.RegisterESPNServices();

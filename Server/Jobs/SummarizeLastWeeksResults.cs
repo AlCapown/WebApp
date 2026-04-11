@@ -1,10 +1,12 @@
 ﻿using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Agents;
 using Microsoft.SemanticKernel.ChatCompletion;
 using Microsoft.SemanticKernel.Connectors.OpenAI;
 using System;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Common.Constants;
@@ -18,12 +20,14 @@ namespace WebApp.Server.Jobs;
 public sealed class SummarizeLastWeeksResults
 {
     private readonly Kernel _kernel;
+    private readonly UserGamePredictionPlugin _userGamePredictionPlugin;
     private readonly IMediator _mediator;
     private readonly CreateBackgroundJobLog.Command _logCommand;
 
-    public SummarizeLastWeeksResults(Kernel kernel, IMediator mediator)
+    public SummarizeLastWeeksResults(Kernel kernel, UserGamePredictionPlugin userGamePredictionPlugin, IMediator mediator)
     {
         _kernel = kernel;
+        _userGamePredictionPlugin = userGamePredictionPlugin;
         _mediator = mediator;
         _logCommand = new CreateBackgroundJobLog.Command
         {
@@ -115,11 +119,15 @@ public sealed class SummarizeLastWeeksResults
 
     private async Task<string> SummarizeResults(int LastGameId, int? SecondToLastGameId, CancellationToken cancellationToken)
     {
-        var chatCompletionService = _kernel.GetRequiredService<IChatCompletionService>();
-        var history = new ChatHistory();
-        var executionSettings = new OpenAIPromptExecutionSettings
+        _kernel.Plugins.AddFromObject(_userGamePredictionPlugin, nameof(UserGamePredictionPlugin));
+
+        var agent = new ChatCompletionAgent
         {
-            FunctionChoiceBehavior = FunctionChoiceBehavior.Required()
+            Kernel = _kernel,
+            Arguments = new KernelArguments(new OpenAIPromptExecutionSettings
+            {
+                FunctionChoiceBehavior = FunctionChoiceBehavior.Required()
+            })
         };
 
         string inputPrompt;
@@ -166,13 +174,19 @@ public sealed class SummarizeLastWeeksResults
             """;
         }
 
-        history.AddUserMessage(inputPrompt);
+        var thread = new ChatHistoryAgentThread();
+        var responseContent = new StringBuilder();
 
-        var result = await chatCompletionService.GetChatMessageContentAsync(history, executionSettings, _kernel, cancellationToken);
+        await foreach (var response in agent.InvokeAsync(
+            new ChatMessageContent(AuthorRole.User, inputPrompt),
+            thread,
+            cancellationToken: cancellationToken))
+        {
+            if (response.Message.Role == AuthorRole.Assistant)
+                responseContent.Append(response.Message.Content);
+        }
 
-        history.AddMessage(result.Role, result.Content ?? string.Empty);
-
-        return result.Content ?? string.Empty;
+        return responseContent.ToString();
     }
 
     private async Task CreateGameSummary(int gameId, string summary, CancellationToken cancellationToken)
