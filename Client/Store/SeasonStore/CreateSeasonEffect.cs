@@ -45,7 +45,10 @@ public sealed class CreateSeasonEffect : Effect<SeasonActions.CreateSeason>
             new SeasonActions.CreateSeasonSuccess();
 
         public override FetchFailureAction GetFailureAction(ApiError apiError) =>
-            new SeasonActions.CreateSeasonFailure();
+            new SeasonActions.CreateSeasonFailure
+            {
+                ApiError = apiError
+            };
     }
 }
 

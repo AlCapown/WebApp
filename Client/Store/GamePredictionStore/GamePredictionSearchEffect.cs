@@ -47,7 +47,10 @@ public sealed class GamePredictionSearchEffect : Effect<GamePredictionActions.Ga
             };
 
         public override FetchFailureAction GetFailureAction(ApiError apiError) =>
-            new GamePredictionActions.GamePredictionSearchFailure();
+            new GamePredictionActions.GamePredictionSearchFailure
+            {
+                ApiError = apiError
+            };
     }
 }
 

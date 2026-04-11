@@ -37,7 +37,10 @@ public sealed class LoadGameSummaryEffect : Effect<GameSummaryActions.LoadGameSu
             };
 
         public override FetchFailureAction GetFailureAction(ApiError apiError) =>
-            new GameSummaryActions.LoadGameSummaryFailure();
+            new GameSummaryActions.LoadGameSummaryFailure
+            {
+                ApiError = apiError
+            };
     }
 }
 

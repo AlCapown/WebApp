@@ -176,12 +176,8 @@ public sealed class ApiClient : IApiClient
         where TResponse : class
     {
         Debug.Assert(apiLoadPlan.FetchStartedAction.FetchName is not null);
-        
-        _dispatcher.Dispatch(apiLoadPlan.GetFailureAction(apiError) with
-        {
-            FetchName = apiLoadPlan.FetchStartedAction.FetchName,
-            ApiError = apiError
-        });
+
+        _dispatcher.Dispatch(apiLoadPlan.GetFailureAction(apiError));
 
         _dispatcher.Dispatch(new FetchActions.FetchFailure
         {

@@ -39,7 +39,10 @@ public sealed class LoadTeamsEffect : Effect<TeamActions.LoadTeams>
             };
 
         public override FetchFailureAction GetFailureAction(ApiError apiError) =>
-            new TeamActions.LoadTeamsFailure();
+            new TeamActions.LoadTeamsFailure
+            {
+                ApiError = apiError
+            };
     }
 }
 

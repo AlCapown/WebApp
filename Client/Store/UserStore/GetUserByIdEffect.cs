@@ -38,7 +38,10 @@ public sealed class GetUserByIdEffect : Effect<UserActions.GetUserById>
             };
 
         public override FetchFailureAction GetFailureAction(ApiError apiError) =>
-            new UserActions.GetUserByIdFailure();
+            new UserActions.GetUserByIdFailure
+            {
+                ApiError = apiError
+            };
     }
 }
 

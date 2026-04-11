@@ -57,6 +57,7 @@ public sealed class LoadSeasonWeekListEffect : Effect<SeasonWeekActions.LoadSeas
 
             return new SeasonWeekActions.LoadSeasonWeekListFailure
             {
+                ApiError = apiError,
                 SeasonId = action.SeasonId,
             };
         }

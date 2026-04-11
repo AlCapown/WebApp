@@ -42,8 +42,11 @@ public sealed class UpdateSeasonEffect : Effect<SeasonActions.UpdateSeason>
         public override FetchSuccessAction GetSuccessAction(NoContentResponse response) =>
             new SeasonActions.UpdateSeasonSuccess();
 
-        public override FetchFailureAction GetFailureAction(ApiError apiError) =>
-            new SeasonActions.UpdateSeasonFailure();
+        public override FetchFailureAction GetFailureAction(ApiError apiError) => 
+            new SeasonActions.UpdateSeasonFailure 
+            { 
+                ApiError = apiError
+            };
     }
 }
 

@@ -51,7 +51,10 @@ public sealed class SearchGamesForSeasonEffect : Effect<GameActions.SearchGamesF
             };
 
         public override FetchFailureAction GetFailureAction(ApiError apiError) =>
-            new GameActions.SearchGamesForSeasonFailure();
+            new GameActions.SearchGamesForSeasonFailure
+            {
+                ApiError = apiError
+            };
     }
 }
 

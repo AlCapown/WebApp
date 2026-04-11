@@ -51,7 +51,10 @@ public sealed class CreateGamePredictionEffect : Effect<GamePredictionActions.Cr
             };
 
         public override FetchFailureAction GetFailureAction(ApiError apiError) =>
-            new GamePredictionActions.CreateGamePredictionFailure();
+            new GamePredictionActions.CreateGamePredictionFailure
+            {
+                ApiError = apiError
+            };
     }
 }
 

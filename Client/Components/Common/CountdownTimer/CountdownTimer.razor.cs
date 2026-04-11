@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Components;
+﻿#nullable enable
+
+using Microsoft.AspNetCore.Components;
 using System;
 using System.Timers;
 
@@ -27,7 +29,7 @@ public partial class CountdownTimer : ComponentBase, IDisposable
     /// <summary>
     /// Gets or sets the action to invoke on each timer tick.
     /// </summary>
-    private Action OnTick { get; set; }
+    private Action? OnTick { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CountdownTimer"/> class.
@@ -80,7 +82,7 @@ public partial class CountdownTimer : ComponentBase, IDisposable
     /// </summary>
     /// <param name="source">The source of the event.</param>
     /// <param name="e">The elapsed event arguments.</param>
-    private void OnTimedEvent(object source, ElapsedEventArgs e)
+    private void OnTimedEvent(object? source, ElapsedEventArgs e)
     {
         RemainingTime = EndTime.Subtract(e.SignalTime);
 

@@ -18,19 +18,20 @@
 </FormDialog>
 
 @code {
+    #nullable enable
 
     [Parameter, EditorRequired]
     public int SeasonId { get; set; }
 
-    public Action OnValidSubmitCallbackSuccess { get; set; }
+    public Action? OnValidSubmitCallbackSuccess { get; set; }
 
-    public Func<ApiError, Task> OnValidSubmitCallbackErrorAsync { get; set; }
+    public Func<ApiError, Task>? OnValidSubmitCallbackErrorAsync { get; set; }
 
     private string Title => $"Editing {SeasonId} Season";
 
-    private UpdateSeasonRequest Model { get; set; }
+    private UpdateSeasonRequest Model { get; set; } = new();
 
-    private FormDialog FormDialog { get; set; }
+    private FormDialog? FormDialog { get; set; }
 
     protected override void OnInitialized()
     {
@@ -43,7 +44,11 @@
 
         ActionSubscriber.SubscribeToAction<SeasonActions.UpdateSeasonFailure>(this, async action =>
         {
-            await OnValidSubmitCallbackErrorAsync?.Invoke(action.ApiError);
+            if (OnValidSubmitCallbackErrorAsync is not null)
+            {
+                await OnValidSubmitCallbackErrorAsync.Invoke(action.ApiError);
+            }
+
         });
 
         base.OnInitialized();

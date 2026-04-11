@@ -12,6 +12,8 @@ else
 
 @code
 {
+#nullable enable
+
     [Parameter]
     [EditorRequired]
     public bool IsLoading { get; set; }
@@ -25,5 +27,5 @@ else
     public string Height { get; set; }
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 }

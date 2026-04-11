@@ -51,7 +51,10 @@ public sealed class CreateGamePredictionForUserEffect : Effect<GamePredictionAct
             };
 
         public override FetchFailureAction GetFailureAction(ApiError apiError) =>
-            new GamePredictionActions.CreateGamePredictionForUserFailure();
+            new GamePredictionActions.CreateGamePredictionForUserFailure
+            {
+                ApiError = apiError,
+            };
     }
 }
 
@@ -65,7 +68,7 @@ public static partial class GamePredictionActions
 
     public sealed record CreateGamePredictionForUserSuccess : FetchSuccessAction 
     {
-        public int GamePredictionId { get; init; }
+        public required int GamePredictionId { get; init; }
     }
 
     public sealed record CreateGamePredictionForUserFailure : FetchFailureAction { }

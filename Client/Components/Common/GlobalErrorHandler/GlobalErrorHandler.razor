@@ -43,8 +43,8 @@
 
     protected override void OnInitialized() 
     {
-        ActionSubscriber.SubscribeToAction<PageActions.EnqueuePageError>(this, action => EnqueueError(action));
         _processingTask = ProcessErrorQueue(_cancellationTokenSource.Token);
+        ActionSubscriber.SubscribeToAction<PageActions.EnqueuePageError>(this, action => EnqueueError(action));
         base.OnInitialized();
     }
 

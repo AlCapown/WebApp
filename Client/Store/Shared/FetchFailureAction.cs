@@ -6,7 +6,6 @@ namespace WebApp.Client.Store.Shared;
 
 public record FetchFailureAction
 {
-    public ApiError? ApiError { get; init; }
-    public string? FetchName { get; init; }
+    public required ApiError ApiError { get; init; }
     public object? RetryAction { get; init; }
 }

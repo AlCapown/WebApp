@@ -65,6 +65,7 @@ public sealed class UpdateSeasonWeekEffect : Effect<SeasonWeekActions.UpdateSeas
 
             return new SeasonWeekActions.UpdateSeasonWeekFailure
             {
+                ApiError = apiError,
                 SeasonId = action.SeasonId,
                 SeasonWeekId = action.SeasonWeekId,
             };

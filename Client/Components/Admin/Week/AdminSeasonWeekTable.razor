@@ -60,6 +60,8 @@
 
 @code {
 
+#nullable enable
+
     [Parameter, EditorRequired]
     public int SeasonId { get; set; }
 
@@ -70,7 +72,7 @@
 
     public string GetSeasonDescription()
     {
-        if (SeasonState.Value.Seasons.TryGetValue(this.SeasonId, out Season Season))
+        if (SeasonState.Value.Seasons.TryGetValue(this.SeasonId, out Season? Season))
         {
             return Season.Description;
         }

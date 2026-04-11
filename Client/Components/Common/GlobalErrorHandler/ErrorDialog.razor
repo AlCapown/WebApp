@@ -25,10 +25,12 @@
 
 @code {
 
-    [CascadingParameter]
-    protected IMudDialogInstance MudDialog { get; set; }
+#nullable enable
 
-    [Parameter]
+    [CascadingParameter]
+    protected IMudDialogInstance? MudDialog { get; set; }
+
+    [Parameter, EditorRequired]
     public string Message { get; set; }
 
     [Parameter]
@@ -43,16 +45,16 @@
 
     private void OnCancel()
     {
-        MudDialog.Close(DialogResult.Ok(ErrorDialogResult.CANCELLED));
+        MudDialog?.Close(DialogResult.Ok(ErrorDialogResult.CANCELLED));
     }
 
     private void OnRetry()
     {
-        MudDialog.Close(DialogResult.Ok(ErrorDialogResult.RETRY));
+        MudDialog?.Close(DialogResult.Ok(ErrorDialogResult.RETRY));
     }
 
     private void OnRefresh()
     {
-        MudDialog.Close(DialogResult.Ok(ErrorDialogResult.REFRESH));
+        MudDialog?.Close(DialogResult.Ok(ErrorDialogResult.REFRESH));
     }
 }

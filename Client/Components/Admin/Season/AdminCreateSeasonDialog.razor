@@ -18,13 +18,15 @@
 
 @code 
 {
-    public Action OnValidSubmitCallbackSuccess { get; set; }
+    #nullable enable
 
-    public Func<ApiError, Task> OnValidSubmitCallbackErrorAsync { get; set; }
+    public Action? OnValidSubmitCallbackSuccess { get; set; }
+
+    public Func<ApiError, Task>? OnValidSubmitCallbackErrorAsync { get; set; }
 
     private CreateSeasonRequest Model = new();
 
-    private FormDialog FormDialog { get; set; }
+    private FormDialog? FormDialog { get; set; }
 
     protected override void OnInitialized()
     {
@@ -35,7 +37,10 @@
 
         ActionSubscriber.SubscribeToAction<SeasonActions.CreateSeasonFailure>(this, async action =>
         {
-            await OnValidSubmitCallbackErrorAsync?.Invoke(action.ApiError);
+            if (OnValidSubmitCallbackErrorAsync is not null)
+            {
+                await OnValidSubmitCallbackErrorAsync(action.ApiError);
+            }
         });
 
         base.OnInitialized();

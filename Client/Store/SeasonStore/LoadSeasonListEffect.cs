@@ -39,7 +39,10 @@ public sealed class LoadSeasonListEffect : Effect<SeasonActions.LoadSeasonList>
             };
 
         public override FetchFailureAction GetFailureAction(ApiError apiError) =>
-            new SeasonActions.LoadSeasonListFailure();
+            new SeasonActions.LoadSeasonListFailure
+            {
+                ApiError = apiError
+            };
     }
 }
 
