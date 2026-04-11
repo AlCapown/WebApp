@@ -1,4 +1,3 @@
-﻿#nullable enable
 
 using Microsoft.JSInterop;
 using System;

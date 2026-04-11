@@ -1,4 +1,3 @@
-#nullable enable
 
 using Fluxor;
 using Microsoft.AspNetCore.Components.Authorization;

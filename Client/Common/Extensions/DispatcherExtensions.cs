@@ -1,4 +1,3 @@
-﻿#nullable enable
 
 using Fluxor;
 using WebApp.Client.Store.Shared;

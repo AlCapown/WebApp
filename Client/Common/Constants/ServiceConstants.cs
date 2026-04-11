@@ -1,6 +1,4 @@
-﻿#nullable enable 
-
-namespace WebApp.Client.Common.Constants;
+﻿namespace WebApp.Client.Common.Constants;
 
 internal static class ServiceConstants
 {

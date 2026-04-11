@@ -1,4 +1,3 @@
-﻿#nullable enable
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;

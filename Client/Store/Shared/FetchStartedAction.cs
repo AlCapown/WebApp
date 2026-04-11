@@ -1,4 +1,3 @@
-﻿#nullable enable
 
 namespace WebApp.Client.Store.Shared;
 
