@@ -29,6 +29,9 @@ public class Program
 
         builder.Logging.SetMinimumLevel(builder.HostEnvironment.IsDevelopment() ? LogLevel.Information : LogLevel.Warning);
 
+        // TimeProvider
+        builder.Services.AddSingleton(TimeProvider.System);
+
         // Authorization
         builder.Services.AddAuthorizationCore();
 

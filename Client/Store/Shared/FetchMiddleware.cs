@@ -1,4 +1,3 @@
-
 using Fluxor;
 using System;
 using WebApp.Client.Store.FetchStore;
@@ -12,11 +11,13 @@ internal sealed class FetchMiddleware : Middleware
 {
     private readonly IState<FetchState> _fetchState;
     private readonly IDispatcher _dispatcher;
+    private readonly TimeProvider _timeProvider;
 
-    public FetchMiddleware(IState<FetchState> fetchState, IDispatcher dispatcher)
+    public FetchMiddleware(IState<FetchState> fetchState, IDispatcher dispatcher, TimeProvider timeProvider)
     {
         _fetchState = fetchState;
         _dispatcher = dispatcher;
+        _timeProvider = timeProvider;
     }
 
     public override bool MayDispatchAction(object action)
@@ -49,7 +50,7 @@ internal sealed class FetchMiddleware : Middleware
         if (!fetchStartedAction.FetchOptions.HasFlag(FetchOptions.ForceDispatch) 
             && _fetchState.Value.Fetches.TryGetValue(fetchStartedAction.FetchName, out var fetch))
         {
-            shouldDispatch = fetch.IsLoading == false && (fetch.CacheExpires == null || fetch.CacheExpires < DateTimeOffset.Now);
+            shouldDispatch = fetch.IsLoading == false && (fetch.CacheExpires == null || fetch.CacheExpires < _timeProvider.GetUtcNow());
         }
 
         if (shouldDispatch)

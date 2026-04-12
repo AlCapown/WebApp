@@ -1,4 +1,3 @@
-
 using Microsoft.JSInterop;
 using System;
 using System.Net.Http;
@@ -10,14 +9,18 @@ namespace WebApp.Client.Infrastructure;
 public sealed class WebAppHttpMessageHandler : DelegatingHandler
 {
     private static readonly TimeSpan _tokenExpiryInterval = TimeSpan.FromMinutes(10);
+
     private readonly IJSRuntime _jsRuntime;
+    private readonly TimeProvider _timeProvider;
 
     private string? CachedToken { get; set; }
     private DateTimeOffset TokenExpiry { get; set; } = DateTimeOffset.MinValue;
 
-    public WebAppHttpMessageHandler(IJSRuntime jsRuntime)
+
+    public WebAppHttpMessageHandler(IJSRuntime jsRuntime, TimeProvider timeProvider)
     {
         _jsRuntime = jsRuntime;
+        _timeProvider = timeProvider;
     }
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -29,7 +32,7 @@ public sealed class WebAppHttpMessageHandler : DelegatingHandler
 
     private async ValueTask<string> GetCachedAntiforgeryTokenAsync(CancellationToken cancellationToken)
     {
-        if (CachedToken is not null && DateTimeOffset.UtcNow < TokenExpiry)
+        if (CachedToken is not null && _timeProvider.GetUtcNow() < TokenExpiry)
         {
             return CachedToken;
         }
@@ -39,7 +42,7 @@ public sealed class WebAppHttpMessageHandler : DelegatingHandler
             ?? throw new InvalidOperationException("Antiforgery token retrieval failed.");
 
         CachedToken = token;
-        TokenExpiry = DateTimeOffset.UtcNow.Add(_tokenExpiryInterval);
+        TokenExpiry = _timeProvider.GetUtcNow().Add(_tokenExpiryInterval);
 
         return CachedToken;
     }

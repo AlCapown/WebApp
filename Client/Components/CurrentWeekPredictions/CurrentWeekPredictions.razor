@@ -12,7 +12,7 @@
 @inject IState<GameState> GameState
 @inject IState<GamePredictionState> GamePredictionState
 @inject IState<SeasonWeekState> SeasonWeekState
-
+@inject TimeProvider TimeProvider
 
 <div class="wa_table__container">
     <div class="wa_table__header">
@@ -102,7 +102,7 @@
 
     private Game? GetNextGame()
     {
-        var todaysDate = DateOnly.FromDateTime(DateTime.Now);
+        var todaysDate = DateOnly.FromDateTime(TimeProvider.GetLocalNow().DateTime);
 
         return
         (

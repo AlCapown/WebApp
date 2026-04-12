@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -54,7 +55,7 @@ public sealed class UserController : ControllerBase
             NameClaimType = claimsIdentity.NameClaimType,
             RoleClaimType = claimsIdentity.RoleClaimType,
             Claims = [.. claimsIdentity.Claims
-                .Where(x => x.Type != "AspNet.Identity.SecurityStamp") // Server side only security mechanism.
+                .Where(x => !x.Type.Equals("AspNet.Identity.SecurityStamp", StringComparison.OrdinalIgnoreCase)) // Server side only security mechanism.
                 .Select(x => new ClaimValue 
                 {
                     Type = x.Type,

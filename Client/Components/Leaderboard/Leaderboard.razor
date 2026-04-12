@@ -13,6 +13,7 @@
 @inject IState<GameState> GameState
 @inject IState<GamePredictionState> GamePredictionState
 @inject IState<PageState> PageState
+@inject TimeProvider TimeProvider
 
 <MudTabs Rounded="true" TabHeaderClass="mb-6" Outlined="true" @bind-ActivePanelIndex=@InternalTabIndex>
     <MudTabPanel Text="Summary" Icon="@Icons.Material.Outlined.Summarize">
@@ -111,7 +112,7 @@
             .Where(x => x.SeasonId == SeasonId)
             .Where(x => x.HomeTeamId == TeamId || x.AwayTeamId == TeamId)
             .Where(x => x.SeasonWeekTypeName == WeekType.RegularSeason)
-            .Where(x => x.GameStartsOn < DateTime.UtcNow)
+            .Where(x => x.GameStartsOn < TimeProvider.GetUtcNow())
             .OrderBy(x => x.Week)
             .ToArray();
 

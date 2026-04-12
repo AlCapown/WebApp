@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using System;
@@ -18,14 +17,16 @@ public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvi
 
     private readonly NavigationManager _navigation;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly TimeProvider _timeProvider;
 
     private ClaimsPrincipal? CachedUser { get; set; }
     private DateTimeOffset UserExpiry { get; set; } = DateTimeOffset.MinValue;
 
-    public WebAppAuthenticationStateProvider(NavigationManager navigation, IHttpClientFactory httpClientFactory)
+    public WebAppAuthenticationStateProvider(NavigationManager navigation, IHttpClientFactory httpClientFactory, TimeProvider timeProvider)
     {
         _navigation = navigation;
         _httpClientFactory = httpClientFactory;
+        _timeProvider = timeProvider;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -42,14 +43,14 @@ public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvi
     private async ValueTask<ClaimsPrincipal> GetUserCachedAsync()
     {
         // Check if we have a valid cached user
-        if (CachedUser is not null && DateTimeOffset.UtcNow < UserExpiry)
+        if (CachedUser is not null && _timeProvider.GetUtcNow() < UserExpiry)
         {
             return CachedUser;
         }
 
         // Fetch new user and cache it. Multiple threads may reach here simultaneously but this is fine.
         CachedUser = await GetUserAsync();
-        UserExpiry = DateTimeOffset.UtcNow.Add(_userCacheExpiryInterval);
+        UserExpiry = _timeProvider.GetUtcNow().Add(_userCacheExpiryInterval);
 
         return CachedUser;
     }

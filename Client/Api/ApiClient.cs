@@ -1,4 +1,3 @@
-
 using Fluxor;
 using System;
 using System.Collections.Generic;
@@ -21,11 +20,13 @@ public sealed class ApiClient : IApiClient
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IDispatcher _dispatcher;
+    private readonly TimeProvider _timeProvider;
 
-    public ApiClient(IHttpClientFactory httpClientFactory, IDispatcher dispatcher)
+    public ApiClient(IHttpClientFactory httpClientFactory, IDispatcher dispatcher, TimeProvider timeProvider)
     {
         _httpClientFactory = httpClientFactory;
         _dispatcher = dispatcher;
+        _timeProvider = timeProvider;
     }
 
     #region public methods
@@ -150,7 +151,7 @@ public sealed class ApiClient : IApiClient
         _dispatcher.Dispatch(new FetchActions.FetchSuccess
         {
             FetchName = apiLoadPlan.FetchStartedAction.FetchName,
-            CacheExpires = DateTimeOffset.Now.AddMinutes(apiLoadPlan.FetchStartedAction.CacheDurationInMinutes)
+            CacheExpires = _timeProvider.GetUtcNow().AddMinutes(apiLoadPlan.FetchStartedAction.CacheDurationInMinutes)
         });
 
         return ApiResponse<TResponse>.Success((int)response.StatusCode, content);
