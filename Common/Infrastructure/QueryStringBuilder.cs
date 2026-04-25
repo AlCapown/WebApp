@@ -38,6 +38,6 @@ public static class QueryHelpers
             sb.Append(Uri.EscapeDataString(kvp.Value));
         }
 
-        return hasQuery ? uri : sb.ToString();
+        return hasQuery ? sb.ToString() : uri;
     }
 }

@@ -103,7 +103,7 @@ public sealed class UserGamePredictionPlugin
 
                 bool predictedWinningTeam =
                     game.HomeTeamScore != game.AwayTeamScore &&
-                    gamePrediction != null &&
+                    gamePrediction is not null &&
                     gamePrediction.PredictedHomeTeamScore != gamePrediction.PredictedAwayTeamScore &&
                     (
                         (game.HomeTeamScore > game.AwayTeamScore && gamePrediction.PredictedHomeTeamScore > gamePrediction.PredictedAwayTeamScore) ||
