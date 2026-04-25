@@ -8,7 +8,7 @@ namespace WebApp.Server.Infrastructure;
 /// <summary>
 /// Singleton middleware that adds security headers to all HTTP responses.
 /// </summary>
-public sealed class SecurityHeadersMiddleware : IMiddleware
+internal sealed class SecurityHeadersMiddleware : IMiddleware
 {
     private readonly KeyValuePair<string, string>[] _headers;
 
@@ -68,51 +68,6 @@ public sealed class SecurityHeadersMiddleware : IMiddleware
         return requestDelegate(context);
     }
 
-    private static class HeaderNames
-    {
-        /// <summary>
-        /// Controls whether the page can be displayed in a frame, iframe, embed or object.
-        /// Used to prevent clickjacking attacks by restricting how the page can be embedded.
-        /// </summary>
-        public const string XFrameOptions = "X-Frame-Options";
-        
-        /// <summary>
-        /// Prevents MIME type sniffing and forces browsers to use the declared content-type.
-        /// Helps prevent attacks where malicious content is disguised as harmless files.
-        /// </summary>
-        public const string XContentTypeOptions = "X-Content-Type-Options";
-        
-        /// <summary>
-        /// Controls how much referrer information is sent along with requests.
-        /// Helps protect user privacy by limiting what information is shared with external sites.
-        /// </summary>
-        public const string ReferrerPolicy = "Referrer-Policy";
-        
-        /// <summary>
-        /// Defines approved sources of content that browsers may load (prevents XSS attacks).
-        /// Acts as a allowlist for scripts, styles, images, and other resources.
-        /// </summary>
-        public const string ContentSecurityPolicy = "Content-Security-Policy";
-        
-        /// <summary>
-        /// Controls the fetching of cross-origin resources to enable features like SharedArrayBuffer.
-        /// Required for advanced WebAssembly features and cross-origin isolation.
-        /// </summary>
-        public const string CrossOriginEmbedderPolicy = "Cross-Origin-Embedder-Policy";
-        
-        /// <summary>
-        /// Isolates the browsing context from cross-origin documents.
-        /// Provides additional security by preventing certain cross-origin interactions.
-        /// </summary>
-        public const string CrossOriginOpenerPolicy = "Cross-Origin-Opener-Policy";
-        
-        /// <summary>
-        /// Forces browsers to use HTTPS connections and protects against protocol downgrade attacks.
-        /// Once set, browsers will automatically redirect HTTP requests to HTTPS for the specified duration.
-        /// </summary>
-        public const string StrictTransportSecurity = "Strict-Transport-Security";
-    }
-
     private static class HeaderValues
     {
         public const string XFrameOptionsDeny = "DENY";
@@ -134,5 +89,50 @@ public sealed class SecurityHeadersMiddleware : IMiddleware
         public const string ImgSrc = "img-src 'self' data:";
         public const string FrameSrc = "frame-src 'none'";
         public const string TrustedTypes = "trusted-types 'none'";
+    }
+
+    private static class HeaderNames
+    {
+        /// <summary>
+        /// Controls whether the page can be displayed in a frame, iframe, embed or object.
+        /// Used to prevent clickjacking attacks by restricting how the page can be embedded.
+        /// </summary>
+        public const string XFrameOptions = "X-Frame-Options";
+
+        /// <summary>
+        /// Prevents MIME type sniffing and forces browsers to use the declared content-type.
+        /// Helps prevent attacks where malicious content is disguised as harmless files.
+        /// </summary>
+        public const string XContentTypeOptions = "X-Content-Type-Options";
+
+        /// <summary>
+        /// Controls how much referrer information is sent along with requests.
+        /// Helps protect user privacy by limiting what information is shared with external sites.
+        /// </summary>
+        public const string ReferrerPolicy = "Referrer-Policy";
+
+        /// <summary>
+        /// Defines approved sources of content that browsers may load (prevents XSS attacks).
+        /// Acts as an allow list for scripts, styles, images, and other resources.
+        /// </summary>
+        public const string ContentSecurityPolicy = "Content-Security-Policy";
+
+        /// <summary>
+        /// Controls the fetching of cross-origin resources to enable features like SharedArrayBuffer.
+        /// Required for advanced WebAssembly features and cross-origin isolation.
+        /// </summary>
+        public const string CrossOriginEmbedderPolicy = "Cross-Origin-Embedder-Policy";
+
+        /// <summary>
+        /// Isolates the browsing context from cross-origin documents.
+        /// Provides additional security by preventing certain cross-origin interactions.
+        /// </summary>
+        public const string CrossOriginOpenerPolicy = "Cross-Origin-Opener-Policy";
+
+        /// <summary>
+        /// Forces browsers to use HTTPS connections and protects against protocol downgrade attacks.
+        /// Once set, browsers will automatically redirect HTTP requests to HTTPS for the specified duration.
+        /// </summary>
+        public const string StrictTransportSecurity = "Strict-Transport-Security";
     }
 }

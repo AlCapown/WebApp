@@ -66,7 +66,7 @@ public class LeagueCalendar
 public class LeagueCalendarEntries
 {
     public required string Label { get; set; }
-    public required string AlternativeLabel { get; set; }
+    public string? AlternativeLabel { get; set; }
     public required string Value { get; set; }
     public DateTimeOffset StartDate { get; set; }
     public DateTimeOffset EndDate { get; set; }
