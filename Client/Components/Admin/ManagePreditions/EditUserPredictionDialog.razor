@@ -78,7 +78,7 @@
 
         ActionSubscriber.SubscribeToAction<GamePredictionActions.CreateGamePredictionForUserFailure>(this, async action =>
         {
-            if (OnValidSubmitCallbackErrorAsync is not null && action.ApiError is not null)
+            if (OnValidSubmitCallbackErrorAsync is not null)
             {
                 await OnValidSubmitCallbackErrorAsync.Invoke(action.ApiError);
             }

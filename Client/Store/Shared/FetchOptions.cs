@@ -1,4 +1,3 @@
-
 using System;
 
 namespace WebApp.Client.Store.Shared;

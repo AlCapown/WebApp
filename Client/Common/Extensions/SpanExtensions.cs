@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections.Generic;
 
@@ -8,7 +7,6 @@ internal static class SpanExtensions
 {
     public static KeyValuePair<TKey, TSource>[] ToKeyValuePairs<TKey, TSource>(this ReadOnlySpan<TSource> source, Func<TSource, TKey> keySelector) 
         where TKey : notnull
-
     {
         ArgumentNullException.ThrowIfNull(keySelector);
 

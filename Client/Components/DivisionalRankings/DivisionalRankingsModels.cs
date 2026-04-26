@@ -1,4 +1,3 @@
-
 namespace WebApp.Client.Components.DivisionalRankings;
 
 public sealed record TeamRecord

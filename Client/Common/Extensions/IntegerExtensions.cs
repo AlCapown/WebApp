@@ -1,4 +1,3 @@
-
 namespace WebApp.Client.Common.Extensions;
 
 internal static class IntegerExtensions

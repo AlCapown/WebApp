@@ -1,4 +1,3 @@
-
 using WebApp.Common.Models;
 
 namespace WebApp.Client.Store.Shared;

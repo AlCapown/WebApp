@@ -1,4 +1,3 @@
-
 using Fluxor;
 using System.Collections.Immutable;
 using WebApp.Common.Models;
