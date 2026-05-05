@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Net.Http;
@@ -18,15 +19,21 @@ public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvi
     private readonly NavigationManager _navigation;
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly TimeProvider _timeProvider;
+    private readonly ILogger<WebAppAuthenticationStateProvider> _logger;
 
     private ClaimsPrincipal? CachedUser { get; set; }
     private DateTimeOffset UserExpiry { get; set; } = DateTimeOffset.MinValue;
 
-    public WebAppAuthenticationStateProvider(NavigationManager navigation, IHttpClientFactory httpClientFactory, TimeProvider timeProvider)
+    public WebAppAuthenticationStateProvider(
+        NavigationManager navigation, 
+        IHttpClientFactory httpClientFactory, 
+        TimeProvider timeProvider, 
+        ILogger<WebAppAuthenticationStateProvider> logger)
     {
         _navigation = navigation;
         _httpClientFactory = httpClientFactory;
         _timeProvider = timeProvider;
+        _logger = logger;
     }
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -65,18 +72,20 @@ public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvi
         {
             user = await client.GetFromJsonAsync("api/User", CurrentUserInfoResponseJsonContext.Default.CurrentUserInfoResponse);
         }
-        catch (Exception) 
-        { }
-
-        if (user is null || !user.IsAuthenticated)
+        catch (Exception ex) 
         {
+            _logger.LogError(ex, "Error fetching user information.");
+        }
+
+        if (user is not { IsAuthenticated: true })
+        {   
             // Anonymous User
             return new ClaimsPrincipal(new ClaimsIdentity());
         }
 
         var identity = new ClaimsIdentity(nameof(AuthenticationStateProvider), user.NameClaimType, user.RoleClaimType);
 
-        if (user.Claims != null)
+        if (user.Claims is not null)
         {
             identity.AddClaims(user.Claims.Select(c => new Claim(c.Type, c.Value)));
         }

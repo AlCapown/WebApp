@@ -11,7 +11,6 @@ using WebApp.Client.Common.Constants;
 using WebApp.Client.Infrastructure;
 using WebApp.Client.Store.Shared;
 
-
 #if DEBUG
 using Fluxor.Blazor.Web.ReduxDevTools;
 #endif
@@ -29,7 +28,7 @@ public class Program
         builder.Logging.SetMinimumLevel(builder.HostEnvironment.IsDevelopment() ? LogLevel.Information : LogLevel.Warning);
 
         // TimeProvider
-        builder.Services.AddSingleton(TimeProvider.System);
+        builder.Services.AddTimeProviderService(builder.Configuration, builder.HostEnvironment.IsDevelopment());
 
         // Authorization
         builder.Services.AddAuthorizationCore();

@@ -108,7 +108,7 @@
             IsFormDialogSubmitting = true;
             Validator?.ClearErrors();
             StateHasChanged();
-            OnSubmit?.Invoke();
+            OnSubmit.Invoke();
         }
         catch (Exception ex)
         {

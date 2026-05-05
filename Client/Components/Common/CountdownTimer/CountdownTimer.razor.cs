@@ -9,6 +9,8 @@ namespace WebApp.Client.Components.Common.CountdownTimer;
 /// </summary>
 public partial class CountdownTimer : ComponentBase, IDisposable
 {
+    private readonly TimeProvider _timeProvider;
+    
     /// <summary>
     /// Gets the remaining time until the countdown ends.
     /// </summary>
@@ -32,8 +34,10 @@ public partial class CountdownTimer : ComponentBase, IDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="CountdownTimer"/> class.
     /// </summary>
-    public CountdownTimer()
+    public CountdownTimer(TimeProvider timeProvider)
     {
+        _timeProvider = timeProvider;
+
         RemainingTime = TimeSpan.Zero;
 
         Timer = new Timer(1000)
@@ -52,7 +56,7 @@ public partial class CountdownTimer : ComponentBase, IDisposable
     public void Start(DateTime endTime, Action onTick)
     {
         EndTime = endTime;
-        RemainingTime = endTime.Subtract(DateTime.Now);
+        RemainingTime = endTime.Subtract(_timeProvider.GetUtcNow().DateTime);
         OnTick = onTick;
         Timer.Start();
     }
@@ -82,7 +86,7 @@ public partial class CountdownTimer : ComponentBase, IDisposable
     /// <param name="e">The elapsed event arguments.</param>
     private void OnTimedEvent(object? source, ElapsedEventArgs e)
     {
-        RemainingTime = EndTime.Subtract(e.SignalTime);
+        RemainingTime = EndTime.Subtract(_timeProvider.GetUtcNow().DateTime);
 
         if (RemainingTime.TotalSeconds < 1)
         {

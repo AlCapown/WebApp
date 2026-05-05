@@ -9,6 +9,12 @@ $breakpoint-xl: 1920px;
 
 $breakpoints: ( xs: $breakpoint-xs, sm: $breakpoint-sm, md: $breakpoint-md, lg: $breakpoint-lg, xl: $breakpoint-xl );
 
+@mixin breakpoint($size) {
+    @media (min-width: map-get($breakpoints, $size)) {
+        @content;
+    }
+}
+
 /* Media query notes
  *
  *  min-width: Greater than equal to this value

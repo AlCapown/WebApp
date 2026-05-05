@@ -42,7 +42,7 @@ else
                     </div>                    
                 </MudItem>
                 <MudItem xs="12">
-                    <MudButton OnClick="OpenPredictionDialog" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary">Make Prediction</MudButton>
+                    <MudButton OnClick="OpenPredictionDialog" Variant="Variant.Outlined" EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary">Enter Prediction</MudButton>
                 </MudItem>
                 break;
             case NextGamePredictionStatuses.HasPredictionThatIsEditable:
@@ -52,7 +52,7 @@ else
                     </div>
                 </MudItem>
                 <MudItem xs="12">
-                    <MudButton OnClick="OpenPredictionDialog" Variant="Variant.Filled" EndIcon="@Icons.Material.Filled.Add" Color="Color.Primary">Change Prediction</MudButton>
+                    <MudButton OnClick="OpenPredictionDialog" Variant="Variant.Outlined" EndIcon="@Icons.Material.Filled.Edit" Color="Color.Primary">Change Prediction</MudButton>
                 </MudItem>
                 break;
             case NextGamePredictionStatuses.PredictionNotEditable:
@@ -130,7 +130,6 @@ else
             where game.SeasonId == SeasonId
             where game.SeasonWeekTypeName == WeekType.RegularSeason
             where game.HomeTeamId == TeamId || game.AwayTeamId == TeamId
-            where game.IsComplete == false
             where todaysDate >= week.WeekStart && todaysDate <= week.WeekEnd
             select game
         )

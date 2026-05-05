@@ -1,12 +1,14 @@
-﻿@use '../../../Common/Styles/Breakpoints.scss';
+﻿@use '../../../Common/Styles/Breakpoints.scss' as *;
 
 .wa_formDialog {
-    @media (min-width: Breakpoints.$breakpoint-sm) {
-        min-width: 30rem;
+
+    @include breakpoint(xs) {
+        min-width: 95%;
     }
 
-    @media (max-width: Breakpoints.$breakpoint-sm) {
-        min-width: 95%;
+    @include breakpoint(sm) {
+        min-width: unset;
+        width: 36rem;
     }
 
     .wa_formDialog__error {
