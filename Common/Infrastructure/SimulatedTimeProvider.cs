@@ -2,12 +2,12 @@ using System;
 
 namespace WebApp.Common.Infrastructure;
 
-public sealed class CountdownTimeProvider : TimeProvider
+public sealed class SimulatedTimeProvider : TimeProvider
 {
     private readonly DateTimeOffset _startTime;
     private readonly long _startTimestamp;
 
-    public CountdownTimeProvider(DateTimeOffset startTime)
+    public SimulatedTimeProvider(DateTimeOffset startTime)
     {
         _startTime = startTime;
         _startTimestamp = GetTimestamp();

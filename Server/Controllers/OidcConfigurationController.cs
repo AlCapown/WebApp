@@ -14,6 +14,6 @@ public sealed class OidcConfigurationController : ControllerBase
     [Produces("application/json")]
     public IActionResult GetMicrosoftPublisherDomain()
     {
-        return Ok(MicrosoftPublisherDomainModel.Value);
+        return Ok(MicrosoftPublisherDomainModel.Instance);
     }
 }

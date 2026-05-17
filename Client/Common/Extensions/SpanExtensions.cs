@@ -8,8 +8,6 @@ internal static class SpanExtensions
     public static KeyValuePair<TKey, TSource>[] ToKeyValuePairs<TKey, TSource>(this ReadOnlySpan<TSource> source, Func<TSource, TKey> keySelector) 
         where TKey : notnull
     {
-        ArgumentNullException.ThrowIfNull(keySelector);
-
         if (source.Length == 0)
         {
             return [];
@@ -19,7 +17,8 @@ internal static class SpanExtensions
 
         for (int i = 0; i < source.Length; i++)
         {
-            result[i] = new KeyValuePair<TKey, TSource>(keySelector(source[i]), source[i]);
+            var t = source[i];
+            result[i] = new KeyValuePair<TKey, TSource>(keySelector(t), t);
         }
 
         return result;

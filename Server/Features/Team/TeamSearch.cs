@@ -65,7 +65,7 @@ public static class TeamSearch
             (
                 key: nameof(TeamSearch),
                 state: (_dbContext),
-                factory: static async (dbContext, cancellationToken) => await GetTeamListAsync(dbContext, cancellationToken),
+                factory: static async (dbContext, ct) => await GetTeamListAsync(dbContext, ct),
                 options: CacheOptions.STANDARD_L20_D60,
                 tags: null,
                 cancellationToken: cancellationToken

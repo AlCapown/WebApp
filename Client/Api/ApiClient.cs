@@ -133,7 +133,7 @@ public sealed class ApiClient : IApiClient
     #region Private Methods
 
     private async ValueTask<ApiResponse<TResponse>> HandleSuccess<TResponse>(ApiLoadPlan<TResponse> apiLoadPlan, HttpResponseMessage response)
-        where TResponse : class
+        where TResponse : class 
     {
         TResponse? content = typeof(TResponse) == typeof(NoContentResponse)
             ? NoContentResponse.Value as TResponse

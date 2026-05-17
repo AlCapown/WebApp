@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using WebApp.Common.Infrastructure;
@@ -8,20 +7,20 @@ namespace WebApp.Client.Infrastructure;
 
 internal static class AddTimeProvider
 {
-    public static IServiceCollection AddTimeProviderService(this IServiceCollection services, WebAssemblyHostConfiguration configuration, bool isDevelopment)
+    public static IServiceCollection AddTimeProviderService(this IServiceCollection services, IConfiguration configuration, bool isDevelopment)
     {
         if (isDevelopment)
         {
-            var frozenTime = configuration.GetValue<string>("Development:FrozenTime");
-            if (DateTimeOffset.TryParse(frozenTime, out var frozenDate))
+            var frozenDateTime = configuration.GetValue<string>("Development:FrozenDateTime");
+            if (DateTimeOffset.TryParse(frozenDateTime, out var parsedFrozenDateTime))
             {
-                return services.AddSingleton<TimeProvider>(new FrozenTimeProvider(frozenDate));
+                return services.AddSingleton<TimeProvider>(new FrozenTimeProvider(parsedFrozenDateTime));
             }
 
-            var countDownTime = configuration.GetValue<string>("Development:CountdownTime");
-            if (DateTimeOffset.TryParse(countDownTime, out var countdownDate))
+            var simulatedDateTime = configuration.GetValue<string>("Development:SimulatedDateTime");
+            if (DateTimeOffset.TryParse(simulatedDateTime, out var parsedSimulatedDateTime))
             {
-                return services.AddSingleton<TimeProvider>(new CountdownTimeProvider(countdownDate));
+                return services.AddSingleton<TimeProvider>(new SimulatedTimeProvider(parsedSimulatedDateTime));
             }
         }
 
