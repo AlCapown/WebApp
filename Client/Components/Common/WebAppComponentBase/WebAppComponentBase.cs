@@ -21,15 +21,15 @@ public abstract class WebAppComponentBase : FluxorComponent
     [Inject]
     private IState<FetchState> FetchState { get; set; } = default!;
 
-    private static readonly TimeSpan DefaultFetchTimeout = TimeSpan.FromSeconds(60);
+    private static readonly TimeSpan DefaultSequentialFetchTimeout = TimeSpan.FromSeconds(60);
 
     private readonly HashSet<string> _fetches;
-    private readonly HashSet<string> _chainedFetches;
+    private readonly HashSet<string> _chainedLoadingFetches;
 
     protected WebAppComponentBase() : base()
     {
         _fetches = [];
-        _chainedFetches = [];
+        _chainedLoadingFetches = [];
     }
 
     /// <summary>
@@ -85,7 +85,7 @@ public abstract class WebAppComponentBase : FluxorComponent
         if (isChainRoot && !action.FetchOptions.HasFlag(FetchOptions.HideLoading))
         {
             chainRootFetchName = fetchName;
-            _chainedFetches.Add(fetchName);
+            _chainedLoadingFetches.Add(fetchName);
         }
 
         try
@@ -118,7 +118,7 @@ public abstract class WebAppComponentBase : FluxorComponent
             // Only the root removes itself after the entire chain has completed
             if (isChainRoot && chainRootFetchName is not null)
             {
-                _chainedFetches.Remove(chainRootFetchName);
+                _chainedLoadingFetches.Remove(chainRootFetchName);
             }
 
             StateHasChanged();
@@ -126,10 +126,8 @@ public abstract class WebAppComponentBase : FluxorComponent
     }
 
     /// <summary>
-    /// Returns a <see cref="Task"/> that completes when the given fetch is no longer loading,
-    /// or throws <see cref="TimeoutException"/> if the fetch does not complete within the default timeout.
-    /// Uses a double-check pattern around the subscription to eliminate the race condition
-    /// between reading state and subscribing to state changes.
+    /// Returns a <see cref="Task"/> that completes when the given fetch is no longer loading, or
+    /// throws <see cref="TimeoutException"/> if the fetch does not complete within the default timeout.
     /// </summary>
     private Task WaitForFetchCompletedAsync(string fetchName)
     {
@@ -139,7 +137,7 @@ public abstract class WebAppComponentBase : FluxorComponent
         }
 
         var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var cts = new CancellationTokenSource(DefaultFetchTimeout);
+        var cts = new CancellationTokenSource(DefaultSequentialFetchTimeout);
 
         cts.Token.Register(() =>
         {
@@ -176,7 +174,7 @@ public abstract class WebAppComponentBase : FluxorComponent
     /// </summary>
     public bool IsLoading()
     {
-        if (_chainedFetches.Count > 0)
+        if (_chainedLoadingFetches.Count > 0)
         {
             return true;
         }
@@ -248,7 +246,7 @@ public abstract class WebAppComponentBase : FluxorComponent
         if (disposing)
         {
             _fetches.Clear();
-            _chainedFetches.Clear();
+            _chainedLoadingFetches.Clear();
         }
 
         return base.DisposeAsyncCore(disposing);
