@@ -68,7 +68,7 @@ public abstract class WebAppComponentBase : FluxorComponent
     /// </param>
     public void MaybeDispatch(FetchStartedAction action, params Func<FetchStartedAction?>[] nextActions)
     {
-        // intentional fire-and-forget.
+        // Intentional fire-and-forget.
         // Errors are caught and dispatched to the page store
         _ = InternalMaybeDispatchAsync(action, nextActions, chainRootFetchName: null);
     }
@@ -145,7 +145,7 @@ public abstract class WebAppComponentBase : FluxorComponent
         {
             FetchState.StateChanged -= OnStateChanged;
             cts.Dispose();
-            tcs.TrySetException(new TimeoutException($"Fetch timed out. Ensure the fetch action is handled and updates FetchState."));
+            tcs.TrySetException(new TimeoutException($"Fetch timed out."));
         });
 
         FetchState.StateChanged += OnStateChanged;
