@@ -98,8 +98,6 @@ public static class UpsertGamePrediction
 
         public async ValueTask<Result> Handle(Command cmd, CancellationToken cancellationToken)
         {
-            cancellationToken.ThrowIfCancellationRequested();
-
             ValidationProblemDetails? problemDetails = await _validator.ValidateRequestAsync(cmd, cancellationToken);
             if (problemDetails is not null)
             {

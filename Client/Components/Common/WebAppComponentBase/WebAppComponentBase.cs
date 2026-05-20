@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading;
 using System.Threading.Tasks;
 using WebApp.Client.Store.FetchStore;
 using WebApp.Client.Store.PageStore;
@@ -20,15 +21,15 @@ public abstract class WebAppComponentBase : FluxorComponent
     [Inject]
     private IState<FetchState> FetchState { get; set; } = default!;
 
+    private static readonly TimeSpan DefaultFetchTimeout = TimeSpan.FromSeconds(60);
+
     private readonly HashSet<string> _fetches;
     private readonly HashSet<string> _chainedFetches;
-    private readonly List<EventHandler> _chainedEventHandlers;
 
-    protected WebAppComponentBase() : base() 
+    protected WebAppComponentBase() : base()
     {
         _fetches = [];
         _chainedFetches = [];
-        _chainedEventHandlers = [];
     }
 
     /// <summary>
@@ -50,70 +51,122 @@ public abstract class WebAppComponentBase : FluxorComponent
     }
 
     /// <summary>
-    /// Dispatches a <see cref="FetchStartedAction"/>. Custom middleware will dispatch the action only if 
-    /// it the action as never been dispatched before or if the store cache has expired for this action.
+    /// <para>
+    /// Dispatches a <see cref="FetchStartedAction"/> and awaits each chained action in sequence.
+    /// Custom middleware will dispatch the action only if it has never been dispatched before or
+    /// if the store cache has expired for this action.
+    /// </para>
+    /// <para>
     /// All actions are individually tracked so their loading state can be read easily using <see cref="IsLoading"/>.
-    /// Actions can be chained together so that when one action completes, the next action is dispatched automatically.
+    /// Actions are executed in order; each factory is invoked only after the previous action completes.
+    /// If any factory returns null, the sequence moves to the next factory without dispatching an action.
+    /// </para>
     /// </summary>
     /// <param name="action">The initial fetch action to dispatch.</param>
     /// <param name="nextActions">
-    /// Collection of factory functions that return the subsequent actions to dispatch in sequence. Actions are 
-    /// executed in order, and each factory function is invoked only after the previous action completes.
-    /// If any action factory returns null, the sequence moves to the next factory without dispatching an action.
+    /// Collection of factory functions that return the subsequent actions to dispatch in sequence.
     /// </param>
     public void MaybeDispatch(FetchStartedAction action, params Func<FetchStartedAction?>[] nextActions)
     {
+        // intentional fire-and-forget.
+        // Errors are caught and dispatched to the page store
+        _ = InternalMaybeDispatchAsync(action, nextActions, chainRootFetchName: null);
+    }
+
+    private async Task InternalMaybeDispatchAsync(FetchStartedAction action, Func<FetchStartedAction?>[] nextActions, string? chainRootFetchName)
+    {
         string fetchName = MaybeDispatch(action);
 
-        if (nextActions.Length == 0)
-        {
-            return;
-        }
+        // Only the root call owns the _chainedFetches entry for the entire chain.
+        // This is to prevent UI flickering due to intermediate fetches completing while the chain is still in progress.
+        // chainRootFetchName is set on the first dispatch that shows loading.
+        bool isChainRoot = chainRootFetchName is null;
 
-        if (!action.FetchOptions.HasFlag(FetchOptions.HideLoading))
+        if (isChainRoot && !action.FetchOptions.HasFlag(FetchOptions.HideLoading))
         {
+            chainRootFetchName = fetchName;
             _chainedFetches.Add(fetchName);
         }
 
-        _chainedEventHandlers.Add(OnStateChangedForChainedAction);
-        FetchState.StateChanged += OnStateChangedForChainedAction;
-
-        // Trigger the check in case the fetch is already complete
-        OnStateChangedForChainedAction(this, EventArgs.Empty);
-
-        void OnStateChangedForChainedAction(object? sender, EventArgs e)
+        try
         {
-            try
+            await WaitForFetchCompletedAsync(fetchName);
+
+            for (int i = 0; i < nextActions.Length; i++)
             {
-                if (FetchState.Value.Fetches.GetValueOrDefault(fetchName) is { IsLoading: false })
+                if (nextActions[i]() is { } nextAction)
                 {
-                    FetchState.StateChanged -= OnStateChangedForChainedAction;
-                    _chainedEventHandlers.Remove(OnStateChangedForChainedAction);
-
-                    for (int i = 0; i < nextActions.Length; i++)
-                    {
-                        if (nextActions[i]() is { } action)
-                        {
-                            MaybeDispatch(action, nextActions[(i + 1)..]);
-                            break;
-                        }
-                    }
-
-                    _chainedFetches.Remove(fetchName);
-                    StateHasChanged();
+                    // Pass the root fetch name down so recursive calls don't touch _chainedFetches
+                    await InternalMaybeDispatchAsync(nextAction, nextActions[(i + 1)..], chainRootFetchName);
+                    break;
                 }
             }
-            catch (Exception ex)
+        }
+        catch (Exception ex)
+        {
+            Dispatcher.Dispatch(new PageActions.EnqueuePageError
             {
-                _chainedFetches.Remove(fetchName);
-                Dispatcher.Dispatch(new PageActions.EnqueuePageError
+                Error = new LocalError
                 {
-                    Error = new LocalError
-                    {
-                        Message = ex.Message,
-                        StackTrace = ex.StackTrace
-                    }
-                });
+                    Message = ex.Message,
+                    StackTrace = ex.StackTrace
+                }
+            });
+        }
+        finally
+        {
+            // Only the root removes itself after the entire chain has completed
+            if (isChainRoot && chainRootFetchName is not null)
+            {
+                _chainedFetches.Remove(chainRootFetchName);
+            }
+
+            StateHasChanged();
+        }
+    }
+
+    /// <summary>
+    /// Returns a <see cref="Task"/> that completes when the given fetch is no longer loading,
+    /// or throws <see cref="TimeoutException"/> if the fetch does not complete within the default timeout.
+    /// Uses a double-check pattern around the subscription to eliminate the race condition
+    /// between reading state and subscribing to state changes.
+    /// </summary>
+    private Task WaitForFetchCompletedAsync(string fetchName)
+    {
+        if (FetchState.Value.Fetches.GetValueOrDefault(fetchName) is not { IsLoading: true })
+        {
+            return Task.CompletedTask;
+        }
+
+        var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var cts = new CancellationTokenSource(DefaultFetchTimeout);
+
+        cts.Token.Register(() =>
+        {
+            FetchState.StateChanged -= OnStateChanged;
+            cts.Dispose();
+            tcs.TrySetException(new TimeoutException($"Fetch timed out. Ensure the fetch action is handled and updates FetchState."));
+        });
+
+        FetchState.StateChanged += OnStateChanged;
+
+        // Double-check after subscribing to check if state could have already changed.
+        if (FetchState.Value.Fetches.GetValueOrDefault(fetchName) is not { IsLoading: true })
+        {
+            FetchState.StateChanged -= OnStateChanged;
+            cts.Dispose();
+            tcs.TrySetResult();
+        }
+
+        return tcs.Task;
+
+        void OnStateChanged(object? sender, EventArgs e)
+        {
+            if (FetchState.Value.Fetches.GetValueOrDefault(fetchName) is not { IsLoading: true })
+            {
+                FetchState.StateChanged -= OnStateChanged;
+                cts.Dispose();
+                tcs.TrySetResult();
             }
         }
     }
@@ -194,14 +247,8 @@ public abstract class WebAppComponentBase : FluxorComponent
     {
         if (disposing)
         {
-            foreach (var handler in _chainedEventHandlers)
-            {
-                FetchState.StateChanged -= handler;
-            }
-
             _fetches.Clear();
             _chainedFetches.Clear();
-            _chainedEventHandlers.Clear();
         }
 
         return base.DisposeAsyncCore(disposing);

@@ -55,8 +55,6 @@ public static class GetGamePrediction
 
         public async ValueTask<Result> Handle(Query query, CancellationToken token)
         {
-            token.ThrowIfCancellationRequested();
-
             ValidationProblemDetails? problemDetails = _validator.ValidateRequest(query);
             if (problemDetails is not null)
             {
