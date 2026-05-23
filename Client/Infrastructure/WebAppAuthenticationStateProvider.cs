@@ -106,7 +106,7 @@ internal sealed class WebAppAuthenticationStateProvider : AuthenticationStatePro
     {
         try
         {
-            CachedUser = await FetchUserFromServerAsync();
+            CachedUser = await FetchUserAsync();
             UserExpiry = _timeProvider.GetUtcNow().Add(_userCacheExpiryInterval);
             return CachedUser;
         }
@@ -120,7 +120,7 @@ internal sealed class WebAppAuthenticationStateProvider : AuthenticationStatePro
     /// Actually makes the API call to the server to get the current user's claims, roles, and authentication status.
     /// </summary>
     /// <returns></returns>
-    private async Task<ClaimsPrincipal> FetchUserFromServerAsync()
+    private async Task<ClaimsPrincipal> FetchUserAsync()
     {
         var client = _httpClientFactory.CreateClient(ServiceConstants.WEBAPP_API_CLIENT);
         
