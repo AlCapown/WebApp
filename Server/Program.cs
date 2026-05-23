@@ -19,6 +19,7 @@ using System;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using WebApp.Common.Constants;
+using WebApp.Common.Infrastructure;
 using WebApp.Database;
 using WebApp.Database.Tables;
 using WebApp.ExternalIntegrations.ESPN.Service;
@@ -222,8 +223,7 @@ services
 
 
 // Add Authorization Policies
-services
-    .AddPolicies();
+services.AddWebAppAuthorization();
 
 // Add Hangfire for background job processing
 services
@@ -266,9 +266,9 @@ app.UseForwardedHeaders();
 app.UseMiddleware<SecurityHeadersMiddleware>();
 
 app.UseWhen(x => x.Request.Path.StartsWithSegments("/api"), builder =>
-    {
-        builder.UseExceptionHandler("/");
-    });
+{
+    builder.UseExceptionHandler("/");
+});
 
 if (app.Environment.IsDevelopment())
 {

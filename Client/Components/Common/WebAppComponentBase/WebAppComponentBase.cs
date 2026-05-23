@@ -21,6 +21,14 @@ public abstract class WebAppComponentBase : FluxorComponent
     [Inject]
     private IState<FetchState> FetchState { get; set; } = default!;
 
+    /// <summary>
+    /// Represents the default timeout interval for sequential fetch operations.
+    /// </summary>
+    /// <remarks>
+    /// This is strictly here to prevent deadlocks in the case of chained fetches 
+    /// where one fetch depends on the completion of another fetch that, due to a bug, 
+    /// never completes. 
+    /// </remarks>
     private static readonly TimeSpan DefaultSequentialFetchTimeout = TimeSpan.FromSeconds(60);
 
     private readonly HashSet<string> _fetches;
@@ -90,7 +98,7 @@ public abstract class WebAppComponentBase : FluxorComponent
 
         try
         {
-            await WaitForFetchCompletedAsync(fetchName);
+            await WaitForFetchCompletedAsync(fetchName, DefaultSequentialFetchTimeout);
 
             for (int i = 0; i < nextActions.Length; i++)
             {
@@ -127,9 +135,9 @@ public abstract class WebAppComponentBase : FluxorComponent
 
     /// <summary>
     /// Returns a <see cref="Task"/> that completes when the given fetch is no longer loading, or
-    /// throws <see cref="TimeoutException"/> if the fetch does not complete within the default timeout.
+    /// throws <see cref="TimeoutException"/> if the fetch does not complete within the specified timeout.
     /// </summary>
-    private Task WaitForFetchCompletedAsync(string fetchName)
+    private Task WaitForFetchCompletedAsync(string fetchName, TimeSpan timeout)
     {
         if (FetchState.Value.Fetches.GetValueOrDefault(fetchName) is not { IsLoading: true })
         {
@@ -137,7 +145,7 @@ public abstract class WebAppComponentBase : FluxorComponent
         }
 
         var tcs = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var cts = new CancellationTokenSource(DefaultSequentialFetchTimeout);
+        var cts = new CancellationTokenSource(timeout);
 
         cts.Token.Register(() =>
         {

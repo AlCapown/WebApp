@@ -14,48 +14,6 @@
 @inject IState<SeasonWeekState> SeasonWeekState
 @inject TimeProvider TimeProvider
 
-<div class="wa_table__container">
-    <div class="wa_table__header">
-        <MudText Typo="@Typo.h6">@("This Week's Predictions")</MudText>
-        <MudText Typo="@Typo.subtitle1">@Subtitle()</MudText>
-        <hr class="wa_hr__primaryGradient" style="margin: 15px 0px 15px 0px;" />
-    </div>
-    <SkeletonLoadingWrapper IsLoading=@IsLoading() Width="100%" Height="20rem">
-        <div class="wa_table__overflowContainer">
-            <MudTable T="CurrentWeekPredictionsTableItem" Items="@GetTableItems()" Hover="true" Breakpoint="Breakpoint.None" Dense="true" Class="wa_table__mudOverrides">
-                <HeaderContent>
-                    <MudTh><MudText Typo="Typo.subtitle2">@("User")</MudText></MudTh>
-                    <MudTh><MudText Typo="Typo.subtitle2">@("Predict")</MudText></MudTh>
-                    <MudTh><MudText Typo="Typo.subtitle2">@("Actual")</MudText></MudTh>
-                    <MudTh><MudText Typo="Typo.subtitle2">@("Score")</MudText></MudTh>
-                    <MudTh><MudText Typo="Typo.subtitle2">@("Win")</MudText></MudTh>
-                </HeaderContent>
-                <RowTemplate>
-                    <MudTd DataLabel="@("User")">
-                        <MudText Typo="Typo.body2">@context.FirstName</MudText>
-                        <MudText Typo="Typo.body2">@context.LastName</MudText>
-                    </MudTd>
-                    <MudTd DataLabel="@("Predict")">
-                        <MudText Typo="Typo.body2">@($"{context.AwayTeamName} - {context.PredictedAwayTeamScore}")</MudText>
-                        <MudText Typo="Typo.body2">@("@")</MudText>
-                        <MudText Typo="Typo.body2">@($"{context.HomeTeamName} - {context.PredictedHomeTeamScore}")</MudText>
-                    </MudTd>
-                    <MudTd DataLabel="@("Actual")">
-                        <MudText Typo="Typo.body2">@($"{context.AwayTeamName} - {context.ActualAwayTeamScore}")</MudText>
-                        <MudText Typo="Typo.body2">@("@")</MudText>
-                        <MudText Typo="Typo.body2">@($"{context.HomeTeamName} - {context.ActualHomeTeamScore}")</MudText>
-                    </MudTd>
-                    <MudTd DataLabel="@("Score")">
-                        <MudText Typo="Typo.body2">@(context.ScoreDifferential)</MudText>
-                    </MudTd>
-                    <MudTd DataLabel="@("Win")">
-                        <MudText Typo="Typo.body2">@(context.PredictedWinningTeam ? "Yes" : "No")</MudText>
-                    </MudTd>
-                </RowTemplate>
-            </MudTable>
-        </div>
-    </SkeletonLoadingWrapper>
-</div>
 
 @code 
 {

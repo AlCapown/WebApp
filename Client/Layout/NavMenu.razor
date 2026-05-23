@@ -6,10 +6,12 @@
     <MudNavLink Href="/PredictionHistory">Prediction History</MudNavLink>
     <MudNavLink Href="/GameScores">Game Scores</MudNavLink>
     <MudNavLink Href="/DivisionalRankings">Divisional Rankings</MudNavLink>
-    <AuthorizeView Roles="@AppRole.ADMIN">
+    <AuthorizeView Policy="@Policy.ADMIN" Context="adminContext">
         <MudNavGroup Title="Admin" Expanded="false">
             <MudNavLink Href="/Admin/Season">Season</MudNavLink>
-            <MudNavLink Href="/Hangfire">Hangfire</MudNavLink>
+            <AuthorizeView Policy="@Policy.HANGFIRE" Context="hangfireContext">
+                <MudNavLink Href="/Hangfire">Hangfire</MudNavLink>
+            </AuthorizeView>
         </MudNavGroup>
     </AuthorizeView>
     <MudNavLink Href="/Account/Logout" ForceLoad="true">Logout</MudNavLink>

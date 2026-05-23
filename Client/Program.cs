@@ -10,6 +10,7 @@ using WebApp.Client.Api;
 using WebApp.Client.Common.Constants;
 using WebApp.Client.Infrastructure;
 using WebApp.Client.Store.Shared;
+using WebApp.Common.Infrastructure;
 
 #if DEBUG
 using Fluxor.Blazor.Web.ReduxDevTools;
@@ -31,7 +32,7 @@ public class Program
         builder.Services.AddTimeProviderService(builder.Configuration, builder.HostEnvironment.IsDevelopment());
 
         // Authorization
-        builder.Services.AddAuthorizationCore();
+        builder.Services.AddWebAppAuthorization();
 
         // Authentication
         builder.Services.AddSingleton<AuthenticationStateProvider, WebAppAuthenticationStateProvider>();
