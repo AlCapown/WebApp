@@ -8,42 +8,59 @@ namespace WebApp.Client.Infrastructure;
 
 public sealed class WebAppHttpMessageHandler : DelegatingHandler
 {
-    private static readonly TimeSpan _tokenExpiryInterval = TimeSpan.FromMinutes(10);
-
     private readonly IJSRuntime _jsRuntime;
-    private readonly TimeProvider _timeProvider;
 
     private string? CachedToken { get; set; }
-    private DateTimeOffset TokenExpiry { get; set; } = DateTimeOffset.MinValue;
+    private Task<string>? _fetchTokenTask;
 
-
-    public WebAppHttpMessageHandler(IJSRuntime jsRuntime, TimeProvider timeProvider)
+    public WebAppHttpMessageHandler(IJSRuntime jsRuntime)
     {
         _jsRuntime = jsRuntime;
-        _timeProvider = timeProvider;
     }
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        var antiforgeryToken = await GetCachedAntiforgeryTokenAsync(cancellationToken);
+        var antiforgeryToken = await GetCachedAntiforgeryTokenAsync();
         request.Headers.Add("X-XSRF-TOKEN", antiforgeryToken);
         return await base.SendAsync(request, cancellationToken);
     }
 
-    private async ValueTask<string> GetCachedAntiforgeryTokenAsync(CancellationToken cancellationToken)
+    private async ValueTask<string> GetCachedAntiforgeryTokenAsync()
     {
-        if (CachedToken is not null && _timeProvider.GetUtcNow() < TokenExpiry)
+        // Check if we have a cached token
+        if (CachedToken is not null)
         {
             return CachedToken;
         }
 
-        // Fetch new token and cache it. Multiple threads may reach here simultaneously, but this is fine.
-        var token = await _jsRuntime.InvokeAsync<string?>("getAntiforgeryToken", cancellationToken)
-            ?? throw new InvalidOperationException("Antiforgery token retrieval failed.");
+        // If a fetch is already in flight, wait for it
+        if (_fetchTokenTask is not null)
+        {
+            return await _fetchTokenTask;
+        }
 
-        CachedToken = token;
-        TokenExpiry = _timeProvider.GetUtcNow().Add(_tokenExpiryInterval);
+        // Otherwise, start a new fetch and then wait for it
+        _fetchTokenTask = OrchestrateFetchTokenAsync();
+        return await _fetchTokenTask;
+    }
 
-        return CachedToken;
+    private async Task<string> OrchestrateFetchTokenAsync()
+    {
+        try
+        {
+            // Pass CancellationToken.None instead of a request-specific token since this task could be
+            // shared between 2 different Web Requests. We don't want first requests cancellation to interrupt
+            // the token fetch for the second request.
+            var token = await _jsRuntime.InvokeAsync<string?>("getAntiforgeryToken", CancellationToken.None)
+                ?? throw new InvalidOperationException("Antiforgery token retrieval failed.");
+
+            CachedToken = token;
+
+            return CachedToken;
+        }
+        finally
+        {
+            _fetchTokenTask = null;
+        }
     }
 }

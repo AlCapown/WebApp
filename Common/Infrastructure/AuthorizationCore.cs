@@ -6,7 +6,7 @@ namespace WebApp.Common.Infrastructure;
 public static class AuthorizationCore
 {
     /// <summary>
-    /// Adds authorization policies to the service collection.
+    /// Adds authorization and configures policies for WebApp. These are shared by both the client and server.
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>

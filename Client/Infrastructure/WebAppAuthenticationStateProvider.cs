@@ -14,7 +14,7 @@ namespace WebApp.Client.Infrastructure;
 
 public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvider
 {
-    private static readonly TimeSpan _userCacheExpiryInterval = TimeSpan.FromSeconds(60);
+    private static readonly TimeSpan _userCacheExpiryInterval = TimeSpan.FromMinutes(5);
 
     private readonly NavigationManager _navigation;
     private readonly IHttpClientFactory _httpClientFactory;
@@ -23,6 +23,8 @@ public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvi
 
     private ClaimsPrincipal? CachedUser { get; set; }
     private DateTimeOffset UserExpiry { get; set; } = DateTimeOffset.MinValue;
+
+    private Task<ClaimsPrincipal>? _fetchUserTask;
 
     public WebAppAuthenticationStateProvider(
         NavigationManager navigation, 
@@ -36,17 +38,47 @@ public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvi
         _logger = logger;
     }
 
+    /// <summary>
+    /// Gets the current authentication state asynchronously.
+    /// Uses a cached user representation if available and valid; otherwise fetches the user from the server.
+    /// </summary>
+    /// <returns></returns>
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         var user = await GetUserCachedAsync();
         return new AuthenticationState(user);
     }
+
+    /// <summary>
+    /// Navigates to the logout endpoint, triggering a forced reload to clear the user session.
+    /// </summary>
+    public void Logout()
+    {
+        _navigation.NavigateTo("Account/Logout", true);
+    }
         
-    public void SignIn()
+    /// <summary>
+    /// Navigates to the login endpoint, triggering a forced reload to initiate the authentication process.
+    /// </summary>
+    public void Login()
     {
         _navigation.NavigateTo("Account/Login", true);
     }
 
+    /// <summary>
+    /// Invalidates the cached user identity and notifies the application that the authentication state has changed.
+    /// </summary>
+    public void RefreshState()
+    {
+        UserExpiry = DateTimeOffset.MinValue;
+        NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+    }
+
+    /// <summary>
+    /// Retrieves the user's claims principal from cache if available and not expired; 
+    /// otherwise, coordinates fetching it from the server to prevent concurrent duplicate requests.
+    /// </summary>
+    /// <returns></returns>
     private async ValueTask<ClaimsPrincipal> GetUserCachedAsync()
     {
         // Check if we have a valid cached user
@@ -55,14 +87,40 @@ public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvi
             return CachedUser;
         }
 
-        // Fetch new user and cache it. Multiple threads may reach here simultaneously but this is fine.
-        CachedUser = await GetUserAsync();
-        UserExpiry = _timeProvider.GetUtcNow().Add(_userCacheExpiryInterval);
+        // If a fetch is already in flight, wait for it
+        if (_fetchUserTask is not null)
+        {
+            return await _fetchUserTask;
+        }
 
-        return CachedUser;
+        // Otherwise, start a new fetch and then wait for it
+        _fetchUserTask = OrchistrateFetchUserAsync();
+        return await _fetchUserTask;
     }
 
-    private async Task<ClaimsPrincipal> GetUserAsync()
+    /// <summary>
+    /// Wraps the remote user fetch process, updates the local cache, and manages the in-flight fetch task.
+    /// </summary>
+    /// <returns></returns>
+    private async Task<ClaimsPrincipal> OrchistrateFetchUserAsync()
+    {
+        try
+        {
+            CachedUser = await FetchUserFromServerAsync();
+            UserExpiry = _timeProvider.GetUtcNow().Add(_userCacheExpiryInterval);
+            return CachedUser;
+        }
+        finally
+        {
+            _fetchUserTask = null;
+        }
+    }
+
+    /// <summary>
+    /// Actually makes the API call to the server to get the current user's claims, roles, and authentication status.
+    /// </summary>
+    /// <returns></returns>
+    private async Task<ClaimsPrincipal> FetchUserFromServerAsync()
     {
         var client = _httpClientFactory.CreateClient(ServiceConstants.WEBAPP_API_CLIENT);
         
