@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebApp.Client.Infrastructure;
 
-public sealed class WebAppHttpMessageHandler : DelegatingHandler
+internal sealed class WebAppHttpMessageHandler : DelegatingHandler
 {
     private readonly IJSRuntime _jsRuntime;
 

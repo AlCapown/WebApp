@@ -12,7 +12,7 @@ using WebApp.Common.Models;
 
 namespace WebApp.Client.Infrastructure;
 
-public sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvider
+internal sealed class WebAppAuthenticationStateProvider : AuthenticationStateProvider
 {
     private static readonly TimeSpan _userCacheExpiryInterval = TimeSpan.FromMinutes(5);
 
