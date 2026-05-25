@@ -1,4 +1,6 @@
-﻿// Breakpoint values should match with our component library
+﻿@use 'sass:map';
+
+// Breakpoint values should match with our component library
 // https://github.com/Garderoben/MudBlazor/blob/de308ac42abf42e893d331beba08f2a87a805b41/src/MudBlazor/Styles/abstracts/_variables.scss
 
 $breakpoint-xs: 0px;
@@ -10,7 +12,7 @@ $breakpoint-xl: 1920px;
 $breakpoints: ( xs: $breakpoint-xs, sm: $breakpoint-sm, md: $breakpoint-md, lg: $breakpoint-lg, xl: $breakpoint-xl );
 
 @mixin breakpoint($size) {
-    @media (min-width: map-get($breakpoints, $size)) {
+    @media (min-width: map.get($breakpoints, $size)) {
         @content;
     }
 }

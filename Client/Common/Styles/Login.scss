@@ -1,20 +1,12 @@
 ﻿@use 'Breakpoints.scss';
 @use 'Colors.scss';
 
-
 .wa_card {
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0);
     margin-top: 7rem;
     width: 20rem;
-
-    @media (min-width: Breakpoints.$breakpoint-sm) {
-        width: 30rem;
-    }
-}
-
-.wa_card__content {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -24,6 +16,10 @@
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
     border: 1px solid rgba(255,255,255,0.11764705882352941);
     border-radius: 4px;
+
+    @media (min-width: Breakpoints.$breakpoint-sm) {
+        width: 30rem;
+    }
 
     h1 {
         margin: 1rem;
@@ -139,10 +135,10 @@
             pointer-events: none;
             margin-bottom: 1rem;
         }
+    }
 
-        .wa_card_formGroup_validation {
-            color: Colors.$softError;
-            margin-top: 0.775rem;
-        }
+    .wa_card__formGroup_validation {
+        color: Colors.$softError;
+        margin-top: 0.775rem;
     }
 }

@@ -24,7 +24,8 @@ internal sealed class SecurityHeadersMiddleware : IMiddleware
                 CspDirectives.ConnectSrcProduction,
                 CspDirectives.ImgSrc,
                 CspDirectives.FrameSrc,
-                CspDirectives.TrustedTypes
+                CspDirectives.TrustedTypes,
+                CspDirectives.WorkerSrc
             ])
             : string.Join("; ",
             [
@@ -35,7 +36,8 @@ internal sealed class SecurityHeadersMiddleware : IMiddleware
                 CspDirectives.ConnectSrcDevelopment,
                 CspDirectives.ImgSrc,
                 CspDirectives.FrameSrc,
-                CspDirectives.TrustedTypes
+                CspDirectives.TrustedTypes,
+                CspDirectives.WorkerSrc
             ]);
 
         var headers = new List<KeyValuePair<string, string>>(capacity: 7) // 6 common headers + 1 conditional header
@@ -85,10 +87,11 @@ internal sealed class SecurityHeadersMiddleware : IMiddleware
         public const string StyleSrc = "style-src 'self' 'unsafe-inline' fonts.googleapis.com";
         public const string FontSrc = "font-src 'self' fonts.gstatic.com";
         public const string ConnectSrcProduction = "connect-src 'self'";
-        public const string ConnectSrcDevelopment = "connect-src 'self' ws: wss: http://localhost:* https://localhost:* ";
-        public const string ImgSrc = "img-src 'self' data:";
+        public const string ConnectSrcDevelopment = "connect-src 'self' ws: wss: http://localhost:* https://localhost:* https://raw.githubusercontent.com/dotnet/";
+        public const string ImgSrc = "img-src 'self'";
         public const string FrameSrc = "frame-src 'none'";
         public const string TrustedTypes = "trusted-types 'none'";
+        public const string WorkerSrc = "worker-src 'self' blob:";
     }
 
     private static class HeaderNames
