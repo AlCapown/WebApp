@@ -10,7 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-        <PackageReference Include="AspNetCore.SassCompiler" Version="1.99.0" />
+        <PackageReference Include="AspNetCore.SassCompiler" Version="1.100.0" />
         <PackageReference Include="Fluxor" Version="6.9.0" />
         <PackageReference Include="Fluxor.Blazor.Web" Version="6.9.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.Analyzers" Version="10.0.8" />
@@ -21,7 +21,7 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="10.0.8" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.8" />
         <PackageReference Include="Microsoft.Extensions.Http.Resilience" Version="10.6.0" />
-        <PackageReference Include="MudBlazor" Version="9.4.0" />
+        <PackageReference Include="MudBlazor" Version="9.5.0" />
     </ItemGroup>
 
     <ItemGroup Condition="$(Configuration)=='Debug'">

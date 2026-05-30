@@ -72,7 +72,7 @@ public class FormDialogValidationHandler : ComponentBase, IDisposable
         }
 
         MessageStore.Clear();
-        UnboundError = string.Empty;
+        UnboundError = null;
         CurrentEditContext.NotifyValidationStateChanged();
     }
 
